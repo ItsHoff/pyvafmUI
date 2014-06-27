@@ -1,0 +1,13 @@
+#0
+import sys
+£sys.path.append($'%PyVAFM src%'$)£
+
+from vafmbase import ChannelType
+from vafmcircuits import Machine
+from customs_pll import *
+import vafmcircuits
+
+machine = Machine(name='machine', $dt = %dt%$, $pushed=%Pushed%$)
+
+#4
+£machine.Wait($%Wait%$)£
