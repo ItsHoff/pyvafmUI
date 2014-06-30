@@ -1,0 +1,2 @@
+#1
+machine.AddCircuit(type='VDW', name = '%Name%', $gamma = %Gamma%$, $hamaker = %Hamaker%$, $radius = %Radius%$, $offset = %Offset%$, $pushed = %Pushed%$)

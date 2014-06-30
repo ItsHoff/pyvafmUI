@@ -139,7 +139,7 @@ class MainWidget(QtGui.QWidget):
         if not savefile:
             return
         blocks = [""]*5
-        with open("formats/machine.frm", "r") as f:
+        with open("formats/machine.format", "r") as f:
             script.createFromFormat(blocks, f, self.parameters)
         
         for circuit in self.machine_widget.circuits:
@@ -154,7 +154,7 @@ class MainWidget(QtGui.QWidget):
                 raise NotImplementedError("Circuit "+ circuit.name+ " doesn't have proper script format implemented!")
         
         for connection in self.machine_widget.connections:
-            with open("formats/connect.frm", "r") as f:
+            with open("formats/connect.format", "r") as f:
                 output = connection.output.circuit.name+"."+connection.output.name
                 input = connection.input.circuit.name+"."+connection.input.name
                 print output, input

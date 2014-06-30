@@ -1,0 +1,2 @@
+#1
+machine.AddCircuit(type='square', name = '%Name%', $amp = %Amp%$, $freq = %Freq%$, $duty = %Duty%$, $offset = %Offset%$, $pushed = %Pushed%$)

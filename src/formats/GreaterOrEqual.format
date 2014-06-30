@@ -1,0 +1,2 @@
+#1
+machine.AddCircuit(type='GreaterOrEqual', name = '%Name%', $in1 = %In1%$, $in2 = %In2%$, $pushed = %Pushed%$)
