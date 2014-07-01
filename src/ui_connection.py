@@ -17,7 +17,7 @@ class UIConnection(QtGui.QGraphicsPathItem):
         Constructor
         '''
         
-        self.input = None
+        self.input_ = None
         self.output = None
         self.start = origin.scenePos()+QtCore.QPointF(0.5*origin.xsize, 0.5*origin.ysize)
         self.end = mouse_pos
@@ -25,7 +25,7 @@ class UIConnection(QtGui.QGraphicsPathItem):
             if origin.nConnections() >= 1:
                 raise ValueError("Input can only have one connection.")
             else:
-                self.input = origin
+                self.input_ = origin
         else:
             self.output = origin
         super(UIConnection, self).__init__(parent)
@@ -38,7 +38,7 @@ class UIConnection(QtGui.QGraphicsPathItem):
         self.setZValue(1)
         
     def addContextActions(self, menu):
-        remove = QtGui.QAction("Remove connection from "+self.input.name + " to "+ self.output.name, menu)
+        remove = QtGui.QAction("Remove connection from "+self.input_.name + " to "+ self.output.name, menu)
         QtCore.QObject.connect(remove, QtCore.SIGNAL("triggered()"), 
                                self.removeConnection)
         
@@ -48,12 +48,12 @@ class UIConnection(QtGui.QGraphicsPathItem):
         self.scene().removeConnection(self)
         
     def addIO(self, io):
-        if io.io_type == "in" and self.input == None and io.nConnections()<1:
-            self.input = io
-            print "connected " + self.input.name + " and "+ self.output.name
+        if io.io_type == "in" and self.input_ == None and io.nConnections()<1:
+            self.input_ = io
+            print "connected " + self.input_.name + " and "+ self.output.name
         elif io.io_type == "out" and self.output == None:
             self.output = io
-            print "connected " + self.input.name + " and "+ self.output.name
+            print "connected " + self.input_.name + " and "+ self.output.name
         else:
             return False
         self.updatePath()
@@ -66,7 +66,7 @@ class UIConnection(QtGui.QGraphicsPathItem):
         self.setPath(path)
         
     def updatePath(self):
-        self.start = self.input.scenePos()+QtCore.QPointF(0.5*self.input.xsize, 0.5*self.input.ysize)
+        self.start = self.input_.scenePos()+QtCore.QPointF(0.5*self.input_.xsize, 0.5*self.input_.ysize)
         self.end = self.output.scenePos()+QtCore.QPointF(0.5*self.output.xsize, 0.5*self.output.ysize)
         path = QtGui.QPainterPath(self.start)
         path.lineTo(self.end)

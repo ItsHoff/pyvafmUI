@@ -54,7 +54,12 @@ docs/_build/
 
 # ~ending backup files
 *~
+*.swp
 
-# scripts and Mockup folders
+# Folders to ignore
 Mockup/
 scripts/
+.settings/
+
+# Files to ignore
+tags

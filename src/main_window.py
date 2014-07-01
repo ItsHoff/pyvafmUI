@@ -16,14 +16,10 @@ import circuits
 import script
 
 
-
-
-
 class MainWindow(QtGui.QMainWindow):
     '''
-    classdocs
+    The main window of the UI
     '''
-
 
     def __init__(self):
         '''
@@ -31,17 +27,17 @@ class MainWindow(QtGui.QMainWindow):
         '''
         super(MainWindow, self).__init__()
         self.initUI()
-        
+
     def initUI(self):
         self.setGeometry(100, 100, 800, 500)
         self.setWindowTitle('PyVAFM')
-        
+
         self.setCentralWidget(MainWidget())
-        
+
         self.show()
 
 
-class MainWidget(QtGui.QWidget): 
+class MainWidget(QtGui.QWidget):
     def __init__(self):
         super(MainWidget, self).__init__()
         self.param_window_style = circuits.machine_param_window_style
@@ -50,89 +46,64 @@ class MainWidget(QtGui.QWidget):
 
     def initWidget(self):
         "Set up the left area of the UI"
-        left_area = QtGui.QVBoxLayout()             
-        
+        left_area = QtGui.QVBoxLayout()
+
         "Set up machine parameter grid on the top left of the UI"
-        machine_param_grid = QtGui.QGridLayout()    
+        machine_param_grid = QtGui.QGridLayout()
         create_button = QtGui.QPushButton("Create Script")
         run_button = QtGui.QPushButton("Create + Run")
         self.parameter_button = QtGui.QPushButton("Machine Parameters")
-        
+
         QtCore.QObject.connect(create_button, QtCore.SIGNAL("clicked()"), self.createScript)
         QtCore.QObject.connect(run_button, QtCore.SIGNAL("clicked()"), self.createRun)
         QtCore.QObject.connect(self.parameter_button, QtCore.SIGNAL("clicked()"), self.showParameters)
-        
-        """label1 = QtGui.QLabel("Temp")
-        label2 = QtGui.QLabel("Temp")
-        label3 = QtGui.QLabel("Temp")
-        label4 = QtGui.QLabel("Temp")
-        label5 = QtGui.QLabel("Temp")
-        machine_param_grid.addWidget(label1, 0, 0)
-        machine_param_grid.addWidget(label2, 1, 0)
-        machine_param_grid.addWidget(label3, 2, 0)
-        machine_param_grid.addWidget(label4, 3, 0)
-        machine_param_grid.addWidget(label5, 4, 0)"""
-        #machine_param_grid.addWidget(self.param_window, 0, 0, 1, 2)
+
         machine_param_grid.addWidget(create_button, 2, 0)
         machine_param_grid.addWidget(run_button, 2, 1)
         machine_param_grid.addWidget(self.parameter_button, 1, 0, 1,  2)
-        
-        
+
         tree_widget = QtGui.QTreeWidget(self)
         tree_widget.setSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Expanding)
         tree_widget.setHeaderLabel("Circuits")
         tree_widget.setDragEnabled(True)
         tree_widget.setFocusPolicy(QtCore.Qt.NoFocus)
-        
+
         self.load_circuits(tree_widget)
-        
+
         left_area.addLayout(machine_param_grid)
         left_area.addWidget(tree_widget)
-        
-        
-        """scroll_area = MyScrollArea()       #Right side scroll area
-        
-        scroll_area.setWidget(machine_widget)
-        scroll_area.setAlignment(QtCore.Qt.AlignCenter)
-        scroll_area.verticalScrollBar().setValue(
-                    0.5*scroll_area.verticalScrollBar().maximum())
-        scroll_area.horizontalScrollBar().setValue(
-                    0.5*scroll_area.horizontalScrollBar().maximum())"""
-        
+
         graphics_view = MyGraphicsView()
         self.machine_widget = MachineWidget(tree_widget, graphics_view)
         graphics_view.setScene(self.machine_widget)
-        
-        
+
         main_layout = QtGui.QHBoxLayout()
         main_layout.addLayout(left_area)
-        #main_layout.addWidget(scroll_area)
         main_layout.addWidget(graphics_view)
         self.setLayout(main_layout)
-        
+
     def showParameters(self):
         self.parameter_window = ParameterWindow(self, True)
-        
+
     def setParameters(self, parameters):
         for label, value in parameters.iteritems():
-            if value or value == False:
-                self.parameters[label] = value 
-        
-   
+            if value is not None:
+                self.parameters[label] = value
+
     def load_circuits(self, tree_widget):
-        "Loads all the circuits from the circuits file to the tree_widget"
+        "Load all the circuits from the circuits file to the tree_widget"
         groups = {}
         for group in circuit_info.groups:
             top_item = QtGui.QTreeWidgetItem(tree_widget)
             top_item.setText(0, group)
-            top_item.setFlags(top_item.flags()&~QtCore.Qt.ItemIsDragEnabled
-                              &~QtCore.Qt.ItemIsSelectable)
+            top_item.setFlags(top_item.flags() & ~QtCore.Qt.ItemIsDragEnabled
+                              & ~QtCore.Qt.ItemIsSelectable)
             groups[group] = top_item
         for name, info in circuits.circuits.iteritems():
             group = info.io_type
             sub_item = QtGui.QTreeWidgetItem(groups[group])
             sub_item.setText(0, name)
-            
+
     def createScript(self):
         print self.parameters
         savefile = QtGui.QFileDialog.getSaveFileName(self, "Save script", "")
@@ -141,7 +112,7 @@ class MainWidget(QtGui.QWidget):
         blocks = [""]*5
         with open("formats/machine.format", "r") as f:
             script.createFromFormat(blocks, f, self.parameters)
-        
+
         for circuit in self.machine_widget.circuits:
             print circuit.name
             print circuit.circuit_info.script_format
@@ -151,15 +122,15 @@ class MainWidget(QtGui.QWidget):
                 with open(circuit.circuit_info.script_format, "r") as f:
                     script.createFromFormat(blocks, f, circuit.parameters)
             else:
-                raise NotImplementedError("Circuit "+ circuit.name+ " doesn't have proper script format implemented!")
-        
+                raise NotImplementedError("Circuit " + circuit.name + " doesn't have proper script format implemented!")
+
         for connection in self.machine_widget.connections:
             with open("formats/connect.format", "r") as f:
                 output = connection.output.circuit.name+"."+connection.output.name
-                input = connection.input.circuit.name+"."+connection.input.name
-                print output, input
-                script.createFromFormat(blocks, f, {"output":output, "input":input})
-                    
+                input_ = connection.input_.circuit.name+"."+connection.input_.name
+                print output, input_
+                script.createFromFormat(blocks, f, {"output": output, "input": input_})
+
         print blocks
         with open(savefile, 'w') as f:
             i = 0
@@ -169,19 +140,19 @@ class MainWidget(QtGui.QWidget):
                 f.write('\n\n')
                 i += 1
         return savefile
-        
+
     def createRun(self):
-        savefile  = self.createScript()
+        savefile = self.createScript()
         if savefile:
             with open(str(savefile), 'r') as f:
                 print f
                 exec(f)
-        
-        
+
+
 def main():
     app = QtGui.QApplication(sys.argv)
     w = MainWindow()
-    sys.exit(app.exec_())        
+    sys.exit(app.exec_())
 
 if __name__ == "__main__":
     main()

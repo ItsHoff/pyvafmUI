@@ -130,7 +130,7 @@ class MachineWidget(QtGui.QGraphicsScene):
         
     def removeConnectionsFrom(self, IO):
         for connection in self.connections[:]:
-            if connection.input == IO or connection.output == IO:
+            if connection.input_ == IO or connection.output == IO:
                 self.connections.remove(connection)
                 self.removeItem(connection)
         self.update()

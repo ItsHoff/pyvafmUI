@@ -28,7 +28,7 @@ class UIIO(QtGui.QGraphicsItem):
     def nConnections(self):
         n = 0
         for connection in self.scene().connections:
-            if connection.input == self or connection.output == self:
+            if connection.input_ == self or connection.output == self:
                 n += 1
         return n
         
