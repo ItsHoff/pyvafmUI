@@ -3,7 +3,7 @@ Created on Jun 12, 2014
 
 @author, keisano1
 '''
-from circuit_info import CircuitInfo, groups
+from circuit_info import CircuitInfo
 from collections import OrderedDict
 
 machine_param_window_style = OrderedDict([
@@ -11,11 +11,11 @@ machine_param_window_style = OrderedDict([
                             ("dt", "LineEdit"),
                             ("Wait", "LineEdit"),
                             ("Pushed", "CheckBox")
-                                          ])
+                            ])
 
 circuits = OrderedDict([
 # MATHEMATICS
-("opAdd",CircuitInfo("opAdd", "Mathematics",
+("opAdd", CircuitInfo("opAdd", "Mathematics",
                      ["in1", "in2"],
                      ["out"],
                      param_window_style = OrderedDict([
@@ -28,7 +28,7 @@ circuits = OrderedDict([
                      script_format = "formats/opAdd.format"
                      )
  ),
-("opSub",CircuitInfo("opSub", "Mathematics",
+("opSub", CircuitInfo("opSub", "Mathematics",
                      ["in1", "in2"],
                      ["out"],
                      param_window_style = OrderedDict([
@@ -40,7 +40,7 @@ circuits = OrderedDict([
                      script_format = "formats/opSub.format"
                      )
  ),
-("opMul",CircuitInfo("opMul", "Mathematics",
+("opMul", CircuitInfo("opMul", "Mathematics",
                      ["in1", "in2"],
                      ["out"],
                      param_window_style = OrderedDict([
@@ -52,7 +52,7 @@ circuits = OrderedDict([
                      script_format = "formats/opMul.format"
                      )
  ),
-("opDiv",CircuitInfo("opDiv", "Mathematics",
+("opDiv", CircuitInfo("opDiv", "Mathematics",
                      ["in1", "in2"],
                      ["out"],
                      param_window_style = OrderedDict([
@@ -64,7 +64,7 @@ circuits = OrderedDict([
                      script_format = "formats/opDiv.format"
                      )
  ),
-("opLinC",CircuitInfo("opLinC", "Mathematics",
+("opLinC", CircuitInfo("opLinC", "Mathematics",
                       ["ina1", "ina2", "inb1", "inb2"],
                       ["out"],
                       param_window_style = OrderedDict([
@@ -79,7 +79,7 @@ circuits = OrderedDict([
                       script_format = "formats/opLinC.format"
                       )
  ),
-("opPow",CircuitInfo("opPow", "Mathematics",
+("opPow", CircuitInfo("opPow", "Mathematics",
                      ["signal"],
                      ["out"],
                      param_window_style = OrderedDict([
@@ -90,7 +90,7 @@ circuits = OrderedDict([
                      script_format = "formats/opPow.format"
                      )
  ),
-("opAbs",CircuitInfo("opAbs", "Mathematics",
+("opAbs", CircuitInfo("opAbs", "Mathematics",
                      ["signal"],
                      ["out"],
                      param_window_style = OrderedDict([
@@ -101,7 +101,7 @@ circuits = OrderedDict([
                      )
  ),
 
-("Greater or Equal",CircuitInfo("GreaterOrEqual", "Mathematics",
+("Greater or Equal", CircuitInfo("GreaterOrEqual", "Mathematics",
                                 ["in1", "in2"],
                                 ["out"],
                      param_window_style = OrderedDict([
@@ -113,7 +113,7 @@ circuits = OrderedDict([
                      script_format = "formats/GreaterOrEqual.format"
                      )
  ),
-("Less or Equal",CircuitInfo("LessOrEqual", "Mathematics",
+("Less or Equal", CircuitInfo("LessOrEqual", "Mathematics",
                              ["in1", "in2"],
                              ["out"],
                      param_window_style = OrderedDict([
@@ -124,7 +124,7 @@ circuits = OrderedDict([
                                          ]),
                      script_format = "formats/LessOrEqual.format"
                      )),
-("Equal",CircuitInfo("Equal", "Mathematics",
+("Equal", CircuitInfo("Equal", "Mathematics",
                      ["in1", "in2"],
                      ["out"],
                      param_window_style = OrderedDict([
@@ -137,7 +137,7 @@ circuits = OrderedDict([
                      )
  ),
 
-("Not",CircuitInfo("NOT", "Mathematics",
+("Not", CircuitInfo("NOT", "Mathematics",
                    ["signal"],
                    ["out"],
                      param_window_style = OrderedDict([
@@ -147,7 +147,7 @@ circuits = OrderedDict([
                      script_format = "formats/NOT.format"
                      )
  ),
-("And",CircuitInfo("AND", "Mathematics",
+("And", CircuitInfo("AND", "Mathematics",
                    ["in1", "in2"],
                    ["out"],
                      param_window_style = OrderedDict([
@@ -160,7 +160,7 @@ circuits = OrderedDict([
                      script_format = "formats/AND.format"
                      )
  ),
-("Or",CircuitInfo("OR", "Mathematics",
+("Or", CircuitInfo("OR", "Mathematics",
                   ["in1", "in2"],
                   ["out"],
                      param_window_style = OrderedDict([
@@ -173,7 +173,7 @@ circuits = OrderedDict([
                      script_format = "formats/OR.format"
                      )
  ),
-("XOr",CircuitInfo("XOR", "Mathematics",
+("XOr", CircuitInfo("XOR", "Mathematics",
                    ["in1", "in2"],
                    ["out"],
                      param_window_style = OrderedDict([
@@ -186,7 +186,7 @@ circuits = OrderedDict([
                      script_format = "formats/XOR.format"
                      )
  ),
-("NOr",CircuitInfo("NOR", "Mathematics",
+("NOr", CircuitInfo("NOR", "Mathematics",
                    ["in1", "in2"],
                    ["out"],
                      param_window_style = OrderedDict([
@@ -201,7 +201,7 @@ circuits = OrderedDict([
  ),
 
 # SIGNAL GENERATION
-("Waver",CircuitInfo("waver", "Signal Generation",
+("Waver", CircuitInfo("waver", "Signal Generation",
                      ["freq", "amp", "offset"],
                      ["sin", "cos", "saw"],
                      param_window_style = OrderedDict([
@@ -214,7 +214,7 @@ circuits = OrderedDict([
                       script_format = "formats/waver.format"
                       )
  ),
-("Square",CircuitInfo("square", "Signal Generation",
+("Square", CircuitInfo("square", "Signal Generation",
                       ["freq", "amp", "offset", "duty"],
                       ["out"],
                      param_window_style = OrderedDict([
@@ -230,7 +230,7 @@ circuits = OrderedDict([
  ),
 
 # SIGNAL PROCESSING
-("SKLP",CircuitInfo("SKLP", "Signal Processing",
+("SKLP", CircuitInfo("SKLP", "Signal Processing",
                     ["signal"],
                     ["out"],
                     param_window_style = OrderedDict([
@@ -243,7 +243,7 @@ circuits = OrderedDict([
                     script_format = "formats/SKLP.format"
                     )
  ),
-("SKHP",CircuitInfo("SKHP", "Signal Processing",
+("SKHP", CircuitInfo("SKHP", "Signal Processing",
                     ["signal"],
                     ["out"],
                     param_window_style = OrderedDict([
@@ -256,19 +256,20 @@ circuits = OrderedDict([
                     script_format = "formats/SKHP.format"
                     )
  ),
-("SKBP",CircuitInfo("SKBP", "Signal Processing",
+("SKBP", CircuitInfo("SKBP", "Signal Processing",
                     ["signal"],
                     ["out"],
                     param_window_style = OrderedDict([
                                         ("Name", "LineEdit"),
                                         ("Gain", "LineEdit"),
                                         ("FC", "LineEdit"),
+                                        ("Band", "LineEdit"),
                                         ("Pushed", "CheckBox")
                                         ]),
                     script_format = "formats/SKBP.format"
                     )
  ),
-("RCLP",CircuitInfo("RCLP", "Signal Processing",
+("RCLP", CircuitInfo("RCLP", "Signal Processing",
                     ["signal"],
                     ["out"],
                     param_window_style = OrderedDict([
@@ -280,7 +281,7 @@ circuits = OrderedDict([
                     script_format = "formats/RCLP.format"
                     )
  ),
-("RCHP",CircuitInfo("RCHP", "Signal Processing",
+("RCHP", CircuitInfo("RCHP", "Signal Processing",
                     ["signal"],
                     ["out"],
                     param_window_style = OrderedDict([
@@ -293,7 +294,7 @@ circuits = OrderedDict([
                     )
  ),
 
-("Avg",CircuitInfo("avg", "Signal Processing",
+("Avg", CircuitInfo("avg", "Signal Processing",
                     ["signal"],
                     ["out"],
                     param_window_style = OrderedDict([
@@ -306,7 +307,7 @@ circuits = OrderedDict([
                     )
  ),
 
-("Gain",CircuitInfo("gain", "Signal Processing",
+("Gain", CircuitInfo("gain", "Signal Processing",
                     ["signal"],
                     ["out"],
                     param_window_style = OrderedDict([
@@ -317,7 +318,7 @@ circuits = OrderedDict([
                     script_format = "formats/gain.format"
                     )
  ),
-("Min Max",CircuitInfo("minmax", "Signal Processing",
+("Min Max", CircuitInfo("minmax", "Signal Processing",
                     ["signal"],
                     ["max", "min", "amp", "offset"],
                     param_window_style = OrderedDict([
@@ -328,7 +329,7 @@ circuits = OrderedDict([
                     script_format = "formats/minmax.format"
                     )
  ),
-("Limiter",CircuitInfo("limiter", "Signal Processing",
+("Limiter", CircuitInfo("limiter", "Signal Processing",
                     ["signal", "min", "max"],
                     ["out"],
                     param_window_style = OrderedDict([
@@ -340,7 +341,7 @@ circuits = OrderedDict([
                     script_format = "formats/limiter.format"
                     )
  ),
-("Derivative",CircuitInfo("derivative", "Signal Processing",
+("Derivative", CircuitInfo("derivative", "Signal Processing",
                     ["signal"],
                     ["out"],
                     param_window_style = OrderedDict([
@@ -350,7 +351,7 @@ circuits = OrderedDict([
                     script_format = "formats/derivate.format"
                     )
  ),
-("Integral",CircuitInfo("integral", "Signal Processing",
+("Integral", CircuitInfo("integral", "Signal Processing",
                     ["signal"],
                     ["out"],
                     param_window_style = OrderedDict([
@@ -360,7 +361,7 @@ circuits = OrderedDict([
                     script_format = "formats/integral.format"
                     )
  ),
-("Delay",CircuitInfo("delay", "Signal Processing",
+("Delay", CircuitInfo("delay", "Signal Processing",
                     ["signal"],
                     ["out"],
                     param_window_style = OrderedDict([
@@ -371,7 +372,7 @@ circuits = OrderedDict([
                     script_format = "formats/delay.format"
                     )
  ),
-("Peaker",CircuitInfo("peaker", "Signal Processing",
+("Peaker", CircuitInfo("peaker", "Signal Processing",
                     ["signal"],
                     ["tick", "peak", "delay"],
                     param_window_style = OrderedDict([
@@ -382,7 +383,7 @@ circuits = OrderedDict([
                     script_format = "formats/peaker.format"
                     )
  ),
-("Phasor",CircuitInfo("phasor", "Signal Processing",
+("Phasor", CircuitInfo("phasor", "Signal Processing",
                       ["in1", "in2"],
                       ["tick", "delay"],
                     param_window_style = OrderedDict([
@@ -392,7 +393,7 @@ circuits = OrderedDict([
                     script_format = "formats/phasor.format"
                     )
  ),
-("Flip",CircuitInfo("flip", "Signal Processing",
+("Flip", CircuitInfo("flip", "Signal Processing",
                     ["signal"],
                     ["out"],
                     param_window_style = OrderedDict([
@@ -404,7 +405,7 @@ circuits = OrderedDict([
  ),
 
 # SIGNAL CONTROL
-("PI",CircuitInfo("PI", "Signal Control",
+("PI", CircuitInfo("PI", "Signal Control",
                     ["signal", "set", "Ki", "Kp"],
                     ["out"],
                     param_window_style = OrderedDict([
@@ -416,7 +417,7 @@ circuits = OrderedDict([
                     script_format = "formats/PI.format"
                     )
  ),
-("PID",CircuitInfo("PID", "Signal Control",
+("PID", CircuitInfo("PID", "Signal Control",
                     ["signal", "set", "Kd", "Ki", "Kp"],
                     ["out"],
                     param_window_style = OrderedDict([
@@ -431,7 +432,7 @@ circuits = OrderedDict([
  ),
 
 # OUTPUT
-("Output",CircuitInfo("output", "Output",
+("Output", CircuitInfo("output", "Output",
                       ["record"],
                       [],
                     param_window_style = OrderedDict([
@@ -446,7 +447,7 @@ circuits = OrderedDict([
  ),
 
 # FLIP-FLOPS
-("SR Flip Flop",CircuitInfo("SRFlipFlop", "Flip-Flops",
+("SR Flip Flop", CircuitInfo("SRFlipFlop", "Flip-Flops",
                             ["S", "R", "clock"],
                             ["Q", "Qbar"],
                     param_window_style = OrderedDict([
@@ -456,7 +457,7 @@ circuits = OrderedDict([
                     script_format = "formats/SRFlipFlop.format"
                     )
  ),
-("JK Flip Flop",CircuitInfo("JKFlipFlop", "Flip-Flops",
+("JK Flip Flop", CircuitInfo("JKFlipFlop", "Flip-Flops",
                             ["J", "K", "clock"],
                             ["Q", "Qbar"],
                     param_window_style = OrderedDict([
@@ -466,7 +467,7 @@ circuits = OrderedDict([
                     script_format = "formats/JKFlipFlop.format"
                     )
  ),
-("D Flip Flop",CircuitInfo("DFlipFlop", "Flip-Flops",
+("D Flip Flop", CircuitInfo("DFlipFlop", "Flip-Flops",
                            ["D", "clock"],
                            ["Q", "Qbar"],
                     param_window_style = OrderedDict([
@@ -476,7 +477,7 @@ circuits = OrderedDict([
                     script_format = "formats/DFlipFlop.format"
                     )
  ),
-("DR Flip Flop",CircuitInfo("DRFlipFlop", "Flip-Flops",
+("DR Flip Flop", CircuitInfo("DRFlipFlop", "Flip-Flops",
                             ["D", "R", "clock"],
                             ["Q", "Qbar"],
                     param_window_style = OrderedDict([
@@ -488,7 +489,7 @@ circuits = OrderedDict([
  ),
 
 # CUSTOM
-("aPLL",CircuitInfo("aPLL", "Custom",
+("aPLL", CircuitInfo("aPLL", "Custom",
                     ["signal1", "signal2", "f0"],
                     ["sin", "cos", "df", "dbg"],
                     param_window_style = OrderedDict([
@@ -503,19 +504,22 @@ circuits = OrderedDict([
                     script_format = "formats/aPLL.format"
                     )
  ),
-("aPFD",CircuitInfo("aPFD", "Custom",
+("aPFD", CircuitInfo("aPFD", "Custom",
                     ["ref", "vco", "f0", "KI", "KP"],
                     ["sin", "cos", "df", "dbg"],
                     param_window_style = OrderedDict([
                                         ("Name", "LineEdit"),
                                         ("Gain", "LineEdit"),
                                         ("Fcut", "LineEdit"),
+                                        ("f0", "LineEdit")m
+                                        ("Ki", "LineEdit"),
+                                        ("Kp", "LineEdint"),
                                         ("Pushed", "CheckBox")
                                         ]),
                     script_format = "formats/aPFD.format"
                     )
  ),
-("aAMPD",CircuitInfo("aAMPD", "Custom",
+("aAMPD", CircuitInfo("aAMPD", "Custom",
                     ["signal"],
                     ["amp", "norm"],
                     param_window_style = OrderedDict([
@@ -528,7 +532,7 @@ circuits = OrderedDict([
  ),
 
 # CANTILEVER
-("Simple Cantilever",CircuitInfo("SiCanti", "Cantilever",
+("Simple Cantilever", CircuitInfo("SiCanti", "Cantilever",
                                  ["holderz", "fz", "exciter"],
                                  ["ztip", "zabs", "vz"],
                     param_window_style = OrderedDict([
@@ -542,7 +546,7 @@ circuits = OrderedDict([
                     script_format = "formats/simple_canti.format"
                     )
  ),
-("Advanced Cantilever",CircuitInfo("AdCanti", "Cantilever",
+("Advanced Cantilever", CircuitInfo("AdCanti", "Cantilever",
                                    ["To Do"],
                                    ["To Do"],
                     param_window_style = OrderedDict([
@@ -556,7 +560,7 @@ circuits = OrderedDict([
  ),
 
 # INTERPOLATION
-("3d Linear Interpolation",CircuitInfo("i3Dlin", "Interpolation",
+("3d Linear Interpolation", CircuitInfo("i3Dlin", "Interpolation",
                                        ["x", "y", "z"],
                                        ["F1", "F2", "F3"],
                     param_window_style = OrderedDict([
@@ -572,9 +576,9 @@ circuits = OrderedDict([
                     script_format = "formats/i3Dlin.format"
                     )
  ),
-("1d Linear Interpolation",CircuitInfo("i1Dlin", "Interpolation",
+("1d Linear Interpolation", CircuitInfo("i1Dlin", "Interpolation",
                                        ["x"],
-                                       ["Fn"],
+                                       ["F1", "F2", "F3"],
                     param_window_style = OrderedDict([
                                         ("Name", "LineEdit"),
                                         ("Components", "LineEdit"),
@@ -583,12 +587,12 @@ circuits = OrderedDict([
                                         ("PBC", "CheckBox"),
                                         ("Pushed", "CheckBox")
                                         ]),
-                    script_format = "formats/1Dlin.format"
+                    script_format = "formats/i1Dlin.format"
                     )
  ),
 
 # SCANNER
-("Scanner",CircuitInfo("Scanner", "Scanner",
+("Scanner", CircuitInfo("Scanner", "Scanner",
                        [],
                        ["x", "y", "z", "record"],
                     param_window_style = OrderedDict([
@@ -605,7 +609,7 @@ circuits = OrderedDict([
  ),
 
 # VAN DER WALLS
-("Van Der Walls Force",CircuitInfo("VDW", "Van Der Walls",
+("Van Der Walls Force", CircuitInfo("VDW", "Van Der Walls",
                                    ["ztip"],
                                    ["fz"],
                     param_window_style = OrderedDict([

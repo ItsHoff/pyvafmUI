@@ -1,2 +1,2 @@
 #1
-machine.AddCircuit(type='delay', name = '%Name%', $delaytime = %DelayTime%$, $pushed = %Pushed%$)
+machine.AddCircuit(type='delay', name = '%Name%', $DelayTime = %DelayTime%$, $pushed = %Pushed%$)

@@ -1,2 +1,2 @@
 #1
-machine.AddCircuit(type='Machine', name = '%Name%', assembly = aPFD, $fcut=%Fcut%$, $gain = %Gain%$, $pushed = %Pushed%$)
+machine.AddCircuit(type='Machine', name = '%Name%', assembly = aPFD, $fcut=%Fcut%$, $gain = %Gain%$, $f0 = %f0%$, $KI = %Ki%$, $KP = %Kp%$, $pushed = %Pushed%$)

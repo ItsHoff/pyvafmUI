@@ -1,2 +1,2 @@
 #1
-machine.AddCircuit(type='derivate', $pushed = %Pushed%$)
+machine.AddCircuit(type='derivate', name = '%Name%', $pushed = %Pushed%$)
