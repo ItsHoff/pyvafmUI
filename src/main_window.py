@@ -7,10 +7,8 @@ Created on Jun 6, 2014
 import sys
 from PyQt4 import QtGui, QtCore
 from machine_widget import MachineWidget
-from my_scroll_area import MyScrollArea
 from my_graphics_view import MyGraphicsView
 from parameter_window import ParameterWindow
-from ui_circuit import UICircuit
 import circuit_info
 import circuits
 import script
@@ -38,18 +36,21 @@ class MainWindow(QtGui.QMainWindow):
 
 
 class MainWidget(QtGui.QWidget):
+
     def __init__(self):
         super(MainWidget, self).__init__()
         self.param_window_style = circuits.machine_param_window_style
         self.parameters = {}
+        self.parameter_window = ParameterWindow(self)
         self.initWidget()
 
     def initWidget(self):
-        "Set up the left area of the UI"
+        """Initialize the graphical elements of the main widget"""
+        # Set up the left area of the UI
         left_area = QtGui.QVBoxLayout()
 
-        "Set up machine parameter grid on the top left of the UI"
-        machine_param_grid = QtGui.QGridLayout()
+        # Set up the buttons on the top left of the UI
+        button_grid = QtGui.QGridLayout()
         create_button = QtGui.QPushButton("Create Script")
         run_button = QtGui.QPushButton("Create + Run")
         self.parameter_button = QtGui.QPushButton("Machine Parameters")
@@ -58,40 +59,45 @@ class MainWidget(QtGui.QWidget):
         QtCore.QObject.connect(run_button, QtCore.SIGNAL("clicked()"), self.createRun)
         QtCore.QObject.connect(self.parameter_button, QtCore.SIGNAL("clicked()"), self.showParameters)
 
-        machine_param_grid.addWidget(create_button, 2, 0)
-        machine_param_grid.addWidget(run_button, 2, 1)
-        machine_param_grid.addWidget(self.parameter_button, 1, 0, 1,  2)
+        button_grid.addWidget(create_button, 2, 0)
+        button_grid.addWidget(run_button, 2, 1)
+        button_grid.addWidget(self.parameter_button, 1, 0, 1,  2)
 
+        # Set up the tree widget holding the circuits
         tree_widget = QtGui.QTreeWidget(self)
         tree_widget.setSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Expanding)
         tree_widget.setHeaderLabel("Circuits")
         tree_widget.setDragEnabled(True)
         tree_widget.setFocusPolicy(QtCore.Qt.NoFocus)
 
-        self.load_circuits(tree_widget)
+        # Load the circuits from circuits.py into the tree_widget
+        self.loadCircuits(tree_widget)
 
-        left_area.addLayout(machine_param_grid)
-        left_area.addWidget(tree_widget)
-
+        # Set up the graphics view for the machine and set the scene
         graphics_view = MyGraphicsView()
         self.machine_widget = MachineWidget(tree_widget, graphics_view)
         graphics_view.setScene(self.machine_widget)
 
+        # Add widgets to the corresponding layouts
+        left_area.addLayout(button_grid)
+        left_area.addWidget(tree_widget)
         main_layout = QtGui.QHBoxLayout()
         main_layout.addLayout(left_area)
         main_layout.addWidget(graphics_view)
         self.setLayout(main_layout)
 
     def showParameters(self):
-        self.parameter_window = ParameterWindow(self, True)
+        """Open the main machine parameter window"""
+        self.parameter_window.showWindow()
 
     def setParameters(self, parameters):
+        """Save the machine parameters"""
         for label, value in parameters.iteritems():
             if value is not None:
                 self.parameters[label] = value
 
-    def load_circuits(self, tree_widget):
-        "Load all the circuits from the circuits file to the tree_widget"
+    def loadCircuits(self, tree_widget):
+        """Load all the circuits from the circuits file to the tree_widget"""
         groups = {}
         for group in circuit_info.groups:
             top_item = QtGui.QTreeWidgetItem(tree_widget)
@@ -105,8 +111,9 @@ class MainWidget(QtGui.QWidget):
             sub_item.setText(0, name)
 
     def createScript(self):
+        """Create pyvafm script from the current machine state."""
         print self.parameters
-        savefile = QtGui.QFileDialog.getSaveFileName(self, "Save script", "")
+        savefile = QtGui.QFileDialog.getSaveFileName(self, "Save script", "..")
         if not savefile:
             return
         blocks = [""]*5
@@ -142,6 +149,9 @@ class MainWidget(QtGui.QWidget):
         return savefile
 
     def createRun(self):
+        """Create pyvafm script and run the script.
+        Currently can only run once and runs from the src folder.
+        """
         savefile = self.createScript()
         if savefile:
             with open(str(savefile), 'r') as f:

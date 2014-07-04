@@ -8,42 +8,43 @@ from PyQt4 import QtGui, QtCore
 from my_check_box import MyCheckBox
 from my_file_dialog import MyFileDialog
 from my_dir_dialog import MyDirDialog
+import ui_circuit
+
 
 class ParameterWindow(QtGui.QDialog):
-    '''
-    classdocs
-    '''
+    """Widget for editing parameters of the circuits.
+    Normally opens a separate window, but can also be embedded
+    by adding it to a layout.
+    """
 
-
-    def __init__(self, circuit = None, machine = False):
-        '''
-        Constructor
-        '''
-        
+    def __init__(self, circuit):
+        """Construct the window based on the circuit parameters.
+        Circuit can also be the main machine in addition to regular
+        circuits.
+        """
         self.circuit = circuit
-        self.machine = machine
-        if not self.machine:
+        if isinstance(self.circuit, ui_circuit.UICircuit):
             super(ParameterWindow, self).__init__(circuit.scene().parent().window())
-            self.setWindowTitle(self.circuit.name)
+            self.setWindowTitle(self.circuit.name + " parameters")
             self.addWidgets(self.circuit.circuit_info.param_window_style)
-            self.initUI()
         else:
-            super(ParameterWindow, self).__init__(circuit)
-            self.setWindowTitle("Machine")
+            super(ParameterWindow, self).__init__(circuit.window())
+            self.setWindowTitle("Machine parameters")
             self.addWidgets(self.circuit.param_window_style)
-            self.initUI()
-        
-    def initUI(self):
+
+    def showWindow(self):
+        """Show the window and make sure it's activated and on top."""
         self.show()
         self.raise_()
         self.activateWindow()
-        
+
     def addWidgets(self, param_window_style):
+        """Add widgets specified in the param_window_style to the window."""
         grid = QtGui.QGridLayout()
         self.setLayout(grid)
-        
         widgets = []
-        
+        # Create all the necessary widgets and add them to the temporary
+        # widgets container.
         for name, widget_type in param_window_style.iteritems():
             if widget_type == "LineEdit":
                 widgets.append(self.createLineEdit(name))
@@ -54,20 +55,16 @@ class ParameterWindow(QtGui.QDialog):
             elif widget_type == "DirDialog":
                 widgets.append(self.createDirDialog(name))
             else:
-                print "Incorrect widget type on circuit " +  self.circuit.name
-        
+                print "Incorrect widget type on circuit " + self.circuit.name
+        # Add the widgets from the container into the window layout.
         row = 0
         for widget_row in widgets:
-            if isinstance(widget_row, QtGui.QLayout):
-                grid.addLayout(widget_row, row, 0, 1, 2)
-                
-            else:
-                col = 0
-                for widget in widget_row:
-                    grid.addWidget(widget, row, col)
-                    col += 1
+            col = 0
+            for widget in widget_row:
+                grid.addWidget(widget, row, col)
+                col += 1
             row += 1
-            
+        # Create the buttons for the window and connect them.
         ok_button = QtGui.QPushButton("OK")
         QtCore.QObject.connect(ok_button, QtCore.SIGNAL("clicked()"), self.setParameters)
         cancel_button = QtGui.QPushButton("Cancel")
@@ -75,39 +72,42 @@ class ParameterWindow(QtGui.QDialog):
         grid.addWidget(ok_button, row, 0)
         grid.addWidget(cancel_button, row, 1)
 
-            
     def createLineEdit(self, label_text):
+        """Create a line edit and a label with label_text."""
         label = QtGui.QLabel(label_text)
         text_edit = QtGui.QLineEdit()
-        if self.circuit.parameters.has_key(label_text):
+        if label_text in self.circuit.parameters:
             text_edit.setText(self.circuit.parameters[label_text])
         return [label, text_edit]
-        
+
     def createCheckBox(self, label_text):
+        """Create a check box and a label with label_text."""
         label = QtGui.QLabel(label_text)
         check_box = MyCheckBox()
-        if self.circuit.parameters.has_key(label_text):
+        if label_text in self.circuit.parameters:
             check_box.setChecked(bool(self.circuit.parameters[label_text]))
         return [label, check_box]
-    
+
     def createFileDialog(self, label_text):
+        """Create a file dialog and a label with label_text."""
         label = QtGui.QLabel(label_text)
         file_dialog = MyFileDialog()
-        if self.circuit.parameters.has_key(label_text):
+        if label_text in self.circuit.parameters:
             file_dialog.setFileName(self.circuit.parameters[label_text])
         return [label, file_dialog]
-    
+
     def createDirDialog(self, label_text):
+        """Create a directory dialog and a label with label_text."""
         label = QtGui.QLabel(label_text)
         file_dialog = MyDirDialog()
-        if self.circuit.parameters.has_key(label_text):
+        if label_text in self.circuit.parameters:
             file_dialog.setFileName(self.circuit.parameters[label_text])
         return [label, file_dialog]
-    
-    def changeCheckBoxState(self, check_box):
-        check_box.setText(str(check_box.isChecked()))
-        
+
     def setParameters(self):
+        """Collect all the parameters given and call the circuits
+        setParameters to save them. Finally close the window.
+        """
         print "set parameters"
         rows = self.layout().rowCount()
         parameters = {}
@@ -122,7 +122,7 @@ class ParameterWindow(QtGui.QDialog):
                 parameters[str(label.text())] = edit.file_path
         self.circuit.setParameters(parameters)
         self.close()
-        
+
     def cancel(self):
+        """Close the window without action when cancel is pressed."""
         self.close()
-        

@@ -5,52 +5,57 @@ Created on Jun 17, 2014
 '''
 
 from PyQt4 import QtGui, QtCore
-from ui_connection import UIConnection
+
 
 class UIIO(QtGui.QGraphicsItem):
-    '''
-    classdocs
-    '''
-
 
     def __init__(self, name, io_type, parent):
-        '''
-        Constructor
-        '''
+        """Create a new input or output with a given name and type.
+        Parent should be the circuit this io belongs to.
+        io_type should be "in" for input and "out" for output.
+        """
         self.name = name
         self.circuit = parent
         self.xsize = 18
         self.ysize = 18
         self.io_type = io_type
-        self.drag = False 
         super(UIIO, self).__init__(parent)
-        
+
     def nConnections(self):
+        """Check how many connections are connected to this io.
+        This should be max. 1 for inputs.
+        """
         n = 0
         for connection in self.scene().connections:
             if connection.input_ == self or connection.output == self:
                 n += 1
         return n
-        
+
     def addContextActions(self, menu):
+        """Add input and output specific context actions into the menu."""
         remove = QtGui.QAction("Remove all connections from "+self.name, menu)
-        QtCore.QObject.connect(remove, QtCore.SIGNAL("triggered()"), 
+        QtCore.QObject.connect(remove, QtCore.SIGNAL("triggered()"),
                                self.removeConnections)
-        
+
         menu.addAction(remove)
-        
+
     def removeConnections(self):
+        """Call the scene to remove all the connections connected
+        to this io."""
         self.scene().removeConnectionsFrom(self)
-        
+
     def boundingRect(self):
+        """Return the bounding rectangle of the io.
+        Required by the scene.
+        """
         return QtCore.QRectF(0, 0, self.xsize, self.ysize)
-    
+
     def paint(self, painter, options, widget):
         pen = QtGui.QPen(QtGui.QColor(0, 0, 0))
         pen.setWidth(1)
         painter.setPen(pen)
         painter.setFont(QtGui.QFont("", 6))
-        if  self.io_type == "in":
+        if self.io_type == "in":
             painter.setBrush(QtGui.QColor(12, 169, 255))
         else:
             painter.setBrush(QtGui.QColor(255, 62, 66))
@@ -62,23 +67,21 @@ class UIIO(QtGui.QGraphicsItem):
         pen.setWidth(2)
         painter.setPen(pen)
         painter.drawPoint(0.5*self.xsize, 0.5*self.ysize)
-        
+
     def mousePressEvent(self, event):
+        """When mouse is pressed try to create create a new connection
+        or connect a incomplete connection.
+        """
+        # We need to check that event position in contained inside the io
+        # since otherwise opening a context menu on the io will send the
+        # following two clicks to the io as well disregarding the click
+        # position.
         if (event.button() == QtCore.Qt.LeftButton and
-            self.contains(event.pos())):               #otherwise context menu does weird stuff
-            if self.scene().new_connection == None:
+           self.contains(event.pos())):
+            if self.scene().new_connection is None:
                 self.scene().createNewConnection(self, event.scenePos())
             else:
                 if self.scene().new_connection.addIO(self):
                     self.scene().addConnection()
                 else:
                     self.scene().deleteNewConnection()
-                    
-                    
-    def mouseReleaseEvent(self, event):
-        if event.button() == QtCore.Qt.LeftButton:
-            self.drag = False
-        
-    def dropEvent(self, event):
-        data = event.mimeData()
-        print data.text()

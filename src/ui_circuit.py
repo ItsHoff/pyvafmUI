@@ -8,33 +8,34 @@ from PyQt4 import QtGui, QtCore
 from ui_IO import UIIO
 from parameter_window import ParameterWindow
 
-class UICircuit(QtGui.QGraphicsItem):
-    '''
-    classdocs
-    '''
 
+class UICircuit(QtGui.QGraphicsItem):
 
     def __init__(self, x, y, circuit_info, parent=None):
-        '''
-        Constructor
-        '''
+        """Create a circuit defined by the circuit_info and
+        place it into the at (x, y)
+        """
         super(UICircuit, self).__init__()
-        self.setX(x) 
+        self.setX(x)
         self.setY(y)
         self.xsize = 140
         self.ysize = 100
         self.circuit_info = circuit_info
+        self.parameter_window = None
         if parent:
             self.name = circuit_info.circuit_name + str(parent.circuit_index)
         else:
             self.name = circuit_info.circuit_name
         self.dragged = False
-        self.parameters = {"Name":self.name}
+        self.parameters = {"Name": self.name}
         self.inputs = []
         self.outputs = []
         self.addIO()
-        
+
     def addIO(self):
+        """Add inputs and outputs defined in circuit info
+        into the scene.
+        """
         for name in self.circuit_info.inputs:
             new_input = UIIO(name, "in", self)
             self.inputs.append(new_input)
@@ -42,8 +43,11 @@ class UICircuit(QtGui.QGraphicsItem):
             new_output = UIIO(name, "out", self)
             self.outputs.append(new_output)
         self.positionIO()
-        
+
     def positionIO(self):
+        """Position the circuits inputs and outputs such that
+        they're evenly spaced, inputs on left and outputs on right.
+        """
         extra = 30
         in_offset = (self.ysize+extra)/(len(self.inputs)+1)
         out_offset = (self.ysize+extra)/(len(self.outputs)+1)
@@ -56,67 +60,91 @@ class UICircuit(QtGui.QGraphicsItem):
             outp.setPos(self.xsize-0.5*outp.xsize, outy-0.5*outp.ysize)
             outy += out_offset
         self.update()
-        
+
     def addContextActions(self, menu):
+        """Add circuit specific context actions into the menu."""
         remove = QtGui.QAction("Remove "+self.name, menu)
-        QtCore.QObject.connect(remove, QtCore.SIGNAL("triggered()"), 
+        QtCore.QObject.connect(remove, QtCore.SIGNAL("triggered()"),
                                self.remove)
-        
+
         menu.addAction(remove)
 
     def remove(self):
+        """Call the scene to remove the circuit."""
         self.scene().removeCircuit(self)
-        
+
     def setParameters(self, parameters):
+        """Save the parameters given by parameter window."""
         for label, value in parameters.iteritems():
-            if value or value == False:
-                self.parameters[label] = value 
-        if self.parameters.has_key("Name") and self.parameters["Name"]:
+            if value is not None and value != "":
+                self.parameters[label] = value
+        if "Name" in self.parameters:
             self.name = self.parameters["Name"]
+        print self.parameters
 
     def boundingRect(self):
+        """Return the bounding rectangle of the circuit.
+        Required by the scene.
+        """
         return QtCore.QRectF(0, 0, self.xsize, self.ysize)
-    
+
     def paint(self, painter, options, widget):
         pen = QtGui.QPen(QtGui.QColor(0, 0, 0))
         pen.setWidth(2)
         painter.setBrush(QtGui.QColor(222, 244, 251))
         painter.setPen(pen)
-        painter.drawRoundedRect(0, 0, self.xsize, self.ysize, 
-                               0.07*self.xsize, 0.1*self.ysize)
-        painter.drawText(0, 0, self.xsize, self.ysize, 
-                        QtCore.Qt.AlignCenter, self.name)
-        
+        painter.drawRoundedRect(0, 0, self.xsize, self.ysize,
+                                0.07*self.xsize, 0.1*self.ysize)
+        painter.drawText(0, 0, self.xsize, self.ysize,
+                         QtCore.Qt.AlignCenter, self.name)
+
     def mousePressEvent(self, event):
+        """If left mouse button is pressed down start dragging
+        the circuit.
+        """
         if event.button() == QtCore.Qt.LeftButton:
             self.dragged = True
-        #super(UICircuit, self).mousePressEvent(event)
-        
-            
+        # super(UICircuit, self).mousePressEvent(event)
+
     def mouseReleaseEvent(self, event):
+        """End drag when mouse is released."""
         if event.button() == QtCore.Qt.LeftButton:
             self.dragged = False
-        super(UICircuit, self).mouseReleaseEvent(event)
-        
-        
+        # super(UICircuit, self).mouseReleaseEvent(event)
+
     def mouseMoveEvent(self, event):
+        """If circuit is being dragged try to set the circuits
+        positions to the mouse position. Circuit will be
+        snapping to 100x100 grid.
+        """
         if self.dragged:
             old_pos = self.pos()
             pos = event.scenePos()
-            pos.setX(pos.x()-pos.x()%100)
-            pos.setY(pos.y()-pos.y()%100)
+            pos.setX(pos.x() - pos.x() % 100)
+            pos.setY(pos.y() - pos.y() % 100)
             self.setPos(pos)
+            # If new position collides with other circuit
+            # return to old position.
             for circuit in self.scene().circuits:
                 if (self.collidesWithItem(circuit) and
-                    circuit != self):
+                   circuit != self):
                     self.setPos(old_pos)
                     break
+            # Update the connections since some of them might
+            # have to be moved with the circuit.
             self.scene().updateConnections()
             self.scene().update()
-        super(UICircuit, self).mouseMoveEvent(event)
-            
+        # super(UICircuit, self).mouseMoveEvent(event)
+
     def mouseDoubleClickEvent(self, event):
+        """Open the parameter window when circuit is double
+        clicked.
+        """
         if event.button() == QtCore.Qt.LeftButton:
-            self.parameter_window = ParameterWindow(self)
-            
-        super(UICircuit, self).mouseDoubleClickEvent(event)    
+            if self.parameter_window is None:
+                self.parameter_window = ParameterWindow(self)
+                self.parameter_window.showWindow()
+            else:
+                self.parameter_window.show()
+                self.parameter_window.showWindow()
+        # super(UICircuit, self).mouseDoubleClickEvent(event)

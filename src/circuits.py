@@ -511,7 +511,7 @@ circuits = OrderedDict([
                                         ("Name", "LineEdit"),
                                         ("Gain", "LineEdit"),
                                         ("Fcut", "LineEdit"),
-                                        ("f0", "LineEdit")m
+                                        ("f0", "LineEdit"),
                                         ("Ki", "LineEdit"),
                                         ("Kp", "LineEdint"),
                                         ("Pushed", "CheckBox")

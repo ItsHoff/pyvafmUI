@@ -4,23 +4,21 @@ Created on Jun 18, 2014
 @author: keisano1
 '''
 
-from PyQt4 import QtGui, QtCore 
+from PyQt4 import QtGui, QtCore
+
 
 class UIConnection(QtGui.QGraphicsPathItem):
-    '''
-    classdocs
-    '''
-
 
     def __init__(self, origin, mouse_pos, parent=None):
-        '''
-        Constructor
-        '''
-        
+        """Create a new connection starting from input or output origin and
+        ending at mouse_pos. Will give ValueError if trying to connect
+        allready connected input.
+        """
         self.input_ = None
         self.output = None
         self.start = origin.scenePos()+QtCore.QPointF(0.5*origin.xsize, 0.5*origin.ysize)
         self.end = mouse_pos
+        # Check if were trying to connect an input thats allready connected.
         if origin.io_type == "in":
             if origin.nConnections() >= 1:
                 raise ValueError("Input can only have one connection.")
@@ -35,41 +33,56 @@ class UIConnection(QtGui.QGraphicsPathItem):
         path = QtGui.QPainterPath(self.start)
         path.lineTo(self.end)
         self.setPath(path)
+        # set Z value to guarantee that connection will be drawn on top.
         self.setZValue(1)
-        
+
     def addContextActions(self, menu):
-        remove = QtGui.QAction("Remove connection from "+self.input_.name + " to "+ self.output.name, menu)
-        QtCore.QObject.connect(remove, QtCore.SIGNAL("triggered()"), 
+        """Add connection specific context actions to the menu."""
+        remove = QtGui.QAction("Remove connection from " + self.input_.name +
+                               " to " + self.output.name, menu)
+        QtCore.QObject.connect(remove, QtCore.SIGNAL("triggered()"),
                                self.removeConnection)
-        
+
         menu.addAction(remove)
-        
+
     def removeConnection(self):
+        """Call the scene to remove the connection."""
         self.scene().removeConnection(self)
-        
+
     def addIO(self, io):
-        if io.io_type == "in" and self.input_ == None and io.nConnections()<1:
+        """Add an ending point to the connection. Check that the io is
+        correct type (output if input is allready set and vice versa) and
+        that input isn't allready connected.
+        Return True if adding was succesfull and False if it failed.
+        """
+        if io.io_type == "in" and self.input_ is None and io.nConnections() < 1:
             self.input_ = io
-            print "connected " + self.input_.name + " and "+ self.output.name
-        elif io.io_type == "out" and self.output == None:
+            print "connected " + self.input_.name + " and " + self.output.name
+        elif io.io_type == "out" and self.output is None:
             self.output = io
-            print "connected " + self.input_.name + " and "+ self.output.name
+            print "connected " + self.input_.name + " and " + self.output.name
         else:
             return False
         self.updatePath()
         return True
-            
+
     def updateMousePos(self, scenePos):
+        """Update the end point of the circuit to position given by scenePos.
+        Used before connection is properly connected to make the connection
+        follow the mouse.
+        """
         self.end = scenePos
         path = QtGui.QPainterPath(self.start)
         path.lineTo(self.end)
         self.setPath(path)
-        
+
     def updatePath(self):
+        """Updates the path from input to output.
+        Currently just draws a line from the center of the input
+        to the center of the output.
+        """
         self.start = self.input_.scenePos()+QtCore.QPointF(0.5*self.input_.xsize, 0.5*self.input_.ysize)
         self.end = self.output.scenePos()+QtCore.QPointF(0.5*self.output.xsize, 0.5*self.output.ysize)
         path = QtGui.QPainterPath(self.start)
         path.lineTo(self.end)
         self.setPath(path)
-
-        
