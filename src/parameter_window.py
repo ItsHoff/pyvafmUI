@@ -5,9 +5,9 @@ Created on Jun 19, 2014
 '''
 
 from PyQt4 import QtGui, QtCore
-from my_check_box import MyCheckBox
-from my_file_dialog import MyFileDialog
-from my_dir_dialog import MyDirDialog
+from state_check_box import StateCheckBox
+from label_file_dialog import LabelFileDialog
+from label_dir_dialog import LabelDirDialog
 import ui_circuit
 
 
@@ -83,7 +83,7 @@ class ParameterWindow(QtGui.QDialog):
     def createCheckBox(self, label_text):
         """Create a check box and a label with label_text."""
         label = QtGui.QLabel(label_text)
-        check_box = MyCheckBox()
+        check_box = StateCheckBox()
         if label_text in self.circuit.parameters:
             check_box.setChecked(bool(self.circuit.parameters[label_text]))
         return [label, check_box]
@@ -91,7 +91,7 @@ class ParameterWindow(QtGui.QDialog):
     def createFileDialog(self, label_text):
         """Create a file dialog and a label with label_text."""
         label = QtGui.QLabel(label_text)
-        file_dialog = MyFileDialog()
+        file_dialog = LabelFileDialog()
         if label_text in self.circuit.parameters:
             file_dialog.setFileName(self.circuit.parameters[label_text])
         return [label, file_dialog]
@@ -99,7 +99,7 @@ class ParameterWindow(QtGui.QDialog):
     def createDirDialog(self, label_text):
         """Create a directory dialog and a label with label_text."""
         label = QtGui.QLabel(label_text)
-        file_dialog = MyDirDialog()
+        file_dialog = LabelDirDialog()
         if label_text in self.circuit.parameters:
             file_dialog.setFileName(self.circuit.parameters[label_text])
         return [label, file_dialog]
@@ -116,9 +116,9 @@ class ParameterWindow(QtGui.QDialog):
             edit = self.layout().itemAtPosition(row, 1).widget()
             if isinstance(edit, QtGui.QLineEdit):
                 parameters[str(label.text())] = edit.text()
-            elif isinstance(edit, MyCheckBox):
+            elif isinstance(edit, StateCheckBox):
                 parameters[str(label.text())] = edit.isChecked()
-            elif isinstance(edit, MyFileDialog):
+            elif isinstance(edit, LabelFileDialog):
                 parameters[str(label.text())] = edit.file_path
         self.circuit.setParameters(parameters)
         self.close()

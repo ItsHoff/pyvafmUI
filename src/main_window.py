@@ -7,7 +7,7 @@ Created on Jun 6, 2014
 import sys
 from PyQt4 import QtGui, QtCore
 from machine_widget import MachineWidget
-from my_graphics_view import MyGraphicsView
+from machine_view import MachineView
 from parameter_window import ParameterWindow
 import circuit_info
 import circuits
@@ -65,7 +65,8 @@ class MainWidget(QtGui.QWidget):
 
         # Set up the tree widget holding the circuits
         tree_widget = QtGui.QTreeWidget(self)
-        tree_widget.setSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Expanding)
+        tree_widget.setSizePolicy(QtGui.QSizePolicy.Fixed,
+                                  QtGui.QSizePolicy.Expanding)
         tree_widget.setHeaderLabel("Circuits")
         tree_widget.setDragEnabled(True)
         tree_widget.setFocusPolicy(QtCore.Qt.NoFocus)
@@ -74,7 +75,7 @@ class MainWidget(QtGui.QWidget):
         self.loadCircuits(tree_widget)
 
         # Set up the graphics view for the machine and set the scene
-        graphics_view = MyGraphicsView()
+        graphics_view = MachineView()
         self.machine_widget = MachineWidget(tree_widget, graphics_view)
         graphics_view.setScene(self.machine_widget)
 

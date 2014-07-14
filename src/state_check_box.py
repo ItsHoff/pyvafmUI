@@ -7,12 +7,12 @@ Created on Jun 19, 2014
 from PyQt4 import QtGui, QtCore
 
 
-class MyCheckBox(QtGui.QCheckBox):
+class StateCheckBox(QtGui.QCheckBox):
     """Simple checkbox that changes its text based on its state."""
 
     def __init__(self, state=True):
         """Create the checkbox and connect it."""
-        super(MyCheckBox, self).__init__()
+        super(StateCheckBox, self).__init__()
         self.setChecked(state)
         self.setText(str(state))
         QtCore.QObject.connect(self, QtCore.SIGNAL("stateChanged(int)"), self.changeText)

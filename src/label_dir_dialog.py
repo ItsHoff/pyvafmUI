@@ -5,10 +5,10 @@ Created on Jun 24, 2014
 '''
 
 from PyQt4 import QtGui
-from my_file_dialog import MyFileDialog
+from label_file_dialog import LabelFileDialog
 
 
-class MyDirDialog(MyFileDialog):
+class LabelDirDialog(LabelFileDialog):
     """Reimplementation of file dialog. Select directories instead of files.
     Reimplemented functions:
         openDialog
@@ -17,7 +17,7 @@ class MyDirDialog(MyFileDialog):
 
     def __init__(self):
         """Call the super and just set a proper label text."""
-        super(MyDirDialog, self).__init__()
+        super(LabelDirDialog, self).__init__()
         self.label.setText("No directory selected")
 
     def openDialog(self):

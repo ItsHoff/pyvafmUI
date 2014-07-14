@@ -7,7 +7,7 @@ Created on Jun 19, 2014
 from PyQt4 import QtGui, QtCore
 
 
-class MyFileDialog(QtGui.QWidget):
+class LabelFileDialog(QtGui.QWidget):
     """File dialog widget that contains label showing the current file
     and a button to open the dialog to select the file.
     """
@@ -17,7 +17,7 @@ class MyFileDialog(QtGui.QWidget):
         the button to open the dialog. Finally add them into a horizontal
         layout.
         """
-        super(MyFileDialog, self).__init__()
+        super(LabelFileDialog, self).__init__()
         self.file_path = None
         self.button = QtGui.QToolButton(self)
         self.button.setIcon(self.style().standardIcon(QtGui.QStyle.SP_DirIcon))

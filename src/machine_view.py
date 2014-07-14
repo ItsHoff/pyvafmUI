@@ -7,14 +7,14 @@ Created on Jun 16, 2014
 from PyQt4 import QtGui, QtCore
 
 
-class MyGraphicsView(QtGui.QGraphicsView):
+class MachineView(QtGui.QGraphicsView):
     """Graphics view that is used to show the contents of the
     machine_widget scene.
     """
 
     def __init__(self):
         """Call super and set the default flags and parameters."""
-        super(MyGraphicsView, self).__init__()
+        super(MachineView, self).__init__()
         self.setAcceptDrops(True)
         self.panning = False
         self.mouse_pos = None
@@ -35,14 +35,14 @@ class MyGraphicsView(QtGui.QGraphicsView):
 
     def mousePressEvent(self, event):
         """Start panning the scene if middle mouse button is pressed."""
-        super(MyGraphicsView, self).mousePressEvent(event)
+        super(MachineView, self).mousePressEvent(event)
         if event.button() == QtCore.Qt.MiddleButton:
             self.panning = True
             self.mouse_pos = event.pos()
 
     def mouseReleaseEvent(self, event):
         """Stop panning if middle mouse button is released."""
-        super(MyGraphicsView, self).mouseReleaseEvent(event)
+        super(MachineView, self).mouseReleaseEvent(event)
         self.panning = False
         self.mouse_pos = None
 
@@ -50,7 +50,7 @@ class MyGraphicsView(QtGui.QGraphicsView):
         """If user is panning, move the scene based on the
         movement of the mouse.
         """
-        super(MyGraphicsView, self).mouseMoveEvent(event)
+        super(MachineView, self).mouseMoveEvent(event)
         if self.panning:
             diff = event.pos() - self.mouse_pos
             self.mouse_pos = event.pos()

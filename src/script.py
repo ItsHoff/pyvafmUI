@@ -44,7 +44,7 @@ def createFromFormat(blocks, format_file, parameters):
             if containsSetOptionalParameters(line, parameters):
                 clean_line = createCleanLine(line, parameters)
                 blocks[block] += clean_line
-        elif getParameters(line):
+        elif containsParameters(line):
             clean_line = createCleanLine(line, parameters)
             blocks[block] += clean_line
         else:
@@ -52,8 +52,10 @@ def createFromFormat(blocks, format_file, parameters):
 
 
 def createCleanLine(line, parameters):
+    """Clean the line from extra formatting characters and
+    insert the right parameters. Then return the clean line.
+    """
     if getOptionalParameters(line):
-        print "cleaning optionals"
         line = cleanOptionalBlocks(line, parameters)
     for label, value in parameters.iteritems():
         replaced = '%'+label+'%'
@@ -64,6 +66,8 @@ def createCleanLine(line, parameters):
 
 
 def cleanOptionalBlocks(string, parameters):
+    """Remove all the optional blocks that have unset parameters.
+    Return the line after the removals."""
     blocks = []
     start = string.find('$') + 1
     i = start-1
@@ -86,14 +90,19 @@ def cleanOptionalBlocks(string, parameters):
 
 
 def containsParameters(string):
-    found = string.find('%')
-    if found != -1:
+    """Return True if string contains parameters and False otherwise."""
+    start = string.find('%')
+    end = string.find('%', start+1)
+    if start != -1 and end != -1:
         return True
     else:
         return False
 
 
 def containsSetParameters(string, parameters):
+    """Return True if string contains parameters given in parameters
+    dictionary otherwise return False.
+    """
     for parameter in getParameters(string):
         if parameter in parameters:
             return True
@@ -101,6 +110,9 @@ def containsSetParameters(string, parameters):
 
 
 def containsSetOptionalParameters(string, parameters):
+    """Return True if string contains optional parameters that
+    have been given in parameters.
+    """
     for parameter in getOptionalParameters(string):
         if parameter in parameters:
             return True
@@ -108,6 +120,9 @@ def containsSetOptionalParameters(string, parameters):
 
 
 def getParameters(string):
+    """Find all parameters in the string.
+    Return list of found parameters.
+    """
     parameters = []
     start = string.find('%') + 1
     while start:
@@ -118,6 +133,9 @@ def getParameters(string):
 
 
 def getOptionalParameters(string):
+    """Find all optional parameters in the string.
+    Return list of the found optional parameters.
+    """
     parameters = []
     start_opt = string.find('$') + 1
     while start_opt:
@@ -126,5 +144,4 @@ def getOptionalParameters(string):
         end = string.rfind('%', start_opt, end_opt+1)
         parameters.append(string[start:end])
         start_opt = string.find('$', end_opt) + 1
-    print parameters
     return parameters
