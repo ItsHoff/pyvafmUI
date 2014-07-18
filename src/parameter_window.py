@@ -8,6 +8,7 @@ from PyQt4 import QtGui, QtCore
 from state_check_box import StateCheckBox
 from label_file_dialog import LabelFileDialog
 from label_dir_dialog import LabelDirDialog
+from register_selection_window import RegisterSelectionWindow
 import ui_circuit
 
 
@@ -23,6 +24,7 @@ class ParameterWindow(QtGui.QDialog):
         circuits.
         """
         self.circuit = circuit
+        self.register_window = None
         if isinstance(self.circuit, ui_circuit.UICircuit):
             super(ParameterWindow, self).__init__(circuit.scene().parent().window())
             self.setWindowTitle(self.circuit.name + " parameters")
@@ -54,6 +56,8 @@ class ParameterWindow(QtGui.QDialog):
                 widgets.append(self.createFileDialog(name))
             elif widget_type == "DirDialog":
                 widgets.append(self.createDirDialog(name))
+            elif widget_type == "RegisterDialog":
+                widgets.append(self.createRegisterDialog(name))
             else:
                 print "Incorrect widget type on circuit " + self.circuit.name
         # Add the widgets from the container into the window layout.
@@ -66,9 +70,11 @@ class ParameterWindow(QtGui.QDialog):
             row += 1
         # Create the buttons for the window and connect them.
         ok_button = QtGui.QPushButton("OK")
-        QtCore.QObject.connect(ok_button, QtCore.SIGNAL("clicked()"), self.setParameters)
+        QtCore.QObject.connect(ok_button, QtCore.SIGNAL("clicked()"),
+                               self.setParameters)
         cancel_button = QtGui.QPushButton("Cancel")
-        QtCore.QObject.connect(cancel_button, QtCore.SIGNAL("clicked()"), self.cancel)
+        QtCore.QObject.connect(cancel_button, QtCore.SIGNAL("clicked()"),
+                               self.cancel)
         grid.addWidget(ok_button, row, 0)
         grid.addWidget(cancel_button, row, 1)
 
@@ -104,6 +110,16 @@ class ParameterWindow(QtGui.QDialog):
             file_dialog.setFileName(self.circuit.parameters[label_text])
         return [label, file_dialog]
 
+    def createRegisterDialog(self, label_text):
+        """Initialize the register window and create a button to open it."""
+        label = QtGui.QLabel(label_text)
+        button = QtGui.QPushButton("Select Channels")
+        self.register_window = RegisterSelectionWindow(self.parent().centralWidget(),
+                                                       self)
+        QtCore.QObject.connect(button, QtCore.SIGNAL("clicked()"),
+                               self.register_window.showWindow)
+        return [label, button]
+
     def setParameters(self):
         """Collect all the parameters given and call the circuits
         setParameters to save them. Finally close the window.
@@ -120,6 +136,18 @@ class ParameterWindow(QtGui.QDialog):
                 parameters[str(label.text())] = edit.isChecked()
             elif isinstance(edit, LabelFileDialog):
                 parameters[str(label.text())] = edit.file_path
+        # Get the registered channels from register window if it is
+        # initialised and atleast one channel is selected.
+        if self.register_window is not None:
+            selection_tree = self.register_window.selection_tree
+            register = "'"
+            for i in range(selection_tree.topLevelItemCount()):
+                top_item = selection_tree.topLevelItem(i)
+                top_item.updateText()
+                register += top_item.text(0) + "', '"
+            if register != "'":
+                register = register[:-3]
+                parameters["Register"] = register
         self.circuit.setParameters(parameters)
         self.close()
 

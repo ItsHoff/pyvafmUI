@@ -54,6 +54,7 @@ def createFromFormat(blocks, format_file, parameters):
 def createCleanLine(line, parameters):
     """Clean the line from extra formatting characters and
     insert the right parameters. Then return the clean line.
+    if circuit.circuit_info.type
     """
     if getOptionalParameters(line):
         line = cleanOptionalBlocks(line, parameters)

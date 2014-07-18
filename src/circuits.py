@@ -439,7 +439,7 @@ circuits = OrderedDict([
                                         ("Name", "LineEdit"),
                                         ("File", "LineEdit"),
                                         ("Dump", "LineEdit"),
-                                        ("Register", "LineEdit"),
+                                        ("Register", "RegisterDialog"),
                                         ("Pushed", "CheckBox")
                                         ]),
                     script_format = "formats/output.format"
@@ -624,3 +624,9 @@ circuits = OrderedDict([
                     )
  ),
 ])
+
+run_time_functions = {"Scanner": ["Move", "MoveTo", "MoveRecord"],
+                      "Output": ["Dump"]
+                      }
+
+global_channels = ["time"]

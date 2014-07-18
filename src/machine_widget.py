@@ -9,7 +9,6 @@ from ui_circuit import UICircuit
 from ui_IO import UIIO
 from ui_connection import UIConnection
 import circuits
-import random
 
 
 class MachineWidget(QtGui.QGraphicsScene):
@@ -44,13 +43,13 @@ class MachineWidget(QtGui.QGraphicsScene):
         self.addCircuit("Scanner", 300, 500)
         self.addCircuit("3d Linear Interpolation", 500, 500)
         self.addCircuit("Output", 700, 500)
-        """for i in range(1, 10):
-            x = random.randint(0, self.xsize)
-            y = random.randint(0, self.ysize)
-            circuit = UICircuit(x - x%100, y -y%100, random.choice(circuits.circuits.values()), self)
-            self.circuits.append(circuit)
-            self.addItem(circuit)
-            self.circuit_index += 1"""
+        # for i in range(1, 10):
+        #     x = random.randint(0, self.xsize)
+        #     y = random.randint(0, self.ysize)
+        #     circuit = UICircuit(x - x%100, y -y%100, random.choice(circuits.circuits.values()), self)
+        #     self.circuits.append(circuit)
+        #     self.addItem(circuit)
+        #     self.circuit_index += 1
 
     def addCircuit(self, name, x, y):
         """Add a circuit with corresponding name to the scene
@@ -128,10 +127,12 @@ class MachineWidget(QtGui.QGraphicsScene):
         context menu given as parameter.
         """
         clear_all = QtGui.QAction("Clear All", menu)
-        QtCore.QObject.connect(clear_all, QtCore.SIGNAL("triggered()"), self.clearAll)
+        QtCore.QObject.connect(clear_all, QtCore.SIGNAL("triggered()"),
+                               self.clearAll)
 
         clear_connections = QtGui.QAction("Clear Connections", menu)
-        QtCore.QObject.connect(clear_connections, QtCore.SIGNAL("triggered()"), self.removeConnections)
+        QtCore.QObject.connect(clear_connections, QtCore.SIGNAL("triggered()"),
+                               self.removeConnections)
 
         menu.addAction(clear_connections)
         menu.addAction(clear_all)
@@ -210,8 +211,10 @@ class MachineWidget(QtGui.QGraphicsScene):
                 qp.drawLine(int(x), int(tl.y()), int(x), int(br.y()))
         # Draw thicklines to the middle of the scene
         qp.setPen(solid_pen)
-        qp.drawLine(int(0.5*self.xsize), int(tl.y()), int(0.5*self.xsize), int(br.y()))
-        qp.drawLine(int(tl.x()), int(0.5*self.ysize), int(br.x()), int(0.5*self.ysize))
+        qp.drawLine(int(0.5*self.xsize), int(tl.y()),
+                    int(0.5*self.xsize), int(br.y()))
+        qp.drawLine(int(tl.x()), int(0.5*self.ysize),
+                    int(br.x()), int(0.5*self.ysize))
 
     def dragEnterEvent(self, event):
         """Accept event for drag & drop to work."""
@@ -225,9 +228,10 @@ class MachineWidget(QtGui.QGraphicsScene):
         """Accept event and add the dropped circuit
         to the scene.
         """
-        event.accept()
-        dropped_item = event.source().currentItem()
-        self.addDroppedCircuit(dropped_item, event.scenePos())
+        if event.source() is self.tree_widget:
+            event.accept()
+            dropped_item = event.source().currentItem()
+            self.addDroppedCircuit(dropped_item, event.scenePos())
 
     def mousePressEvent(self, event):
         """If user is adding circuits try to add circuit to the scene.

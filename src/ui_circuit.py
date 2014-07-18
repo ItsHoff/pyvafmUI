@@ -23,9 +23,9 @@ class UICircuit(QtGui.QGraphicsItem):
         self.circuit_info = circuit_info
         self.parameter_window = None
         if parent:
-            self.name = circuit_info.circuit_name + str(parent.circuit_index)
+            self.name = circuit_info.circuit_type + str(parent.circuit_index)
         else:
-            self.name = circuit_info.circuit_name
+            self.name = circuit_info.circuit_type
         self.dragged = False
         self.parameters = {"Name": self.name}
         self.inputs = []
