@@ -9,6 +9,7 @@ from PyQt4 import QtGui, QtCore
 
 class UIConnection(QtGui.QGraphicsPathItem):
 
+    # TODO: Make this init less awfull...
     def __init__(self, origin, mouse_pos, parent=None):
         """Create a new connection starting from input or output origin and
         ending at mouse_pos. Will give ValueError if trying to connect
@@ -16,7 +17,9 @@ class UIConnection(QtGui.QGraphicsPathItem):
         """
         self.input_ = None
         self.output = None
-        self.start = origin.scenePos()+QtCore.QPointF(0.5*origin.xsize, 0.5*origin.ysize)
+        self.save_state = None
+        self.start = origin.scenePos()+QtCore.QPointF(0.5*origin.xsize,
+                                                      0.5*origin.ysize)
         self.end = mouse_pos
         # Check if were trying to connect an input thats allready connected.
         if origin.io_type == "in":
@@ -66,6 +69,21 @@ class UIConnection(QtGui.QGraphicsPathItem):
         self.updatePath()
         return True
 
+    def getSaveState(self):
+        """Return the current state of the connection without the Qt bindings
+        for saving.
+        """
+        if self.save_state is None:
+            self.save_state = SaveConnection(self)
+        else:
+            self.save_state.update(self)
+        return self.save_state
+
+    def loadSaveState(self, save_state):
+        self.input_ = save_state.input_.loaded_item
+        self.output = save_state.output.loaded_item
+        self.updatePath()
+
     def updateMousePos(self, scenePos):
         """Update the end point of the circuit to position given by scenePos.
         Used before connection is properly connected to make the connection
@@ -81,8 +99,22 @@ class UIConnection(QtGui.QGraphicsPathItem):
         Currently just draws a line from the center of the input
         to the center of the output.
         """
-        self.start = self.input_.scenePos()+QtCore.QPointF(0.5*self.input_.xsize, 0.5*self.input_.ysize)
-        self.end = self.output.scenePos()+QtCore.QPointF(0.5*self.output.xsize, 0.5*self.output.ysize)
+        self.start = self.input_.scenePos()+QtCore.QPointF(0.5*self.input_.xsize,
+                                                           0.5*self.input_.ysize)
+        self.end = self.output.scenePos()+QtCore.QPointF(0.5*self.output.xsize,
+                                                         0.5*self.output.ysize)
         path = QtGui.QPainterPath(self.start)
         path.lineTo(self.end)
         self.setPath(path)
+
+
+class SaveConnection(object):
+    """Container for UIConnection state without Qt bindings. Used for saving."""
+
+    def __init__(self, connection):
+        self.input_ = connection.input_.save_state
+        self.output = connection.output.save_state
+        self.loaded_item = None         # Do not set this before saving
+
+    def update(self, connection):
+        self.__init__(connection)

@@ -56,6 +56,7 @@ class MachineWidget(QtGui.QGraphicsScene):
         and update the scene.
         """
         circuit = UICircuit(x - x % 100, y - y % 100, circuits.circuits[name], self)
+        circuit.addIO()
         self.circuits.append(circuit)
         self.addItem(circuit)
         self.circuit_index += 1
@@ -76,6 +77,14 @@ class MachineWidget(QtGui.QGraphicsScene):
         name = str(item.text(0))
         if item.parent():
             self.addCircuit(name, pos.x(), pos.y())
+
+    def addLoadedCircuit(self, save_state):
+        circuit = UICircuit(0, 0, save_state.circuit_info)
+        circuit.loadSaveState(save_state)
+        save_state.loaded_item = circuit
+        self.circuits.append(circuit)
+        self.addItem(circuit)
+        self.circuit_index += 1
 
     def createNewConnection(self, origin, mouse_pos):
         """Try to create a new connection starting from mouse_pos.
@@ -98,6 +107,14 @@ class MachineWidget(QtGui.QGraphicsScene):
         self.connections.append(self.new_connection)
         self.new_connection = None
         self.views()[0].setMouseTracking(False)
+
+    def addLoadedConnection(self, save_state):
+        output = save_state.output
+        connection = UIConnection(output.loaded_item, output.loaded_item.pos())
+        connection.loadSaveState(save_state)
+        save_state.loaded_item = connection
+        self.connections.append(connection)
+        self.addItem(connection)
 
     def deleteNewConnection(self):
         """Delete unconnected new_connextion."""

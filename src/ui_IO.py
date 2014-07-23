@@ -9,17 +9,18 @@ from PyQt4 import QtGui, QtCore
 
 class UIIO(QtGui.QGraphicsItem):
 
-    def __init__(self, name, io_type, parent):
+    def __init__(self, name, io_type, circuit):
         """Create a new input or output with a given name and type.
         Parent should be the circuit this io belongs to.
         io_type should be "in" for input and "out" for output.
         """
         self.name = name
-        self.circuit = parent
+        self.circuit = circuit
         self.xsize = 18
         self.ysize = 18
         self.io_type = io_type
-        super(UIIO, self).__init__(parent)
+        self.save_state = None
+        super(UIIO, self).__init__(circuit)
 
     def nConnections(self):
         """Check how many connections are connected to this io.
@@ -43,6 +44,16 @@ class UIIO(QtGui.QGraphicsItem):
         """Call the scene to remove all the connections connected
         to this io."""
         self.scene().removeConnectionsFrom(self)
+
+    def getSaveState(self):
+        """Return the current state of the io without the Qt bindings
+        for saving.
+        """
+        if self.save_state is None:
+            self.save_state = SaveIO(self)
+        else:
+            self.save_state.update(self)
+        return self.save_state
 
     def boundingRect(self):
         """Return the bounding rectangle of the io.
@@ -85,3 +96,15 @@ class UIIO(QtGui.QGraphicsItem):
                     self.scene().addConnection()
                 else:
                     self.scene().deleteNewConnection()
+
+
+class SaveIO(object):
+    """Container for UIIO state without Qt bindings. Used for saving."""
+
+    def __init__(self, io):
+        self.name = io.name
+        self.io_type = io.io_type
+        self.loaded_item = None         # Do not set this before saving
+
+    def update(self, io):
+        self.__init__(io)

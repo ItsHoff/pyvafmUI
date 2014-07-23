@@ -11,6 +11,7 @@ from parameter_window import ParameterWindow
 
 class UICircuit(QtGui.QGraphicsItem):
 
+    # TODO: Unite inputs and outputs?
     def __init__(self, x, y, circuit_info, parent=None):
         """Create a circuit defined by the circuit_info and
         place it into the at (x, y)
@@ -22,6 +23,7 @@ class UICircuit(QtGui.QGraphicsItem):
         self.ysize = 100
         self.circuit_info = circuit_info
         self.parameter_window = None
+        self.save_state = None
         if parent:
             self.name = circuit_info.circuit_type + str(parent.circuit_index)
         else:
@@ -30,7 +32,6 @@ class UICircuit(QtGui.QGraphicsItem):
         self.parameters = {"Name": self.name}
         self.inputs = []
         self.outputs = []
-        self.addIO()
 
     def addIO(self):
         """Add inputs and outputs defined in circuit info
@@ -43,6 +44,14 @@ class UICircuit(QtGui.QGraphicsItem):
             new_output = UIIO(name, "out", self)
             self.outputs.append(new_output)
         self.positionIO()
+
+    def addLoadedIO(self, save_state):
+        io = UIIO(save_state.name, save_state.io_type, self)
+        save_state.loaded_item = io
+        if save_state.io_type == "in":
+            self.inputs.append(io)
+        else:
+            self.outputs.append(io)
 
     def positionIO(self):
         """Position the circuits inputs and outputs such that
@@ -81,6 +90,28 @@ class UICircuit(QtGui.QGraphicsItem):
         if "Name" in self.parameters:
             self.name = self.parameters["Name"]
         print self.parameters
+
+    def getSaveState(self):
+        """Return the current state of the circuit without the Qt bindings
+        for saving.
+        """
+        if self.save_state is None:
+            self.save_state = SaveCircuit(self)
+        else:
+            self.save_state.update(self)
+        return self.save_state
+
+    def loadSaveState(self, save_state):
+        self.setX(save_state.x)
+        self.setY(save_state.y)
+        self.circuit_info = save_state.circuit_info
+        self.name = save_state.name
+        self.parameters = save_state.parameters
+        for input_ in save_state.inputs:
+            self.addLoadedIO(input_)
+        for output in save_state.outputs:
+            self.addLoadedIO(output)
+        self.positionIO()
 
     def boundingRect(self):
         """Return the bounding rectangle of the circuit.
@@ -148,3 +179,24 @@ class UICircuit(QtGui.QGraphicsItem):
                 self.parameter_window.show()
                 self.parameter_window.showWindow()
         # super(UICircuit, self).mouseDoubleClickEvent(event)
+
+
+class SaveCircuit(object):
+    """Container for UICircuit state without Qt bindings. Used for saving."""
+
+    def __init__(self, circuit):
+        pos = circuit.pos()
+        self.x = pos.x()
+        self.y = pos.y()
+        self.circuit_info = circuit.circuit_info
+        self.name = circuit.name
+        self.parameters = circuit.parameters
+        self.inputs = []
+        for input_ in circuit.inputs:
+            self.inputs.append(input_.getSaveState())
+        self.outputs = []
+        for output_ in circuit.outputs:
+            self.outputs.append(output_.getSaveState())
+
+    def update(self, circuit):
+        self.__init__(circuit)

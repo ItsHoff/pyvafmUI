@@ -13,6 +13,12 @@ machine_param_window_style = OrderedDict([
                             ("Pushed", "CheckBox")
                             ])
 
+run_time_functions = {"Scanner": ["Move", "MoveTo", "MoveRecord"],
+                      "Output": ["Dump"]
+                      }
+
+global_channels = ["time"]
+
 circuits = OrderedDict([
 # MATHEMATICS
 ("opAdd", CircuitInfo("opAdd", "Mathematics",
@@ -624,9 +630,3 @@ circuits = OrderedDict([
                     )
  ),
 ])
-
-run_time_functions = {"Scanner": ["Move", "MoveTo", "MoveRecord"],
-                      "Output": ["Dump"]
-                      }
-
-global_channels = ["time"]

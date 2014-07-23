@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 '''
 Created on Jun 6, 2014
 
@@ -5,7 +6,10 @@ Created on Jun 6, 2014
 '''
 
 import sys
+import cPickle as pickle
+
 from PyQt4 import QtGui, QtCore
+
 from machine_widget import MachineWidget
 from machine_view import MachineView
 from parameter_window import ParameterWindow
@@ -31,9 +35,45 @@ class MainWindow(QtGui.QMainWindow):
         self.setGeometry(100, 100, 800, 500)
         self.setWindowTitle('PyVAFM')
 
+        file_menu = QtGui.QMenu("File", self)
+
+        save_action = QtGui.QAction("Save", self)
+        save_action.setShortcut(QtGui.QKeySequence("Ctrl+S"))
+        QtCore.QObject.connect(save_action, QtCore.SIGNAL("triggered()"),
+                               self.save)
+
+        load_action = QtGui.QAction("Load", self)
+        load_action.setShortcut(QtGui.QKeySequence("Ctrl+L"))
+        QtCore.QObject.connect(load_action, QtCore.SIGNAL("triggered()"),
+                               self.load)
+
+        quit_action = QtGui.QAction("Quit", self)
+        quit_action.setShortcut(QtGui.QKeySequence("Ctrl+Q"))
+        QtCore.QObject.connect(quit_action, QtCore.SIGNAL("triggered()"),
+                               self.close)
+
+        file_menu.addAction(save_action)
+        file_menu.addAction(load_action)
+        file_menu.addSeparator()
+        file_menu.addAction(quit_action)
+        self.menuBar().addMenu(file_menu)
+
         self.setCentralWidget(MainWidget())
 
         self.show()
+
+    def save(self):
+        save_state = SaveState()
+        save_state.create(self)
+        with open("test_save", "w") as f:
+            pickle.dump(save_state, f)
+            print "saved"
+
+    def load(self):
+        with open("test_save", "r") as f:
+            save_state = pickle.load(f)
+            save_state.load(self)
+            print "loaded"
 
 
 class MainWidget(QtGui.QWidget):
@@ -74,7 +114,7 @@ class MainWidget(QtGui.QWidget):
 
         # Set up the tree widget holding the circuits
         tree_widget = QtGui.QTreeWidget(self)
-        tree_widget.setSizePolicy(QtGui.QSizePolicy.Preferred,
+        tree_widget.setSizePolicy(QtGui.QSizePolicy.Minimum,
                                   QtGui.QSizePolicy.Expanding)
         tree_widget.setHeaderLabel("Circuits")
         tree_widget.setDragEnabled(True)
@@ -178,6 +218,38 @@ class MainWidget(QtGui.QWidget):
         if savefile:
             with open(str(savefile), 'r') as f:
                 exec(f)
+
+
+class SaveState(object):
+    """Stores the global save state."""
+
+    def __init__(self):
+        self.circuits = []
+        self.connections = []
+        self.run_selections = []
+        self.machine_parameters = {}
+        self.circuit_index = 0
+
+    def create(self, main_window):
+        print "creating save state"
+        machine_widget = main_window.centralWidget().machine_widget
+        self.circuit_index = machine_widget.circuit_index
+        self.machine_parameters = main_window.centralWidget().parameters
+        for circuit in machine_widget.circuits:
+            self.circuits.append(circuit.getSaveState())
+        for connection in machine_widget.connections:
+            self.connections.append(connection.getSaveState())
+
+    def load(self, main_window):
+        print "loading save state"
+        machine_widget = main_window.centralWidget().machine_widget
+        machine_widget.clearAll()
+        machine_widget.circuit_index = self.circuit_index
+        main_window.centralWidget().parameters = self.machine_parameters
+        for circuit in self.circuits:
+            machine_widget.addLoadedCircuit(circuit)
+        for connection in self.connections:
+            machine_widget.addLoadedConnection(connection)
 
 
 def main():

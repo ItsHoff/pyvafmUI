@@ -68,7 +68,7 @@ class RegisterSelectionWindow(drag_selection_window.DragSelectionWindow):
 
 class RegisterSelectionTree(drag_selection_window.SelectionTree):
     """Subclass of the selection tree to be used in register selection
-    tree.
+    window.
     """
 
     def __init__(self):
