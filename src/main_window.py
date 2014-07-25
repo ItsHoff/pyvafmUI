@@ -65,15 +65,19 @@ class MainWindow(QtGui.QMainWindow):
     def save(self):
         save_state = SaveState()
         save_state.create(self)
-        with open("test_save", "w") as f:
-            pickle.dump(save_state, f)
-            print "saved"
+        save_file = QtGui.QFileDialog().getSaveFileName(self, "Save Setup", "..")
+        if save_file:
+            with open(save_file, "w") as f:
+                pickle.dump(save_state, f)
+                print "saved"
 
     def load(self):
-        with open("test_save", "r") as f:
-            save_state = pickle.load(f)
-            save_state.load(self)
-            print "loaded"
+        load_file = QtGui.QFileDialog().getOpenFileName(self, "Load Setup", "..")
+        if load_file:
+            with open(load_file, "r") as f:
+                save_state = pickle.load(f)
+                save_state.load(self)
+                print "loaded"
 
 
 class MainWidget(QtGui.QWidget):

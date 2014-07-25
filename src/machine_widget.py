@@ -30,7 +30,6 @@ class MachineWidget(QtGui.QGraphicsScene):
         self.circuit_index = 1
         self.font_size = 15
         self.new_connection = None
-        self.add_circuits = False
         self.initWidget()
 
     def initWidget(self):
@@ -271,10 +270,11 @@ class MachineWidget(QtGui.QGraphicsScene):
             self.addDroppedCircuit(dropped_item, event.scenePos())
 
     def mousePressEvent(self, event):
-        """If user is adding circuits try to add circuit to the scene.
+        """If user is holding down ctrl try to add circuit to the scene.
         Otherwise call the super function to send signal forward.
         """
-        if self.add_circuits and event.button() == QtCore.Qt.LeftButton:
+        if (event.modifiers() & QtCore.Qt.ControlModifier and
+                event.button() == QtCore.Qt.LeftButton):
             event.accept()
             self.addClickedCircuit(event.scenePos())
         else:
@@ -284,8 +284,8 @@ class MachineWidget(QtGui.QGraphicsScene):
             # destroy the connection. Also non left clicks
             # destroy the connection.
             if (self.new_connection is not None and
-               (not self.hasIOatPos(event.scenePos()) or
-               event.button() != QtCore.Qt.LeftButton)):
+                    (not self.hasIOatPos(event.scenePos()) or
+                     event.button() != QtCore.Qt.LeftButton)):
                 self.deleteNewConnection()
                 print "destroyed connection"
 
@@ -297,16 +297,6 @@ class MachineWidget(QtGui.QGraphicsScene):
         if self.new_connection is not None:
             self.new_connection.updateMousePos(event.scenePos())
             self.update()
-
-    def keyPressEvent(self, event):
-        """Set the add_circuits flag to True if user presses down CTRL"""
-        if event.key() == QtCore.Qt.Key_Control:
-            self.add_circuits = True
-
-    def keyReleaseEvent(self, event):
-        """Set the add_circuits flag to False if user releases CTRL"""
-        if event.key() == QtCore.Qt.Key_Control:
-            self.add_circuits = False
 
     def contextMenuEvent(self, event):
         """Create a new context menu and open it under mouse"""
