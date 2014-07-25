@@ -35,7 +35,32 @@ class MachineWidget(QtGui.QGraphicsScene):
 
     def initWidget(self):
         self.addCircuits()
+        self.updateSceneRect()
         self.update()
+
+    def getNewSceneRect(self):
+        """Return a new scene rectangle based on the bounding rectangle
+        of all scene items.
+        """
+        rect = self.itemsBoundingRect()
+        center = rect.center()
+        rect.setHeight(rect.height() + 500)
+        rect.setWidth(rect.width() + 500)
+        rect.moveCenter(center)
+        return rect
+
+    def updateSceneRect(self):
+        rect = self.getNewSceneRect()
+        self.setSceneRect(rect)
+
+    def updateMovingSceneRect(self):
+        """Update the scene rectangle but don't make it smaller. Used while
+        moving circuits to avoid unwanted movement.
+        """
+        old_rect = self.sceneRect()
+        new_rect = self.getNewSceneRect()
+        new_rect = new_rect.united(old_rect)
+        self.setSceneRect(new_rect)
 
     def addCircuits(self):
         """Add some circuits to the scene on startup.
@@ -60,6 +85,7 @@ class MachineWidget(QtGui.QGraphicsScene):
         self.circuits.append(circuit)
         self.addItem(circuit)
         self.circuit_index += 1
+        self.updateSceneRect()
         self.update()
 
     def addDroppedCircuit(self, dropped, pos):
@@ -159,6 +185,7 @@ class MachineWidget(QtGui.QGraphicsScene):
         self.connections = []
         self.circuits = []
         self.clear()
+        self.updateSceneRect()
         self.update()
 
     def removeConnections(self):
@@ -196,15 +223,8 @@ class MachineWidget(QtGui.QGraphicsScene):
             self.removeItem(outp)
         self.circuits.remove(circuit)
         self.removeItem(circuit)
+        self.updateSceneRect()
         self.update()
-
-    """def paintEvent(self, event):
-        qp = QtGui.QPainter()
-        qp.begin(self)
-        self.drawBackground(qp)
-        self.drawGrid(qp)
-        self.drawCircuits(qp)
-        qp.end()"""
 
     def drawBackground(self, qp, rect):
         """Draw the background white and call a grid draw"""

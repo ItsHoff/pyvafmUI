@@ -250,6 +250,7 @@ class SaveState(object):
             machine_widget.addLoadedCircuit(circuit)
         for connection in self.connections:
             machine_widget.addLoadedConnection(connection)
+        machine_widget.updateSceneRect()
 
 
 def main():

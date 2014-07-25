@@ -19,6 +19,8 @@ class UICircuit(QtGui.QGraphicsItem):
         super(UICircuit, self).__init__()
         self.setX(x)
         self.setY(y)
+        # self.setFlag(self.ItemIsMovable, True)
+        # self.setFlag(self.ItemSendsScenePositionChanges, True)
         self.xsize = 140
         self.ysize = 100
         self.circuit_info = circuit_info
@@ -141,7 +143,9 @@ class UICircuit(QtGui.QGraphicsItem):
         """End drag when mouse is released."""
         if event.button() == QtCore.Qt.LeftButton:
             self.dragged = False
-        # super(UICircuit, self).mouseReleaseEvent(event)
+            self.ensureVisible()
+            self.scene().updateSceneRect()
+        super(UICircuit, self).mouseReleaseEvent(event)
 
     def mouseMoveEvent(self, event):
         """If circuit is being dragged try to set the circuits
@@ -164,6 +168,8 @@ class UICircuit(QtGui.QGraphicsItem):
             # Update the connections since some of them might
             # have to be moved with the circuit.
             self.scene().updateConnections()
+            self.scene().updateMovingSceneRect()
+            self.scene().views()[0].autoScroll(event.scenePos())
             self.scene().update()
         # super(UICircuit, self).mouseMoveEvent(event)
 

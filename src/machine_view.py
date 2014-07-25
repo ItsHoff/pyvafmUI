@@ -6,6 +6,13 @@ Created on Jun 16, 2014
 
 from PyQt4 import QtGui, QtCore
 
+SCROLL_DISTANCE = 50
+SCROLL_SPEED = 20
+UP = 0
+DOWN = 1
+LEFT = 2
+RIGHT = 3
+
 
 class MachineView(QtGui.QGraphicsView):
     """Graphics view that is used to show the contents of the
@@ -21,6 +28,43 @@ class MachineView(QtGui.QGraphicsView):
         self.scale_factor = 1
         self.min_factor = 0.3
         self.max_factor = 2.5
+
+        self.scroll_dir = None
+        self.scroll_timer = QtCore.QTimer(self)
+        self.scroll_timer.start(20)
+        QtCore.QObject().connect(self.scroll_timer, QtCore.SIGNAL("timeout()"),
+                                 self.scrollTimeOut)
+
+    def autoScroll(self, point):
+        """Check if the point is close to an edge and set the scroll direction
+        to that edge if it is.
+        point = scene point
+        """
+        self.scroll_dir = None
+        view_pos = self.mapFromScene(point)
+        if view_pos.x() < SCROLL_DISTANCE:
+            self.scroll_dir = LEFT
+        elif self.width() - view_pos.x() < SCROLL_DISTANCE:
+            self.scroll_dir = RIGHT
+        elif view_pos.y() < SCROLL_DISTANCE:
+            self.scroll_dir = UP
+        elif self.height() - view_pos.y() < SCROLL_DISTANCE:
+            self.scroll_dir = DOWN
+
+    def scrollTimeOut(self):
+        """Scroll the scene on scroll timer timeout if direction is set."""
+        if self.scroll_dir == LEFT:
+            scroll_bar = self.horizontalScrollBar()
+            scroll_bar.setValue(scroll_bar.value() - SCROLL_SPEED)
+        elif self.scroll_dir == RIGHT:
+            scroll_bar = self.horizontalScrollBar()
+            scroll_bar.setValue(scroll_bar.value() + SCROLL_SPEED)
+        elif self.scroll_dir == UP:
+            scroll_bar = self.verticalScrollBar()
+            scroll_bar.setValue(scroll_bar.value() - SCROLL_SPEED)
+        elif self.scroll_dir == DOWN:
+            scroll_bar = self.verticalScrollBar()
+            scroll_bar.setValue(scroll_bar.value() + SCROLL_SPEED)
 
     def wheelEvent(self, event):
         """Scale the view when wheel is scrolled."""
