@@ -8,6 +8,3 @@ from customs_pll import *
 import vafmcircuits
 
 machine = Machine(name='machine', $dt = %dt%$, $pushed=%Pushed%$)
-
-#4
-£machine.Wait($%Wait%$)£

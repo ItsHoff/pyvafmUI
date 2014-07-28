@@ -9,12 +9,12 @@ from collections import OrderedDict
 machine_param_window_style = OrderedDict([
                             ("PyVAFM src", "DirDialog"),
                             ("dt", "LineEdit"),
-                            ("Wait", "LineEdit"),
                             ("Pushed", "CheckBox")
                             ])
 
-run_time_functions = {"Scanner": ["Move", "MoveTo", "MoveRecord"],
-                      "Output": ["Dump"]
+run_time_functions = {"Machine": ["Wait"],
+                      "Scanner": ["Place", "Move", "MoveTo", "MoveRecord", "ScanArea"],
+                      "output": ["Dump", "Stop", "Start"]
                       }
 
 global_channels = ["time"]
@@ -416,6 +416,7 @@ circuits = OrderedDict([
                     ["out"],
                     param_window_style = OrderedDict([
                                         ("Name", "LineEdit"),
+                                        ("Set", "LineEdit"),
                                         ("Kp", "LineEdit"),
                                         ("Ki", "LineEdit"),
                                         ("Pushed", "CheckBox")
@@ -519,7 +520,7 @@ circuits = OrderedDict([
                                         ("Fcut", "LineEdit"),
                                         ("f0", "LineEdit"),
                                         ("Ki", "LineEdit"),
-                                        ("Kp", "LineEdint"),
+                                        ("Kp", "LineEdit"),
                                         ("Pushed", "CheckBox")
                                         ]),
                     script_format = "formats/aPFD.format"
@@ -603,7 +604,6 @@ circuits = OrderedDict([
                        ["x", "y", "z", "record"],
                     param_window_style = OrderedDict([
                                         ("Name", "LineEdit"),
-                                        ("Place", "LineEdit"),
                                         ("Recorder", "LineEdit"),
                                         ("Resolution", "LineEdit"),
                                         ("ImageArea", "LineEdit"),
@@ -629,4 +629,21 @@ circuits = OrderedDict([
                     script_format = "formats/VDW.format"
                     )
  ),
+("VDWtorn", CircuitInfo("VDWtorn", "Van Der Walls",
+                                   ["ztip"],
+                                   ["fz"],
+                    param_window_style = OrderedDict([
+                                        ("Name", "LineEdit"),
+                                        ("A1", "LineEdit"),
+                                        ("A2", "LineEdit"),
+                                        ("A3", "LineEdit"),
+                                        ("A4", "LineEdit"),
+                                        ("A5", "LineEdit"),
+                                        ("A6", "LineEdit"),
+                                        ("Tip Offset", "LineEdit"),
+                                        ("Pushed", "CheckBox"),
+                                        ]),
+                    script_format = "formats/VDWtorn.format"
+                    )
+ )
 ])

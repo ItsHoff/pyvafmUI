@@ -1,2 +1,2 @@
 #1
-machine.AddCircuit(type='PI', name='%Name%', $Kp = %Kp%$, $Ki = %Ki%$, $pushed = %Pushed%$)
+machine.AddCircuit(type='PI', name='%Name%',$set = %Set%$, $Kp = %Kp%$, $Ki = %Ki%$, $pushed = %Pushed%$)

@@ -7,6 +7,3 @@
 £%Name%.BlankLines = $%BlankLines%$£
 £%Name%.Resolution = $[%Resolution%]$£
 £%Name%.ImageArea($%ImageArea%$)£
-
-#4
-%Name%.ScanArea()

@@ -6,6 +6,7 @@ Created on Jun 6, 2014
 '''
 
 import sys
+import subprocess
 import cPickle as pickle
 
 from PyQt4 import QtGui, QtCore
@@ -62,6 +63,7 @@ class MainWindow(QtGui.QMainWindow):
 
         self.show()
 
+    # TODO: Implement save and load for drag selection windows
     def save(self):
         save_state = SaveState()
         save_state.create(self)
@@ -87,7 +89,7 @@ class MainWidget(QtGui.QWidget):
         self.param_window_style = circuits.machine_param_window_style
         self.parameters = {}
         self.initWidget()
-        self.parameter_window = ParameterWindow(self)
+        self.parameter_window = None
         self.run_selection_window = RunSelectionWindow(self)
 
     def initWidget(self):
@@ -142,7 +144,11 @@ class MainWidget(QtGui.QWidget):
 
     def showParameters(self):
         """Open the main machine parameter window"""
-        self.parameter_window.showWindow()
+        if self.parameter_window is None:
+            self.parameter_window = ParameterWindow(self)
+            self.parameter_window.showWindow()
+        else:
+            self.parameter_window.showWindow()
 
     def showRunSelection(self):
         """Open the run selection window."""
@@ -170,7 +176,6 @@ class MainWidget(QtGui.QWidget):
 
     def createScript(self):
         """Create pyvafm script from the current machine state."""
-        print self.parameters
         savefile = QtGui.QFileDialog.getSaveFileName(self, "Save script", "..")
         if not savefile:
             return
@@ -180,8 +185,7 @@ class MainWidget(QtGui.QWidget):
 
         # Create script lines for all the circuits
         for circuit in self.machine_widget.circuits:
-            print circuit.name
-            print circuit.circuit_info.script_format
+            circuit.getSaveState()               # Update the save state
             if circuit.circuit_info.script_format:
                 with open(circuit.circuit_info.script_format, "r") as f:
                     script.createFromFormat(blocks, f, circuit.parameters)
@@ -220,8 +224,10 @@ class MainWidget(QtGui.QWidget):
         """
         savefile = self.createScript()
         if savefile:
-            with open(str(savefile), 'r') as f:
-                exec(f)
+            end = savefile.lastIndexOf('/')
+            savedir = savefile[:end]
+            subprocess.call('ls', cwd=savedir)
+            subprocess.call(["python", str(savefile)], cwd=savedir)
 
 
 class SaveState(object):
@@ -243,6 +249,8 @@ class SaveState(object):
             self.circuits.append(circuit.getSaveState())
         for connection in machine_widget.connections:
             self.connections.append(connection.getSaveState())
+        run_selection_window = main_window.centralWidget().run_selection_window
+        self.run_selections = run_selection_window.getSaveState()
 
     def load(self, main_window):
         print "loading save state"
@@ -254,6 +262,8 @@ class SaveState(object):
             machine_widget.addLoadedCircuit(circuit)
         for connection in self.connections:
             machine_widget.addLoadedConnection(connection)
+        run_selection_window = main_window.centralWidget().run_selection_window
+        run_selection_window.loadSaveState(self.run_selections)
         machine_widget.updateSceneRect()
 
 

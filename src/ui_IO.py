@@ -57,9 +57,19 @@ class UIIO(QtGui.QGraphicsItem):
 
     def boundingRect(self):
         """Return the bounding rectangle of the io.
+        Defines where all the painting takes place.
         Required by the scene.
         """
-        return QtCore.QRectF(0, 0, self.xsize, self.ysize)
+        x_border = 50
+        y_border = 10
+        return QtCore.QRectF(-x_border, -y_border,
+                             self.xsize + x_border, self.ysize + y_border)
+
+    def shape(self):
+        """Return the shape of the io. Used for collision detection."""
+        shape = QtGui.QPainterPath()
+        shape.addRect(0, 0, self.xsize, self.ysize)
+        return shape
 
     def paint(self, painter, options, widget):
         pen = QtGui.QPen(QtGui.QColor(0, 0, 0))

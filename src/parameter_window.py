@@ -105,10 +105,10 @@ class ParameterWindow(QtGui.QDialog):
     def createDirDialog(self, label_text):
         """Create a directory dialog and a label with label_text."""
         label = QtGui.QLabel(label_text)
-        file_dialog = LabelDirDialog()
+        dir_dialog = LabelDirDialog()
         if label_text in self.circuit.parameters:
-            file_dialog.setFileName(self.circuit.parameters[label_text])
-        return [label, file_dialog]
+            dir_dialog.setFileName(self.circuit.parameters[label_text])
+        return [label, dir_dialog]
 
     def createRegisterDialog(self, label_text):
         """Initialize the register window and create a button to open it."""
@@ -118,13 +118,14 @@ class ParameterWindow(QtGui.QDialog):
                                                        self)
         QtCore.QObject.connect(button, QtCore.SIGNAL("clicked()"),
                                self.register_window.showWindow)
+        if label_text in self.circuit.parameters:
+            self.register_window.loadSaveState(self.circuit.parameters[label_text])
         return [label, button]
 
     def setParameters(self):
         """Collect all the parameters given and call the circuits
         setParameters to save them. Finally close the window.
         """
-        print "set parameters"
         rows = self.layout().rowCount()
         parameters = {}
         for row in range(0, rows - 1):
@@ -140,14 +141,7 @@ class ParameterWindow(QtGui.QDialog):
         # initialised and atleast one channel is selected.
         if self.register_window is not None:
             selection_tree = self.register_window.selection_tree
-            register = "'"
-            for i in range(selection_tree.topLevelItemCount()):
-                top_item = selection_tree.topLevelItem(i)
-                top_item.updateText()
-                register += top_item.text(0) + "', '"
-            if register != "'":
-                register = register[:-3]
-                parameters["Register"] = register
+            parameters["Register"] = selection_tree.getSaveState()
         self.circuit.setParameters(parameters)
         self.close()
 

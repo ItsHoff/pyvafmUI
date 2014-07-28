@@ -57,13 +57,19 @@ class RegisterSelectionWindow(drag_selection_window.DragSelectionWindow):
 
     def updateNames(self):
         """Update the circuit names that might have changed since the
-        window was last opened.
+        window was last opened and remove selections from removed circuits.
         """
         self.option_tree.clear()
         self.loadOptions()
+        top_items = []
         for i in range(self.selection_tree.topLevelItemCount()):
-            top_item = self.selection_tree.topLevelItem(i)
-            top_item.updateText()
+            top_items.append(self.selection_tree.topLevelItem(i))
+        for top_item in top_items:
+            if top_item.circuit.scene() is None:
+                i = self.selection_tree.indexOfTopLevelItem(top_item)
+                self.selection_tree.takeTopLevelItem(i)
+            else:
+                top_item.updateText()
 
 
 class RegisterSelectionTree(drag_selection_window.SelectionTree):
@@ -74,12 +80,25 @@ class RegisterSelectionTree(drag_selection_window.SelectionTree):
     def __init__(self):
         super(RegisterSelectionTree, self).__init__()
 
+    def getSaveState(self):
+        save_state = RegisterSelectionSaveList()
+        for i in range(self.topLevelItemCount()):
+            top_item = self.topLevelItem(i)
+            save_item = RegisterSelectionSaveItem(top_item)
+            save_state.append(save_item)
+        return save_state
+
     def createNewItem(self, dropped_item, parent_item):
         """Create a new tree item for the tree. Return new_item, None since
         no custom widget is used.
         """
         circuit = parent_item.data(0, QtCore.Qt.UserRole).toPyObject()
         new_item = RegisterSelectionTreeItem(circuit, dropped_item.text(0))
+        return new_item, None
+
+    def createLoadedItem(self, save_state):
+        new_item = RegisterSelectionTreeItem(save_state.circuit.loaded_item,
+                                             save_state.channel)
         return new_item, None
 
 
@@ -100,11 +119,51 @@ class RegisterSelectionTreeItem(QtGui.QTreeWidgetItem):
         self.setText(0, self.circuit.name + '.' + self.channel)
 
 
+class RegisterSelectionSaveItem(object):
+    """Container for RunSelectionTreeItem state without Qt bindings.
+    Used for saving.
+    """
+
+    def __init__(self, tree_item):
+        self.circuit = tree_item.circuit.getSaveState()
+        self.channel = tree_item.channel
+
+    def update(self, tree_item):
+        self.__init__(tree_item)
+
+    def __str__(self):
+        return str("'" + self.circuit.name + "." + self.channel + "'")
+
+
+class RegisterSelectionSaveList(list):
+
+    def __init__(self):
+        super(RegisterSelectionSaveList, self).__init__()
+
+    def __str__(self):
+        i = 0
+        string = ""
+        for item in self:
+            if i != 0:
+                string += ", "
+            string += str(item)
+            i += 1
+        return str(string)
+
+
 class GlobalDummy(object):
     """Dummy class used with global channels to pass as a global circuit."""
 
     def __init__(self):
         self.name = "global"
+        self.save_state = self
+        self.loaded_item = self
+
+    def getSaveState(self):
+        return self.save_state
+
+    def scene(self):
+        return "Global"
 
 
 if __name__ == '__main__':

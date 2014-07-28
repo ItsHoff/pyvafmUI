@@ -91,7 +91,6 @@ class UICircuit(QtGui.QGraphicsItem):
                 self.parameters[label] = value
         if "Name" in self.parameters:
             self.name = self.parameters["Name"]
-        print self.parameters
 
     def getSaveState(self):
         """Return the current state of the circuit without the Qt bindings
@@ -203,6 +202,7 @@ class SaveCircuit(object):
         self.outputs = []
         for output_ in circuit.outputs:
             self.outputs.append(output_.getSaveState())
+        self.loaded_item = None         # Do not set this before saving
 
     def update(self, circuit):
         self.__init__(circuit)

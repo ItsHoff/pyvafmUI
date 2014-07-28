@@ -79,6 +79,12 @@ class DragSelectionWindow(QtGui.QDialog):
         Should be reimplemented by subclasses."""
         pass
 
+    def getSaveState(self):
+        return self.selection_tree.getSaveState()
+
+    def loadSaveState(self, save_state):
+        self.selection_tree.loadSaveState(save_state)
+
     def dragEnterEvent(self, event):
         """Delete dragged item from selection tree when it exits the widget
         ie. enters this one. Save the deleted item incase user wants to
@@ -109,15 +115,20 @@ class SelectionTree(QtGui.QTreeWidget):
         self.deleted_item = None
         self.deleted_widget = None
 
-    # def dragEnterEvent(self, event):
-    #     event.accept()
-    #     if event.source() == self:
-    #         print "enter from self"
+    def getSaveState(self):
+        """Return a list of save_states for the tree items.
+        Should be reimplemeted by subclasses.
+        """
+        pass
 
-    # def dragMoveEvent(self, event):
-    #     # event.accept()
-    #     # super(SelectionTree, self).dragMoveEvent(event)
-    #     pass
+    def loadSaveState(self, save_state):
+        """Add the tree items defined in save_state to the tree."""
+        self.clear()
+        for save_item in save_state:
+            new_item, widget = self.createLoadedItem(save_item)
+            self.addTopLevelItem(new_item)
+            if widget is not None:
+                self.setItemWidget(new_item, 0, widget)
 
     def dropEvent(self, event):
         """Add a new selection item to the tree if user drags an item from
@@ -179,6 +190,11 @@ class SelectionTree(QtGui.QTreeWidget):
                          dropped_item.text(0))
         return new_item, None
 
+    def createLoadedItem(self, save_state):
+        """Create a tree widget item matching the save_state.
+        Should be reimplemented by subclasses.
+        """
+        pass
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)

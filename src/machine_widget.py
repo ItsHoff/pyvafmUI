@@ -181,10 +181,9 @@ class MachineWidget(QtGui.QGraphicsScene):
 
     def clearAll(self):
         """Clear everything from the scene."""
-        self.connections = []
-        self.circuits = []
-        self.clear()
-        self.updateSceneRect()
+        for circuit in self.circuits[:]:
+            self.removeCircuit(circuit)
+        # self.updateSceneRect()
         self.update()
 
     def removeConnections(self):

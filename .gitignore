@@ -59,6 +59,7 @@ docs/_build/
 # Folders to ignore
 Mockup/
 scripts/
+saves/
 .settings/
 
 # Files to ignore
