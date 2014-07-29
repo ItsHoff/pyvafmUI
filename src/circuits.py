@@ -511,7 +511,7 @@ circuits = OrderedDict([
                     script_format = "formats/aPLL.format"
                     )
  ),
-("aPFD", CircuitInfo("aPFD", "Custom",
+("dPFD", CircuitInfo("dPFD", "Custom",
                     ["ref", "vco", "f0", "KI", "KP"],
                     ["sin", "cos", "df", "dbg"],
                     param_window_style = OrderedDict([
@@ -523,7 +523,7 @@ circuits = OrderedDict([
                                         ("Kp", "LineEdit"),
                                         ("Pushed", "CheckBox")
                                         ]),
-                    script_format = "formats/aPFD.format"
+                    script_format = "formats/dPFD.format"
                     )
  ),
 ("aAMPD", CircuitInfo("aAMPD", "Custom",
