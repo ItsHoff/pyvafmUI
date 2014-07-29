@@ -35,6 +35,9 @@ class MachineView(QtGui.QGraphicsView):
         QtCore.QObject().connect(self.scroll_timer, QtCore.SIGNAL("timeout()"),
                                  self.scrollTimeOut)
 
+        self.setRenderHint(QtGui.QPainter.Antialiasing, True)
+        # self.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, True)
+
     def autoScroll(self, point):
         """Check if the point is close to an edge and set the scroll direction
         to that edge if it is.

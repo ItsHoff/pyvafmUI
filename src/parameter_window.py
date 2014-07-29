@@ -69,14 +69,14 @@ class ParameterWindow(QtGui.QDialog):
                 col += 1
             row += 1
         # Create the buttons for the window and connect them.
-        ok_button = QtGui.QPushButton("OK")
+        ok_button = QtGui.QPushButton("Done")
         QtCore.QObject.connect(ok_button, QtCore.SIGNAL("clicked()"),
                                self.setParameters)
-        cancel_button = QtGui.QPushButton("Cancel")
-        QtCore.QObject.connect(cancel_button, QtCore.SIGNAL("clicked()"),
-                               self.cancel)
-        grid.addWidget(ok_button, row, 0)
-        grid.addWidget(cancel_button, row, 1)
+        # cancel_button = QtGui.QPushButton("Cancel")
+        # QtCore.QObject.connect(cancel_button, QtCore.SIGNAL("clicked()"),
+        #                        self.cancel)
+        grid.addWidget(ok_button, row, 0, 1, 2)
+        # grid.addWidget(cancel_button, row, 1)
 
     def createLineEdit(self, label_text):
         """Create a line edit and a label with label_text."""

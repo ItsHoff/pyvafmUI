@@ -3,6 +3,7 @@ Created on Jun 18, 2014
 
 @author: keisano1
 '''
+import random
 
 from PyQt4 import QtGui, QtCore
 
@@ -30,7 +31,10 @@ class UIConnection(QtGui.QGraphicsPathItem):
         else:
             self.output = origin
         super(UIConnection, self).__init__(parent)
-        pen = QtGui.QPen(QtGui.QColor(0, 255, 0))
+        # pen = QtGui.QPen(QtGui.QColor(251, 182, 1))
+        # pen = QtGui.QPen(QtGui.QColor(203, 107, 0))
+        # pen = QtGui.QPen(QtGui.QColor(203, 75, 22))
+        pen = QtGui.QPen(QtGui.QColor(0, 0, 0))
         pen.setWidth(2)
         self.setPen(pen)
         path = QtGui.QPainterPath(self.start)

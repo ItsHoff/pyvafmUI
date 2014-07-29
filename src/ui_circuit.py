@@ -11,7 +11,6 @@ from parameter_window import ParameterWindow
 
 class UICircuit(QtGui.QGraphicsItem):
 
-    # TODO: Unite inputs and outputs?
     def __init__(self, x, y, circuit_info, parent=None):
         """Create a circuit defined by the circuit_info and
         place it into the at (x, y)
@@ -21,7 +20,7 @@ class UICircuit(QtGui.QGraphicsItem):
         self.setY(y)
         # self.setFlag(self.ItemIsMovable, True)
         # self.setFlag(self.ItemSendsScenePositionChanges, True)
-        self.xsize = 140
+        self.xsize = 130
         self.ysize = 100
         self.circuit_info = circuit_info
         self.parameter_window = None
@@ -59,9 +58,11 @@ class UICircuit(QtGui.QGraphicsItem):
         """Position the circuits inputs and outputs such that
         they're evenly spaced, inputs on left and outputs on right.
         """
-        extra = 30
-        in_offset = (self.ysize+extra)/(len(self.inputs)+1)
-        out_offset = (self.ysize+extra)/(len(self.outputs)+1)
+        extra = 25
+        io_max = max(len(self.inputs), len(self.outputs))
+        self.ysize = (io_max/6 + 1)*100
+        in_offset = round(self.ysize+extra)/(len(self.inputs)+1)
+        out_offset = round(self.ysize+extra)/(len(self.outputs)+1)
         iny = in_offset-0.5*extra
         outy = out_offset-0.5*extra
         for inp in self.inputs:
@@ -91,6 +92,7 @@ class UICircuit(QtGui.QGraphicsItem):
                 self.parameters[label] = value
         if "Name" in self.parameters:
             self.name = self.parameters["Name"]
+            self.parameter_window.setWindowTitle(self.name + " parameters")
 
     def getSaveState(self):
         """Return the current state of the circuit without the Qt bindings

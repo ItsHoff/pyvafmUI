@@ -577,8 +577,8 @@ circuits = OrderedDict([
                                         ("Npoints", "LineEdit"),
                                         ("PBC", "LineEdit"),
                                         ("Force Multiplier", "LineEdit"),
-                                        ("Pushed", "CheckBox"),
-                                        ("Filename", "FileDialog")
+                                        ("Data", "FileDialog"),
+                                        ("Pushed", "CheckBox")
                                         ]),
                     script_format = "formats/i3Dlin.format"
                     )
@@ -590,7 +590,7 @@ circuits = OrderedDict([
                                         ("Name", "LineEdit"),
                                         ("Components", "LineEdit"),
                                         ("Step", "LineEdit"),
-                                        ("Filename", "FileDialog"),
+                                        ("Data", "FileDialog"),
                                         ("PBC", "CheckBox"),
                                         ("Pushed", "CheckBox")
                                         ]),

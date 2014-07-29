@@ -16,8 +16,8 @@ class UIIO(QtGui.QGraphicsItem):
         """
         self.name = name
         self.circuit = circuit
-        self.xsize = 18
-        self.ysize = 18
+        self.xsize = 16
+        self.ysize = 16
         self.io_type = io_type
         self.save_state = None
         super(UIIO, self).__init__(circuit)
@@ -73,7 +73,7 @@ class UIIO(QtGui.QGraphicsItem):
 
     def paint(self, painter, options, widget):
         pen = QtGui.QPen(QtGui.QColor(0, 0, 0))
-        pen.setWidth(1)
+        pen.setWidthF(1.25)
         painter.setPen(pen)
         painter.setFont(QtGui.QFont("", 6))
         if self.io_type == "in":
@@ -82,9 +82,16 @@ class UIIO(QtGui.QGraphicsItem):
             painter.setBrush(QtGui.QColor(255, 62, 66))
         painter.drawRect(0, 0, self.xsize, self.ysize)
         if self.io_type == "in":
-            painter.drawText(-self.xsize-4, -1, self.name)
+            rect = QtCore.QRect(0, 0, 30, 10)
+            rect.moveBottomRight(self.shape().boundingRect().topLeft().toPoint())
+            rect.moveRight(rect.right()-2)
+            # painter.drawText(-self.xsize-4, -1, self.name)
+            painter.drawText(rect, QtCore.Qt.AlignRight, self.name)
         else:
-            painter.drawText(self.xsize+1, -1, self.name)
+            rect = QtCore.QRect(0, 0, 30, 10)
+            rect.moveBottomLeft(self.shape().boundingRect().topRight().toPoint())
+            rect.moveLeft(rect.left()+2)
+            painter.drawText(rect, QtCore.Qt.AlignLeft, self.name)
         pen.setWidth(2)
         painter.setPen(pen)
         painter.drawPoint(0.5*self.xsize, 0.5*self.ysize)

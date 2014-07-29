@@ -63,7 +63,7 @@ class MainWindow(QtGui.QMainWindow):
 
         self.show()
 
-    # TODO: Implement save and load for drag selection windows
+    # TODO: Fix saving after load
     def save(self):
         save_state = SaveState()
         save_state.create(self)
