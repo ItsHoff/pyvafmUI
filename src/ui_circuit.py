@@ -115,6 +115,8 @@ class UICircuit(QtGui.QGraphicsItem):
         for output in save_state.outputs:
             self.addLoadedIO(output)
         self.positionIO()
+        self.parameter_window = ParameterWindow(self)
+        self.parameter_window.setParameters()        # Clear loaded items
 
     def boundingRect(self):
         """Return the bounding rectangle of the circuit.

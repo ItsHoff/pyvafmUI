@@ -105,10 +105,10 @@ class MachineWidget(QtGui.QGraphicsScene):
 
     def addLoadedCircuit(self, save_state):
         circuit = UICircuit(0, 0, save_state.circuit_info)
-        circuit.loadSaveState(save_state)
-        save_state.loaded_item = circuit
         self.circuits.append(circuit)
         self.addItem(circuit)
+        circuit.loadSaveState(save_state)
+        save_state.loaded_item = circuit
         self.circuit_index += 1
 
     def createNewConnection(self, origin, mouse_pos):
