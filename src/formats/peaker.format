@@ -1,2 +1,2 @@
 #1
-machine.AddCircuit(type='peaker', name = '%Name%', $up = %Up%$, $pushed = %Pushed%$)
+machine.AddCircuit(type='peaker', name = '%Name%', $up = %Up%$, $%INPUTS%$, $pushed = %Pushed%$)

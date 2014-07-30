@@ -90,7 +90,9 @@ class UICircuit(QtGui.QGraphicsItem):
         for label, value in parameters.iteritems():
             if value is not None and value != "":
                 self.parameters[label] = value
-        if "Name" in self.parameters:
+            elif label != "Name" and label in self.parameters:
+                del self.parameters[label]
+        if self.name != self.parameters["Name"]:
             self.name = self.parameters["Name"]
             self.parameter_window.setWindowTitle(self.name + " parameters")
 

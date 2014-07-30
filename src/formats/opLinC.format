@@ -1,2 +1,2 @@
 #1
-machine.AddCircuit(type='opLinC', name = '%Name%', $factors = %Factors%$, $ina1 = %Ina1%$, $ina2 = %Ina2%$, $inb1 = %Inb1%$, $inb2 = %Inb2%$, $pushed = %Pushed%$)
+machine.AddCircuit(type='opLinC', name = '%Name%', $factors = %Factors%$, $%INPUTS%$, $pushed = %Pushed%$)

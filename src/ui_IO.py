@@ -6,6 +6,8 @@ Created on Jun 17, 2014
 
 from PyQt4 import QtGui, QtCore
 
+from parameter_window import InputValueWindow
+
 
 class UIIO(QtGui.QGraphicsItem):
 
@@ -14,13 +16,14 @@ class UIIO(QtGui.QGraphicsItem):
         Parent should be the circuit this io belongs to.
         io_type should be "in" for input and "out" for output.
         """
+        super(UIIO, self).__init__(circuit)
         self.name = name
         self.circuit = circuit
         self.xsize = 16
         self.ysize = 16
         self.io_type = io_type
+        self.value_window = None
         self.save_state = None
-        super(UIIO, self).__init__(circuit)
 
     def nConnections(self):
         """Check how many connections are connected to this io.
@@ -113,6 +116,14 @@ class UIIO(QtGui.QGraphicsItem):
                     self.scene().addConnection()
                 else:
                     self.scene().deleteNewConnection()
+
+    def mouseDoubleClickEvent(self, event):
+        self.scene().deleteNewConnection()
+        if self.value_window is not None:
+            self.value_window.showWindow()
+        elif self.io_type == "in":
+            self.value_window = InputValueWindow(self)
+            self.value_window.showWindow()
 
 
 class SaveIO(object):

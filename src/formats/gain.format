@@ -1,2 +1,2 @@
 #1
-machine.AddCircuit(type='gain', name = '%Name%', $gain = %Gain%$, $pushed = %Pushed%$)
+machine.AddCircuit(type='gain', name = '%Name%', $gain = %Gain%$, $%INPUTS%$, $pushed = %Pushed%$)

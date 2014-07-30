@@ -1,2 +1,2 @@
 #1
-machine.AddCircuit(type='limiter', name='%Name%', $min = %Min%$, $max = %Max%$, $pushed = %Pushed%$)
+machine.AddCircuit(type='limiter', name='%Name%', $%INPUTS%$, $pushed = %Pushed%$)

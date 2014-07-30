@@ -148,3 +148,40 @@ class ParameterWindow(QtGui.QDialog):
     def cancel(self):
         """Close the window without action when cancel is pressed."""
         self.close()
+
+
+class InputValueWindow(QtGui.QDialog):
+
+    def __init__(self, input_):
+        self.input_ = input_
+        self.circuit = self.input_.parentItem()
+        super(InputValueWindow, self).__init__(input_.scene().parent().window())
+        self.setWindowTitle(self.circuit.name + "." + self.input_.name)
+        self.initUI()
+
+    def initUI(self):
+        layout = QtGui.QGridLayout()
+        label = QtGui.QLabel("Value")
+        self.edit = QtGui.QLineEdit()
+        if "INPUT:"+self.input_.name in self.circuit.parameters:
+            self.edit.setText(self.circuit.parameters["INPUT:"+self.input_.name])
+        done_button = QtGui.QPushButton("Done")
+        QtCore.QObject.connect(done_button, QtCore.SIGNAL("clicked()"),
+                               self.setParameters)
+
+        layout.addWidget(label, 0, 0)
+        layout.addWidget(self.edit, 0, 1)
+        layout.addWidget(done_button, 1, 0, 1, 2)
+        self.setLayout(layout)
+
+    def showWindow(self):
+        """Show the window and make sure it's activated and on top."""
+        self.setWindowTitle(self.circuit.name + "." + self.input_.name)
+        self.show()
+        self.raise_()
+        self.activateWindow()
+
+    def setParameters(self):
+        parameters = {"INPUT:"+self.input_.name: self.edit.text()}
+        self.circuit.setParameters(parameters)
+        self.close()

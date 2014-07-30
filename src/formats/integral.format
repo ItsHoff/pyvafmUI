@@ -1,2 +1,2 @@
 #1
-machine.AddCircuit(type='integral', name = '%Name%', $pushed = %Pushed%$)
+machine.AddCircuit(type='integral', name = '%Name%', $%INPUTS%$, $pushed = %Pushed%$)

@@ -1,2 +1,2 @@
 #1
-machine.AddCircuit(type='SRFlipFlop', name = '%Name%', $pushed = %Pushed%$)
+machine.AddCircuit(type='SRFlipFlop', name = '%Name%', $%INPUTS%$, $pushed = %Pushed%$)

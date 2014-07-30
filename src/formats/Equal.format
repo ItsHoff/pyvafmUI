@@ -1,2 +1,2 @@
 #1
-machine.AddCircuit(type='Equal', name = '%Name%', $in1 = %In1%$, $in2 = %In2%$, $pushed = %Pushed%$)
+machine.AddCircuit(type='Equal', name = '%Name%', $%INPUTS%$, $pushed = %Pushed%$)

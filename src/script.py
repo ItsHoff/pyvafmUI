@@ -56,6 +56,8 @@ def createCleanLine(line, parameters):
     insert the right parameters. Then return the clean line.
     if circuit.circuit_info.type
     """
+    if containsInputs(line):
+        line = addInputs(line, parameters)
     if getOptionalParameters(line):
         line = cleanOptionalBlocks(line, parameters)
     for label, value in parameters.iteritems():
@@ -64,6 +66,21 @@ def createCleanLine(line, parameters):
     line = line.replace('£', '')
     line = line.replace('$', '')
     return line
+
+
+def addInputs(string, parameters):
+    """Add manually set inputs into the string."""
+    start = string.find("INPUTS")
+    insert = start - 2
+    for key in parameters.keys():
+        print key
+        if key.startswith("INPUT"):
+            name = key.split(":")[-1]
+            input_string = "$"+name+"="+"%"+key+"%$, "
+            string = string[:insert] + input_string + string[insert:]
+            print input_string
+    print string
+    return string
 
 
 def cleanOptionalBlocks(string, parameters):
@@ -118,6 +135,14 @@ def containsSetOptionalParameters(string, parameters):
         if parameter in parameters:
             return True
     return False
+
+
+def containsInputs(string):
+    found = string.find("INPUTS")
+    if found != -1:
+        return True
+    else:
+        return False
 
 
 def getParameters(string):

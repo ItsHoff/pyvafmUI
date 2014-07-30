@@ -111,6 +111,9 @@ class UIConnection(QtGui.QGraphicsPathItem):
         path.lineTo(self.end)
         self.setPath(path)
 
+    def mousePressEvent(self, event):
+        event.ignore()
+
 
 class SaveConnection(object):
     """Container for UIConnection state without Qt bindings. Used for saving."""

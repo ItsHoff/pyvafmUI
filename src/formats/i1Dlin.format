@@ -1,5 +1,5 @@
 #1
 
-machine.AddCircuit(type='i1Dlin', name = '%Name%', $comp = %Components%$, $step = %Step%$, $pbc = %PBC%$, $pushed = %Pushed%$)
+machine.AddCircuit(type='i1Dlin', name = '%Name%', $comp = %Components%$, $step = %Step%$, $pbc = %PBC%$, $%INPUTS%$, $pushed = %Pushed%$)
 £%Name%.SetData($'%Data%'$)£
 

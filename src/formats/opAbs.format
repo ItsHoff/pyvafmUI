@@ -1,2 +1,2 @@
 #1
-machine.AddCircuit(type='opAbs', name = '%Name%', $pushed = %Pushed%$)
+machine.AddCircuit(type='opAbs', name = '%Name%', $%INPUTS%$, $pushed = %Pushed%$)

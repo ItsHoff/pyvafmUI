@@ -1,2 +1,2 @@
 #1
-machine.AddCircuit(type='PID', name = '%Name%', $kp = %Kp%$, $ki = %Ki%$, $kd = %Kd%$, $pushed = %Pushed%$)
+machine.AddCircuit(type='PID', name = '%Name%', $%INPUTS%$, $pushed = %Pushed%$)

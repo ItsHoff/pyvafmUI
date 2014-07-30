@@ -1,2 +1,2 @@
 #1
-machine.AddCircuit(type='minmax', name = '%Name%', $CheckTime = %CheckTime%$, $pushed = %Pushed%$)
+machine.AddCircuit(type='minmax', name = '%Name%', $CheckTime = %CheckTime%$, $%INPUTS%$, $pushed = %Pushed%$)

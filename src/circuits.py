@@ -27,8 +27,6 @@ circuits = OrderedDict([
                      param_window_style = OrderedDict([
                                          ("Name", "LineEdit"),
                                          ("Factors", "LineEdit"),
-                                         ("In1", "LineEdit"),
-                                         ("In2", "LineEdit"),
                                          ("Pushed", "CheckBox")
                                          ]),
                      script_format = "formats/opAdd.format"
@@ -39,8 +37,6 @@ circuits = OrderedDict([
                      ["out"],
                      param_window_style = OrderedDict([
                                          ("Name", "LineEdit"),
-                                         ("In1", "LineEdit"),
-                                         ("In2", "LineEdit"),
                                          ("Pushed", "CheckBox")
                                          ]),
                      script_format = "formats/opSub.format"
@@ -51,8 +47,6 @@ circuits = OrderedDict([
                      ["out"],
                      param_window_style = OrderedDict([
                                          ("Name", "LineEdit"),
-                                         ("In1", "LineEdit"),
-                                         ("In2", "LineEdit"),
                                          ("Pushed", "CheckBox")
                                          ]),
                      script_format = "formats/opMul.format"
@@ -63,8 +57,6 @@ circuits = OrderedDict([
                      ["out"],
                      param_window_style = OrderedDict([
                                          ("Name", "LineEdit"),
-                                         ("In1", "LineEdit"),
-                                         ("In2", "LineEdit"),
                                          ("Pushed", "CheckBox")
                                          ]),
                      script_format = "formats/opDiv.format"
@@ -76,10 +68,6 @@ circuits = OrderedDict([
                       param_window_style = OrderedDict([
                                           ("Name", "LineEdit"),
                                           ("Factors", "LineEdit"),
-                                          ("Ina1", "LineEdit"),
-                                          ("Ina2", "LineEdit"),
-                                          ("Inb1", "LineEdit"),
-                                          ("Inb2", "LineEdit"),
                                           ("Pushed", "CheckBox")
                                           ]),
                       script_format = "formats/opLinC.format"
@@ -112,8 +100,6 @@ circuits = OrderedDict([
                                 ["out"],
                      param_window_style = OrderedDict([
                                          ("Name", "LineEdit"),
-                                         ("In1", "LineEdit"),
-                                         ("In2", "LineEdit"),
                                          ("Pushed", "CheckBox")
                                          ]),
                      script_format = "formats/GreaterOrEqual.format"
@@ -124,8 +110,6 @@ circuits = OrderedDict([
                              ["out"],
                      param_window_style = OrderedDict([
                                          ("Name", "LineEdit"),
-                                         ("In1", "LineEdit"),
-                                         ("In2", "LineEdit"),
                                          ("Pushed", "CheckBox")
                                          ]),
                      script_format = "formats/LessOrEqual.format"
@@ -135,8 +119,6 @@ circuits = OrderedDict([
                      ["out"],
                      param_window_style = OrderedDict([
                                          ("Name", "LineEdit"),
-                                         ("In1", "LineEdit"),
-                                         ("In2", "LineEdit"),
                                          ("Pushed", "CheckBox")
                                          ]),
                      script_format = "formats/Equal.format"
@@ -159,8 +141,6 @@ circuits = OrderedDict([
                      param_window_style = OrderedDict([
                                          ("Name", "LineEdit"),
                                          ("Factors", "LineEdit"),
-                                         ("In1", "LineEdit"),
-                                         ("In2", "LineEdit"),
                                          ("Pushed", "CheckBox")
                                          ]),
                      script_format = "formats/AND.format"
@@ -172,8 +152,6 @@ circuits = OrderedDict([
                      param_window_style = OrderedDict([
                                          ("Name", "LineEdit"),
                                          ("Factors", "LineEdit"),
-                                         ("In1", "LineEdit"),
-                                         ("In2", "LineEdit"),
                                          ("Pushed", "CheckBox")
                                          ]),
                      script_format = "formats/OR.format"
@@ -185,8 +163,6 @@ circuits = OrderedDict([
                      param_window_style = OrderedDict([
                                          ("Name", "LineEdit"),
                                          ("Factors", "LineEdit"),
-                                         ("In1", "LineEdit"),
-                                         ("In2", "LineEdit"),
                                          ("Pushed", "CheckBox")
                                          ]),
                      script_format = "formats/XOR.format"
@@ -198,8 +174,6 @@ circuits = OrderedDict([
                      param_window_style = OrderedDict([
                                          ("Name", "LineEdit"),
                                          ("Factors", "LineEdit"),
-                                         ("In1", "LineEdit"),
-                                         ("In2", "LineEdit"),
                                          ("Pushed", "CheckBox")
                                          ]),
                      script_format = "formats/NOR.format"
@@ -212,9 +186,6 @@ circuits = OrderedDict([
                      ["sin", "cos", "saw"],
                      param_window_style = OrderedDict([
                                          ("Name", "LineEdit"),
-                                         ("Amp", "LineEdit"),
-                                         ("Freq", "LineEdit"),
-                                         ("Offset", "LineEdit"),
                                          ("Pushed", "CheckBox")
                                          ]),
                       script_format = "formats/waver.format"
@@ -225,10 +196,6 @@ circuits = OrderedDict([
                       ["out"],
                      param_window_style = OrderedDict([
                                          ("Name", "LineEdit"),
-                                         ("Amp", "LineEdit"),
-                                         ("Freq", "LineEdit"),
-                                         ("Duty", "LineEdit"),
-                                         ("Offset", "LineEdit"),
                                          ("Pushed", "CheckBox")
                                          ]),
                      script_format = "formats/square.format"
@@ -340,8 +307,6 @@ circuits = OrderedDict([
                     ["out"],
                     param_window_style = OrderedDict([
                                         ("Name", "LineEdit"),
-                                        ("Min", "LineEdit"),
-                                        ("Max", "LineEdit"),
                                         ("Pushed", "CheckBox")
                                         ]),
                     script_format = "formats/limiter.format"
@@ -416,9 +381,6 @@ circuits = OrderedDict([
                     ["out"],
                     param_window_style = OrderedDict([
                                         ("Name", "LineEdit"),
-                                        ("Set", "LineEdit"),
-                                        ("Kp", "LineEdit"),
-                                        ("Ki", "LineEdit"),
                                         ("Pushed", "CheckBox")
                                         ]),
                     script_format = "formats/PI.format"
@@ -429,9 +391,6 @@ circuits = OrderedDict([
                     ["out"],
                     param_window_style = OrderedDict([
                                         ("Name", "LineEdit"),
-                                        ("Kp", "LineEdit"),
-                                        ("Ki", "LineEdit"),
-                                        ("Kd", "LineEdit"),
                                         ("Pushed", "CheckBox")
                                         ]),
                     script_format = "formats/PID.format"
@@ -505,7 +464,6 @@ circuits = OrderedDict([
                                         ("Kp", "LineEdit"),
                                         ("Ki", "LineEdit"),
                                         ("Gain", "LineEdit"),
-                                        ("f0", "LineEdit"),
                                         ("Pushed", "CheckBox")
                                         ]),
                     script_format = "formats/aPLL.format"
@@ -518,9 +476,6 @@ circuits = OrderedDict([
                                         ("Name", "LineEdit"),
                                         ("Gain", "LineEdit"),
                                         ("Fcut", "LineEdit"),
-                                        ("f0", "LineEdit"),
-                                        ("Ki", "LineEdit"),
-                                        ("Kp", "LineEdit"),
                                         ("Pushed", "CheckBox")
                                         ]),
                     script_format = "formats/dPFD.format"

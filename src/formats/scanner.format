@@ -1,5 +1,5 @@
 #1
-%Name% = machine.AddCircuit(type='Scanner', name='%Name%', $pushed = %Pushed%$)
+%Name% = machine.AddCircuit(type='Scanner', name='%Name%', $%INPUTS%$, $pushed = %Pushed%$)
 
 #3
 £%Name%.Place($%Place%$)£
