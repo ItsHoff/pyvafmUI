@@ -13,12 +13,13 @@ class CircuitInfo(object):
     """Container for all the general circuit parameters."""
 
     def __init__(self, type_, group, inputs=[], outputs=[],
-                 param_window_style={}, script_format=None):
+                 param_window_style={}, default_values={},
+                 script_format=None):
         """Save all the parameters."""
         self.circuit_type = type_
         self.group = group
         self.params = []
-        self.default_values = []
+        self.default_values = default_values
         self.param_window_style = param_window_style
         self.script_format = script_format
         self.inputs = inputs

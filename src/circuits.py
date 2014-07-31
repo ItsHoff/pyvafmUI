@@ -22,13 +22,14 @@ global_channels = ["time"]
 circuits = OrderedDict([
 # MATHEMATICS
 ("opAdd", CircuitInfo("opAdd", "Mathematics",
-                     ["in1", "in2"],
+                     ["in#Factors"],
                      ["out"],
                      param_window_style = OrderedDict([
                                          ("Name", "LineEdit"),
                                          ("Factors", "LineEdit"),
                                          ("Pushed", "CheckBox")
                                          ]),
+                     default_values = {"Factors": 2},
                      script_format = "formats/opAdd.format"
                      )
  ),
@@ -43,12 +44,13 @@ circuits = OrderedDict([
                      )
  ),
 ("opMul", CircuitInfo("opMul", "Mathematics",
-                     ["in1", "in2"],
+                     ["in#Factors"],
                      ["out"],
                      param_window_style = OrderedDict([
                                          ("Name", "LineEdit"),
                                          ("Pushed", "CheckBox")
                                          ]),
+                     default_values = {"Factors": 2},
                      script_format = "formats/opMul.format"
                      )
  ),
@@ -63,13 +65,14 @@ circuits = OrderedDict([
                      )
  ),
 ("opLinC", CircuitInfo("opLinC", "Mathematics",
-                      ["ina1", "ina2", "inb1", "inb2"],
+                      ["ina#Factors", "inb#Factors"],
                       ["out"],
                       param_window_style = OrderedDict([
                                           ("Name", "LineEdit"),
                                           ("Factors", "LineEdit"),
                                           ("Pushed", "CheckBox")
                                           ]),
+                      default_values = {"Factors": 2},
                       script_format = "formats/opLinC.format"
                       )
  ),
@@ -136,13 +139,14 @@ circuits = OrderedDict([
                      )
  ),
 ("And", CircuitInfo("AND", "Mathematics",
-                   ["in1", "in2"],
+                   ["in#Factors"],
                    ["out"],
                      param_window_style = OrderedDict([
                                          ("Name", "LineEdit"),
                                          ("Factors", "LineEdit"),
                                          ("Pushed", "CheckBox")
                                          ]),
+                     default_values = {"Factors": 2},
                      script_format = "formats/AND.format"
                      )
  ),
@@ -524,7 +528,7 @@ circuits = OrderedDict([
 # INTERPOLATION
 ("3d Linear Interpolation", CircuitInfo("i3Dlin", "Interpolation",
                                        ["x", "y", "z"],
-                                       ["F1", "F2", "F3"],
+                                       ["F#Components"],
                     param_window_style = OrderedDict([
                                         ("Name", "LineEdit"),
                                         ("Components","LineEdit"),
@@ -535,12 +539,13 @@ circuits = OrderedDict([
                                         ("Data", "FileDialog"),
                                         ("Pushed", "CheckBox")
                                         ]),
+                    default_values = {"Components": 3},
                     script_format = "formats/i3Dlin.format"
                     )
  ),
 ("1d Linear Interpolation", CircuitInfo("i1Dlin", "Interpolation",
                                        ["x"],
-                                       ["F1", "F2", "F3"],
+                                       ["F#Components"],
                     param_window_style = OrderedDict([
                                         ("Name", "LineEdit"),
                                         ("Components", "LineEdit"),
@@ -549,6 +554,7 @@ circuits = OrderedDict([
                                         ("PBC", "CheckBox"),
                                         ("Pushed", "CheckBox")
                                         ]),
+                    default_values = {"Components": 1},
                     script_format = "formats/i1Dlin.format"
                     )
  ),

@@ -30,7 +30,9 @@ class UICircuit(QtGui.QGraphicsItem):
         else:
             self.name = circuit_info.circuit_type
         self.dragged = False
-        self.parameters = {"Name": self.name}
+        self.parameters = circuit_info.default_values.copy()
+        self.parameters["Name"] = self.name
+        self.ios = []
         self.inputs = []
         self.outputs = []
 
@@ -38,37 +40,104 @@ class UICircuit(QtGui.QGraphicsItem):
         """Add inputs and outputs defined in circuit info
         into the scene.
         """
-        for name in self.circuit_info.inputs:
-            new_input = UIIO(name, "in", self)
-            self.inputs.append(new_input)
-        for name in self.circuit_info.outputs:
-            new_output = UIIO(name, "out", self)
-            self.outputs.append(new_output)
+        info_ios = self.circuit_info.inputs + self.circuit_info.outputs
+        for name in info_ios:
+            if name in self.circuit_info.inputs:
+                io_type = "in"
+            else:
+                io_type = "out"
+            number_index = name.find("#")
+            if number_index != -1:
+                parameter = name[number_index+1:]
+                n_io = self.parameters[parameter]
+                self.changeNofIO(name, 0, n_io)
+            else:
+                new_input = UIIO(name, io_type, self)
+                self.ios.append(new_input)
         self.positionIO()
+
+    def changeNofIO(self, name, old_n, new_n):
+        """Change the number of ios matching name from old to new."""
+        if name in self.circuit_info.inputs:
+            io_type = "in"
+        else:
+            io_type = "out"
+        number_index = name.find("#")
+        if new_n > old_n:
+            for i in range(old_n, new_n):
+                new_io = UIIO(name[:number_index]+str(i+1), io_type, self)
+                insert_index = None
+                io_name = name[:number_index]+str(i)
+                io = self.findMatchingIO(io_name)
+                if io is not None:
+                    insert_index = self.ios.index(io)+1
+                    self.ios.insert(insert_index, new_io)
+                else:
+                    self.ios.append(new_io)
+        elif new_n < old_n:
+            for i in range(new_n, old_n):
+                io_name = name[:number_index]+str(i+1)
+                io_to_remove = self.findMatchingIO(io_name)
+                self.removeIO(io_to_remove)
+
+    def findMatchingIO(self, name):
+        """Find IO matching the name."""
+        for io in self.ios:
+            if io.name == name:
+                return io
+        return None
+
+    def updateIO(self, new_parameters):
+        info_ios = self.circuit_info.inputs + self.circuit_info.outputs
+        for name in info_ios:
+            number_index = name.find("#")
+            if number_index != -1:
+                parameter = name[number_index+1:]
+                if parameter in new_parameters:
+                    new_n = int(new_parameters[parameter])
+                    old_n = int(self.parameters[parameter])
+                    if new_n == old_n:
+                        continue
+                    else:
+                        self.changeNofIO(name, old_n, new_n)
+        self.positionIO()
+        self.scene().updateConnections()
+
+    def removeIO(self, io_to_remove):
+        self.scene().removeConnectionsFrom(io_to_remove)
+        self.ios.remove(io_to_remove)
+        parameter_name = "INPUT:"+io_to_remove.name
+        if parameter_name in self.parameters:
+            del self.parameters[parameter_name]
+        self.scene().removeItem(io_to_remove)
 
     def addLoadedIO(self, save_state):
         io = UIIO(save_state.name, save_state.io_type, self)
         save_state.loaded_item = io
-        if save_state.io_type == "in":
-            self.inputs.append(io)
-        else:
-            self.outputs.append(io)
+        self.ios.append(io)
 
     def positionIO(self):
         """Position the circuits inputs and outputs such that
         they're evenly spaced, inputs on left and outputs on right.
         """
         extra = 25
-        io_max = max(len(self.inputs), len(self.outputs))
+        inputs = []
+        outputs = []
+        for io in self.ios:
+            if io.io_type == "in":
+                inputs.append(io)
+            else:
+                outputs.append(io)
+        io_max = max(len(inputs), len(outputs))
         self.ysize = (io_max/6 + 1)*100
-        in_offset = round(self.ysize+extra)/(len(self.inputs)+1)
-        out_offset = round(self.ysize+extra)/(len(self.outputs)+1)
+        in_offset = round(self.ysize+extra)/(len(inputs)+1)
+        out_offset = round(self.ysize+extra)/(len(outputs)+1)
         iny = in_offset-0.5*extra
         outy = out_offset-0.5*extra
-        for inp in self.inputs:
+        for inp in inputs:
             inp.setPos(-0.5*inp.xsize, iny-0.5*inp.ysize)
             iny += in_offset
-        for outp in self.outputs:
+        for outp in outputs:
             outp.setPos(self.xsize-0.5*outp.xsize, outy-0.5*outp.ysize)
             outy += out_offset
         self.update()
@@ -87,6 +156,7 @@ class UICircuit(QtGui.QGraphicsItem):
 
     def setParameters(self, parameters):
         """Save the parameters given by parameter window."""
+        self.updateIO(parameters)
         for label, value in parameters.iteritems():
             if value is not None and value != "":
                 self.parameters[label] = value
@@ -112,10 +182,8 @@ class UICircuit(QtGui.QGraphicsItem):
         self.circuit_info = save_state.circuit_info
         self.name = save_state.name
         self.parameters = save_state.parameters
-        for input_ in save_state.inputs:
-            self.addLoadedIO(input_)
-        for output in save_state.outputs:
-            self.addLoadedIO(output)
+        for io in save_state.ios:
+            self.addLoadedIO(io)
         self.positionIO()
         self.parameter_window = ParameterWindow(self)
         self.parameter_window.setParameters()        # Clear loaded items
@@ -202,12 +270,9 @@ class SaveCircuit(object):
         self.circuit_info = circuit.circuit_info
         self.name = circuit.name
         self.parameters = circuit.parameters
-        self.inputs = []
-        for input_ in circuit.inputs:
-            self.inputs.append(input_.getSaveState())
-        self.outputs = []
-        for output_ in circuit.outputs:
-            self.outputs.append(output_.getSaveState())
+        self.ios = []
+        for io in circuit.ios:
+            self.ios.append(io.getSaveState())
         self.loaded_item = None         # Do not set this before saving
 
     def update(self, circuit):

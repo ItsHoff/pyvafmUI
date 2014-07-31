@@ -83,7 +83,7 @@ class ParameterWindow(QtGui.QDialog):
         label = QtGui.QLabel(label_text)
         text_edit = QtGui.QLineEdit()
         if label_text in self.circuit.parameters:
-            text_edit.setText(self.circuit.parameters[label_text])
+            text_edit.setText(str(self.circuit.parameters[label_text]))
         return [label, text_edit]
 
     def createCheckBox(self, label_text):
