@@ -73,13 +73,10 @@ def addInputs(string, parameters):
     start = string.find("INPUTS")
     insert = start - 2
     for key in parameters.keys():
-        print key
         if key.startswith("INPUT"):
             name = key.split(":")[-1]
             input_string = "$"+name+"="+"%"+key+"%$, "
             string = string[:insert] + input_string + string[insert:]
-            print input_string
-    print string
     return string
 
 

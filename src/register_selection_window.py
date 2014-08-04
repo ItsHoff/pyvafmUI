@@ -7,8 +7,10 @@ Classes:
     - GlobalDummy
 """
 
-from PyQt4 import QtGui, QtCore
 import sys
+
+from PyQt4 import QtGui, QtCore
+
 import drag_selection_window
 import circuits
 
@@ -39,15 +41,16 @@ class RegisterSelectionWindow(drag_selection_window.DragSelectionWindow):
             sub_item = QtGui.QTreeWidgetItem(global_item)
             sub_item.setText(0, channel)
         for circuit in self.main_widget.machine_widget.circuits:
-            if circuit.outputs:
+            if circuit.ios:
                 new_item = QtGui.QTreeWidgetItem(self.option_tree)
                 new_item.setText(0, circuit.name)
                 new_item.setData(0, QtCore.Qt.UserRole, circuit)
                 new_item.setFlags(new_item.flags() &
                                   ~QtCore.Qt.ItemIsDragEnabled)
-                for output in circuit.outputs:
-                    sub_item = QtGui.QTreeWidgetItem(new_item)
-                    sub_item.setText(0, output.name)
+                for io in circuit.ios:
+                    if io.io_type == "out":
+                        sub_item = QtGui.QTreeWidgetItem(new_item)
+                        sub_item.setText(0, io.name)
 
     def loadSelections(self):
         """Currently not required since window should never have to be
@@ -65,7 +68,7 @@ class RegisterSelectionWindow(drag_selection_window.DragSelectionWindow):
         for i in range(self.selection_tree.topLevelItemCount()):
             top_items.append(self.selection_tree.topLevelItem(i))
         for top_item in top_items:
-            if top_item.circuit.scene() is None:
+            if top_item.io is None or top_item.io.scene() is None:
                 i = self.selection_tree.indexOfTopLevelItem(top_item)
                 self.selection_tree.takeTopLevelItem(i)
             else:
@@ -81,6 +84,7 @@ class RegisterSelectionTree(drag_selection_window.SelectionTree):
         super(RegisterSelectionTree, self).__init__()
 
     def getSaveState(self):
+        self.parent().updateNames()
         save_state = RegisterSelectionSaveList()
         for i in range(self.topLevelItemCount()):
             top_item = self.topLevelItem(i)
@@ -109,6 +113,7 @@ class RegisterSelectionTreeItem(QtGui.QTreeWidgetItem):
         # Save references to the circuit and channel for easy updates
         self.circuit = circuit
         self.channel = channel
+        self.io = self.circuit.findMatchingIO(self.channel)
         super(RegisterSelectionTreeItem, self).__init__()
         self.updateText()
 
@@ -161,6 +166,9 @@ class GlobalDummy(object):
 
     def getSaveState(self):
         return self.save_state
+
+    def findMatchingIO(self, channel):
+        return self
 
     def scene(self):
         return "Global"

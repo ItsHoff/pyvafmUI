@@ -185,7 +185,7 @@ class MainWidget(QtGui.QWidget):
 
         # Create script lines for all the circuits
         for circuit in self.machine_widget.circuits:
-            circuit.getSaveState()               # Update the save state
+            circuit.updateParameters()
             if circuit.circuit_info.script_format:
                 with open(circuit.circuit_info.script_format, "r") as f:
                     script.createFromFormat(blocks, f, circuit.parameters)
@@ -246,6 +246,7 @@ class SaveState(object):
         self.circuit_index = machine_widget.circuit_index
         self.machine_parameters = main_window.centralWidget().parameters
         for circuit in machine_widget.circuits:
+            circuit.updateParameters()
             self.circuits.append(circuit.getSaveState())
         for connection in machine_widget.connections:
             self.connections.append(connection.getSaveState())

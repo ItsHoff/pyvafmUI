@@ -2,6 +2,6 @@
 %Name% = machine.AddCircuit(type='output', name='%Name%', $file = '%File%'$, $dump = %Dump%$, $%INPUTS%$, $pushed = %Pushed%$)
 
 #3
-£%Name%.Register($%Register%$)£
 
+£%Name%.Register($%Register%$)£
 

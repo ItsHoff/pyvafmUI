@@ -85,13 +85,13 @@ class UIIO(QtGui.QGraphicsItem):
             painter.setBrush(QtGui.QColor(255, 62, 66))
         painter.drawRect(0, 0, self.xsize, self.ysize)
         if self.io_type == "in":
-            rect = QtCore.QRect(0, 0, 30, 10)
+            rect = QtCore.QRect(0, 0, 35, 10)
             rect.moveBottomRight(self.shape().boundingRect().topLeft().toPoint())
             rect.moveRight(rect.right()-2)
             # painter.drawText(-self.xsize-4, -1, self.name)
             painter.drawText(rect, QtCore.Qt.AlignRight, self.name)
         else:
-            rect = QtCore.QRect(0, 0, 30, 10)
+            rect = QtCore.QRect(0, 0, 35, 10)
             rect.moveBottomLeft(self.shape().boundingRect().topRight().toPoint())
             rect.moveLeft(rect.left()+2)
             painter.drawText(rect, QtCore.Qt.AlignLeft, self.name)

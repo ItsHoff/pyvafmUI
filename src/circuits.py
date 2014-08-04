@@ -513,14 +513,20 @@ circuits = OrderedDict([
                     )
  ),
 ("Advanced Cantilever", CircuitInfo("AdCanti", "Cantilever",
-                                   ["To Do"],
-                                   ["To Do"],
+                                   ["exciterz", "excitery", "Holderx",
+                                    "Holdery", "Holderz", "ForceV", "ForceL"],
+                                   ["zPos", "yPos", "xABS", "yABS", "zABS",
+                                    "vV#NumberOfModesV", "vL#NumberOfModesL",
+                                    "yL#NumberOfModesL", "zV#NumberOfModesV"],
                     param_window_style = OrderedDict([
                                         ("Name", "LineEdit"),
                                         ("NumberOfModesV", "LineEdit"),
                                         ("NumberOfModesL", "LineEdit"),
+                                        ("StartingPos", "LineEdit"),
+                                        ("Modes", "ModeSetup"),
                                         ("Pushed", "CheckBox")
                                         ]),
+                    default_values = {"NumberOfModesV": 1, "NumberOfModesL": 1},
                     script_format = "formats/advanced_canti.format"
                     )
  ),

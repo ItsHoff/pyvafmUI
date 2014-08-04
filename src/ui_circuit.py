@@ -101,6 +101,7 @@ class UICircuit(QtGui.QGraphicsItem):
                     else:
                         self.changeNofIO(name, old_n, new_n)
         self.positionIO()
+        self.scene().updateSceneRect()
         self.scene().updateConnections()
 
     def removeIO(self, io_to_remove):
@@ -158,13 +159,17 @@ class UICircuit(QtGui.QGraphicsItem):
         """Save the parameters given by parameter window."""
         self.updateIO(parameters)
         for label, value in parameters.iteritems():
-            if value is not None and value != "":
+            if value is not None and value != "" and value != []:
                 self.parameters[label] = value
             elif label != "Name" and label in self.parameters:
                 del self.parameters[label]
         if self.name != self.parameters["Name"]:
             self.name = self.parameters["Name"]
             self.parameter_window.setWindowTitle(self.name + " parameters")
+
+    def updateParameters(self):
+        if self.parameter_window is not None:
+            self.parameter_window.setParameters()
 
     def getSaveState(self):
         """Return the current state of the circuit without the Qt bindings
@@ -177,6 +182,7 @@ class UICircuit(QtGui.QGraphicsItem):
         return self.save_state
 
     def loadSaveState(self, save_state):
+        save_state.loaded_item = self
         self.setX(save_state.x)
         self.setY(save_state.y)
         self.circuit_info = save_state.circuit_info
@@ -186,7 +192,7 @@ class UICircuit(QtGui.QGraphicsItem):
             self.addLoadedIO(io)
         self.positionIO()
         self.parameter_window = ParameterWindow(self)
-        self.parameter_window.setParameters()        # Clear loaded items
+        self.parameter_window.setParameters()           # Clear loaded items
 
     def boundingRect(self):
         """Return the bounding rectangle of the circuit.
@@ -200,7 +206,7 @@ class UICircuit(QtGui.QGraphicsItem):
         painter.setBrush(QtGui.QColor(222, 244, 251))
         painter.setPen(pen)
         painter.drawRoundedRect(0, 0, self.xsize, self.ysize,
-                                0.07*self.xsize, 0.1*self.ysize)
+                                10, 10)
         painter.drawText(0, 0, self.xsize, self.ysize,
                          QtCore.Qt.AlignCenter, self.name)
 

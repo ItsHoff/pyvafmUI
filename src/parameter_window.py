@@ -5,10 +5,12 @@ Created on Jun 19, 2014
 '''
 
 from PyQt4 import QtGui, QtCore
+
 from state_check_box import StateCheckBox
 from label_file_dialog import LabelFileDialog
 from label_dir_dialog import LabelDirDialog
 from register_selection_window import RegisterSelectionWindow
+from mode_setup_window import ModeSetupWindow
 import ui_circuit
 
 
@@ -24,7 +26,7 @@ class ParameterWindow(QtGui.QDialog):
         circuits.
         """
         self.circuit = circuit
-        self.register_window = None
+        self.extra_window = None
         if isinstance(self.circuit, ui_circuit.UICircuit):
             super(ParameterWindow, self).__init__(circuit.scene().parent().window())
             self.setWindowTitle(self.circuit.name + " parameters")
@@ -58,6 +60,8 @@ class ParameterWindow(QtGui.QDialog):
                 widgets.append(self.createDirDialog(name))
             elif widget_type == "RegisterDialog":
                 widgets.append(self.createRegisterDialog(name))
+            elif widget_type == "ModeSetup":
+                widgets.append(self.createModeSetup(name))
             else:
                 print "Incorrect widget type on circuit " + self.circuit.name
         # Add the widgets from the container into the window layout.
@@ -114,12 +118,23 @@ class ParameterWindow(QtGui.QDialog):
         """Initialize the register window and create a button to open it."""
         label = QtGui.QLabel(label_text)
         button = QtGui.QPushButton("Select Channels")
-        self.register_window = RegisterSelectionWindow(self.parent().centralWidget(),
+        self.extra_window = RegisterSelectionWindow(self.parent().centralWidget(),
                                                        self)
         QtCore.QObject.connect(button, QtCore.SIGNAL("clicked()"),
-                               self.register_window.showWindow)
+                               self.extra_window.showWindow)
         if label_text in self.circuit.parameters:
-            self.register_window.loadSaveState(self.circuit.parameters[label_text])
+            self.extra_window.loadSaveState(self.circuit.parameters[label_text])
+        return [label, button]
+
+    def createModeSetup(self, label_text):
+        """Initialize the mode setup window and create a button to open it."""
+        label = QtGui.QLabel(label_text)
+        button = QtGui.QPushButton("Setup Modes")
+        self.extra_window = ModeSetupWindow(self)
+        QtCore.QObject.connect(button, QtCore.SIGNAL("clicked()"),
+                               self.extra_window.showWindow)
+        if label_text in self.circuit.parameters:
+            self.extra_window.loadSaveState(self.circuit.parameters[label_text])
         return [label, button]
 
     def setParameters(self):
@@ -137,11 +152,11 @@ class ParameterWindow(QtGui.QDialog):
                 parameters[str(label.text())] = edit.isChecked()
             elif isinstance(edit, LabelFileDialog):
                 parameters[str(label.text())] = edit.file_path
-        # Get the registered channels from register window if it is
-        # initialised and atleast one channel is selected.
-        if self.register_window is not None:
-            selection_tree = self.register_window.selection_tree
-            parameters["Register"] = selection_tree.getSaveState()
+            elif isinstance(edit, QtGui.QPushButton):
+                # Get the save state from the extra window if its initialised
+                if self.extra_window is not None:
+                    selection_tree = self.extra_window.selection_tree
+                    parameters[str(label.text())] = selection_tree.getSaveState()
         self.circuit.setParameters(parameters)
         self.close()
 

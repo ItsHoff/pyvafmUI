@@ -67,6 +67,7 @@ class MachineWidget(QtGui.QGraphicsScene):
         self.addCircuit("Scanner", 300, 500)
         self.addCircuit("3d Linear Interpolation", 500, 500)
         self.addCircuit("Output", 700, 500)
+        self.addCircuit("Advanced Cantilever", 500, 300)
         # for i in range(1, 10):
         #     x = random.randint(0, self.xsize)
         #     y = random.randint(0, self.ysize)
@@ -108,7 +109,6 @@ class MachineWidget(QtGui.QGraphicsScene):
         self.circuits.append(circuit)
         self.addItem(circuit)
         circuit.loadSaveState(save_state)
-        save_state.loaded_item = circuit
         self.circuit_index += 1
 
     def createNewConnection(self, origin, mouse_pos):

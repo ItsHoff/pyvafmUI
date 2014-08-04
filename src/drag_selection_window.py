@@ -64,15 +64,7 @@ class DragSelectionWindow(QtGui.QDialog):
     def loadOptions(self):
         """Load all the possible options into the option tree.
         Should be reimplemented by subclasses."""
-        # This implemetation should only be used for testing purposes
-        test_options = {"Scanner": ["out1", "out2"], "Global": ["out1", "out2"]}
-        for top, sub_list in test_options.iteritems():
-            top_item = QtGui.QTreeWidgetItem(self.option_tree)
-            top_item.setText(0, top)
-            top_item.setFlags(top_item.flags() & ~QtCore.Qt.ItemIsDragEnabled)
-            for sub in sub_list:
-                sub_item = QtGui.QTreeWidgetItem(top_item)
-                sub_item.setText(0, sub)
+        pass
 
     def loadSelections(self):
         """Load all the readily selected items into the selection tree.
