@@ -3,12 +3,12 @@ Created on Jun 18, 2014
 
 @author: keisano1
 '''
-import random
 
 from PyQt4 import QtGui, QtCore
 
 
 class UIConnection(QtGui.QGraphicsPathItem):
+    """Graphics item that represents the connections of the machine."""
 
     # TODO: Make this init less awfull...
     def __init__(self, origin, mouse_pos, parent=None):
@@ -25,7 +25,7 @@ class UIConnection(QtGui.QGraphicsPathItem):
         # Check if were trying to connect an input thats allready connected.
         if origin.io_type == "in":
             if origin.nConnections() >= 1:
-                raise ValueError("Input can only have one connection.")
+                raise ValueError("Input can only have one connection!")
             else:
                 self.input_ = origin
         else:
@@ -64,10 +64,8 @@ class UIConnection(QtGui.QGraphicsPathItem):
         """
         if io.io_type == "in" and self.input_ is None and io.nConnections() < 1:
             self.input_ = io
-            print "connected " + self.input_.name + " and " + self.output.name
         elif io.io_type == "out" and self.output is None:
             self.output = io
-            print "connected " + self.input_.name + " and " + self.output.name
         else:
             return False
         self.updatePath()
@@ -84,6 +82,7 @@ class UIConnection(QtGui.QGraphicsPathItem):
         return self.save_state
 
     def loadSaveState(self, save_state):
+        """Load the state given in save_state."""
         self.input_ = save_state.input_.loaded_item
         self.output = save_state.output.loaded_item
         self.updatePath()
@@ -111,9 +110,6 @@ class UIConnection(QtGui.QGraphicsPathItem):
         path.lineTo(self.end)
         self.setPath(path)
 
-    def mousePressEvent(self, event):
-        event.ignore()
-
 
 class SaveConnection(object):
     """Container for UIConnection state without Qt bindings. Used for saving."""
@@ -124,4 +120,5 @@ class SaveConnection(object):
         self.loaded_item = None         # Do not set this before saving
 
     def update(self, connection):
+        """Update the save state to match current state."""
         self.__init__(connection)

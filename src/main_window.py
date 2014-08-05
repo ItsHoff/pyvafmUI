@@ -21,18 +21,15 @@ import script
 
 
 class MainWindow(QtGui.QMainWindow):
-    '''
-    The main window of the UI
-    '''
+    """The main window of the UI."""
 
     def __init__(self):
-        '''
-        Constructor
-        '''
+        """Initialise the main window."""
         super(MainWindow, self).__init__()
         self.initUI()
 
     def initUI(self):
+        """Initialise the UI elements of the main window."""
         self.setGeometry(100, 100, 800, 500)
         self.setWindowTitle('PyVAFM')
 
@@ -62,27 +59,40 @@ class MainWindow(QtGui.QMainWindow):
         self.setCentralWidget(MainWidget())
 
         self.show()
+        self.statusBar().showMessage("Ready!", 2000)
 
-    # TODO: Fix saving after load
     def save(self):
+        """Get the save state of the program and save it to the users choice
+        of location.
+        """
+        self.statusBar().showMessage("Creating save state...", 10000)
         save_state = SaveState()
         save_state.create(self)
         save_file = QtGui.QFileDialog().getSaveFileName(self, "Save Setup", "..")
         if save_file:
             with open(save_file, "w") as f:
                 pickle.dump(save_state, f)
-                print "saved"
+                self.statusBar().showMessage("Creating save state... Done!", 2000)
+        else:
+            self.statusBar().showMessage("Creating save state... Failed!", 2000)
 
     def load(self):
+        """Load the save state of users choice."""
+        self.statusBar().showMessage("Loading save state...", 10000)
         load_file = QtGui.QFileDialog().getOpenFileName(self, "Load Setup", "..")
         if load_file:
             with open(load_file, "r") as f:
                 save_state = pickle.load(f)
                 save_state.load(self)
-                print "loaded"
+                self.statusBar().showMessage("Loading save state... Done!", 2000)
+        else:
+            self.statusBar().showMessage("Loading save state... Failed!", 2000)
 
 
 class MainWidget(QtGui.QWidget):
+    """The main widget of the UI. Holds all of the widgets except status
+    and menubars.
+    """
 
     def __init__(self):
         super(MainWidget, self).__init__()
@@ -159,6 +169,7 @@ class MainWidget(QtGui.QWidget):
         for label, value in parameters.iteritems():
             if value is not None:
                 self.parameters[label] = value
+        self.window().statusBar().showMessage("Set machine parameters", 2000)
 
     def loadCircuits(self, tree_widget):
         """Load all the circuits from the circuits file to the tree_widget"""
@@ -176,8 +187,11 @@ class MainWidget(QtGui.QWidget):
 
     def createScript(self):
         """Create pyvafm script from the current machine state."""
+        status_bar = self.window().statusBar()
+        status_bar.showMessage("Creating script...", 10000)
         savefile = QtGui.QFileDialog.getSaveFileName(self, "Save script", "..")
         if not savefile:
+            status_bar.showMessage("Creating script... Failed!", 2000)
             return
         blocks = [""]*5
         with open("formats/machine.format", "r") as f:
@@ -190,6 +204,7 @@ class MainWidget(QtGui.QWidget):
                 with open(circuit.circuit_info.script_format, "r") as f:
                     script.createFromFormat(blocks, f, circuit.parameters)
             else:
+                status_bar.showMessage("Creating script... Failed!", 2000)
                 raise NotImplementedError("Circuit " + circuit.name +
                       " doesn't have proper script format implemented!")
 
@@ -216,6 +231,7 @@ class MainWidget(QtGui.QWidget):
                 f.write(block)
                 f.write('\n\n')
                 i += 1
+        status_bar.showMessage("Creating script... Done!", 2000)
         return savefile
 
     def createRun(self):
@@ -226,8 +242,8 @@ class MainWidget(QtGui.QWidget):
         if savefile:
             end = savefile.lastIndexOf('/')
             savedir = savefile[:end]
-            subprocess.call('ls', cwd=savedir)
-            subprocess.call(["python", str(savefile)], cwd=savedir)
+            self.window().statusBar().showMessage("Running script", 4000)
+            subprocess.Popen(["python", str(savefile)], cwd=savedir)
 
 
 class SaveState(object):
@@ -241,7 +257,7 @@ class SaveState(object):
         self.circuit_index = 0
 
     def create(self, main_window):
-        print "creating save state"
+        """Gather all the data for saving without Qt bindings."""
         machine_widget = main_window.centralWidget().machine_widget
         self.circuit_index = machine_widget.circuit_index
         self.machine_parameters = main_window.centralWidget().parameters
@@ -254,7 +270,7 @@ class SaveState(object):
         self.run_selections = run_selection_window.getSaveState()
 
     def load(self, main_window):
-        print "loading save state"
+        """Load the save state stored in this object."""
         machine_widget = main_window.centralWidget().machine_widget
         machine_widget.clearAll()
         machine_widget.circuit_index = self.circuit_index
@@ -269,6 +285,7 @@ class SaveState(object):
 
 
 def main():
+    """Start the program and open the main window."""
     app = QtGui.QApplication(sys.argv)
     w = MainWindow()
     sys.exit(app.exec_())

@@ -5,6 +5,7 @@ Created on Jun 6, 2014
 '''
 
 from PyQt4 import QtGui, QtCore
+
 from ui_circuit import UICircuit
 from ui_IO import UIIO
 from ui_connection import UIConnection
@@ -12,9 +13,7 @@ import circuits
 
 
 class MachineWidget(QtGui.QGraphicsScene):
-    '''
-    classdocs
-    '''
+    """Scene displaying the current state of the machine."""
 
     def __init__(self, tree_widget, parent=None):
         '''
@@ -24,15 +23,14 @@ class MachineWidget(QtGui.QGraphicsScene):
         self.tree_widget = tree_widget
         self.xsize = 1000
         self.ysize = 1000
-        self.max_size = 2000
         self.circuits = []
         self.connections = []
         self.circuit_index = 1
-        self.font_size = 15
         self.new_connection = None
         self.initWidget()
 
     def initWidget(self):
+        """Initialise the UI of the widget."""
         self.addCircuits()
         self.updateSceneRect()
         self.update()
@@ -49,6 +47,7 @@ class MachineWidget(QtGui.QGraphicsScene):
         return rect
 
     def updateSceneRect(self):
+        """Update the scene rect to the one given by getNewSceneRect."""
         rect = self.getNewSceneRect()
         self.setSceneRect(rect)
 
@@ -68,19 +67,12 @@ class MachineWidget(QtGui.QGraphicsScene):
         self.addCircuit("3d Linear Interpolation", 500, 500)
         self.addCircuit("Output", 700, 500)
         self.addCircuit("Advanced Cantilever", 500, 300)
-        # for i in range(1, 10):
-        #     x = random.randint(0, self.xsize)
-        #     y = random.randint(0, self.ysize)
-        #     circuit = UICircuit(x - x%100, y -y%100, random.choice(circuits.circuits.values()), self)
-        #     self.circuits.append(circuit)
-        #     self.addItem(circuit)
-        #     self.circuit_index += 1
 
     def addCircuit(self, name, x, y):
         """Add a circuit with corresponding name to the scene
         and update the scene.
         """
-        circuit = UICircuit(x - x % 100, y - y % 100, circuits.circuits[name], self)
+        circuit = UICircuit(x-x%100, y-y%100, circuits.circuits[name], self)
         circuit.addIO()
         self.circuits.append(circuit)
         self.addItem(circuit)
@@ -105,6 +97,7 @@ class MachineWidget(QtGui.QGraphicsScene):
             self.addCircuit(name, pos.x(), pos.y())
 
     def addLoadedCircuit(self, save_state):
+        """Add circuit loaded from save_state into the scene."""
         circuit = UICircuit(0, 0, save_state.circuit_info)
         self.circuits.append(circuit)
         self.addItem(circuit)
@@ -117,10 +110,11 @@ class MachineWidget(QtGui.QGraphicsScene):
         Should be called by the input or output at the start of the
         connection.
         """
+        status_bar = self.parent().window().statusBar()
         try:
             self.new_connection = UIConnection(origin, mouse_pos)
         except ValueError as e:
-            print e.message
+            status_bar.showMessage(e.message, 3000)
             return
         self.views()[0].setMouseTracking(True)
         self.addItem(self.new_connection)
@@ -129,11 +123,18 @@ class MachineWidget(QtGui.QGraphicsScene):
         """Add a new valid connection. Should be called
         by the input or output at the end of connection.
         """
+        status_bar = self.parent().window().statusBar()
+        input_ = self.new_connection.input_
+        output = self.new_connection.output
+        message = "Connected %s.%s and %s.%s" % (input_.circuit.name,
+                input_.name, output.circuit.name, output.name)
         self.connections.append(self.new_connection)
         self.new_connection = None
         self.views()[0].setMouseTracking(False)
+        status_bar.showMessage(message, 4000)
 
     def addLoadedConnection(self, save_state):
+        """Add connection loaded from save_state into the scene."""
         output = save_state.output
         connection = UIConnection(output.loaded_item, output.loaded_item.pos())
         connection.loadSaveState(save_state)
@@ -144,9 +145,11 @@ class MachineWidget(QtGui.QGraphicsScene):
     def deleteNewConnection(self):
         """Delete unconnected new_connextion."""
         if self.new_connection is not None:
+            status_bar = self.parent().window().statusBar()
             self.removeItem(self.new_connection)
             self.new_connection = None
             self.views()[0].setMouseTracking(False)
+            status_bar.showMessage("Destroyed connection", 2000)
 
     def updateConnections(self):
         """Update paths for all required connections.
@@ -181,46 +184,57 @@ class MachineWidget(QtGui.QGraphicsScene):
 
     def clearAll(self):
         """Clear everything from the scene."""
+        status_bar = self.parent().window().statusBar()
         for circuit in self.circuits[:]:
             self.removeCircuit(circuit)
         # self.updateSceneRect()
+        status_bar.showMessage("Cleared all", 3000)
         self.update()
 
     def removeConnections(self):
         """Clear all connections from the scene."""
+        status_bar = self.parent().window().statusBar()
         for connection in self.connections:
             self.removeItem(connection)
         self.connections = []
+        status_bar.showMessage("Removed all connections", 3000)
         self.update()
 
     def removeConnectionsFrom(self, IO):
         """Remove all connections from input or output
         given as parameter.
         """
+        status_bar = self.parent().window().statusBar()
         for connection in self.connections[:]:
             if connection.input_ == IO or connection.output == IO:
                 self.connections.remove(connection)
                 self.removeItem(connection)
+        status_bar.showMessage("Removed all connections from %s.%s"%
+                (IO.circuit.name, IO.name), 3000)
         self.update()
 
     def removeConnection(self, connection):
         """Remove the specified connection from the scene."""
+        status_bar = self.parent().window().statusBar()
+        input_ = connection.input_
+        output = connection.output
+        message = "Removed connection from %s.%s to %s.%s" % (input_.circuit.name,
+                input_.name, output.circuit.name, output.name)
         self.connections.remove(connection)
         self.removeItem(connection)
+        status_bar.showMessage(message, 3000)
 
     def removeCircuit(self, circuit):
         """Remove the specified circuit from the scene.
         Also remove all the circuits inputs, outputs and connections
         from the scene.
         """
-        for inp in circuit.inputs:
-            self.removeConnectionsFrom(inp)
-            self.removeItem(inp)
-        for outp in circuit.outputs:
-            self.removeConnectionsFrom(outp)
-            self.removeItem(outp)
+        status_bar = self.parent().window().statusBar()
+        for io in circuit.ios:
+            self.removeConnectionsFrom(io)
         self.circuits.remove(circuit)
         self.removeItem(circuit)
+        status_bar.showMessage("Removed %s"%circuit.name, 3000)
         self.updateSceneRect()
         self.update()
 
@@ -286,7 +300,6 @@ class MachineWidget(QtGui.QGraphicsScene):
                     (not self.hasIOatPos(event.scenePos()) or
                      event.button() != QtCore.Qt.LeftButton)):
                 self.deleteNewConnection()
-                print "destroyed connection"
 
     def mouseMoveEvent(self, event):
         """If user is trying to create a connection update connections

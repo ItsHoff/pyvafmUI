@@ -10,6 +10,7 @@ from parameter_window import InputValueWindow
 
 
 class UIIO(QtGui.QGraphicsItem):
+    """Graphics item that represents the inputs and outputs of the machine."""
 
     def __init__(self, name, io_type, circuit):
         """Create a new input or output with a given name and type.
@@ -75,6 +76,7 @@ class UIIO(QtGui.QGraphicsItem):
         return shape
 
     def paint(self, painter, options, widget):
+        """Paint the io and add the name text."""
         pen = QtGui.QPen(QtGui.QColor(0, 0, 0))
         pen.setWidthF(1.25)
         painter.setPen(pen)
@@ -107,6 +109,7 @@ class UIIO(QtGui.QGraphicsItem):
         # since otherwise opening a context menu on the io will send the
         # following two clicks to the io as well disregarding the click
         # position.
+        status_bar = self.scene().parent().window().statusBar()
         if (event.button() == QtCore.Qt.LeftButton and
            self.contains(event.pos())):
             if self.scene().new_connection is None:
@@ -116,8 +119,10 @@ class UIIO(QtGui.QGraphicsItem):
                     self.scene().addConnection()
                 else:
                     self.scene().deleteNewConnection()
+                    status_bar.showMessage("Connection failed", 3000)
 
     def mouseDoubleClickEvent(self, event):
+        """Open a window for setting constant value if io is input."""
         self.scene().deleteNewConnection()
         if self.value_window is not None:
             self.value_window.showWindow()
@@ -135,4 +140,5 @@ class SaveIO(object):
         self.loaded_item = None         # Do not set this before saving
 
     def update(self, io):
+        """Update the save state to match current machine state."""
         self.__init__(io)

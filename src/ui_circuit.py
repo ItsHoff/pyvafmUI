@@ -10,6 +10,7 @@ from parameter_window import ParameterWindow
 
 
 class UICircuit(QtGui.QGraphicsItem):
+    """Graphics item that represents the circuits of the machine."""
 
     def __init__(self, x, y, circuit_info, parent=None):
         """Create a circuit defined by the circuit_info and
@@ -33,8 +34,6 @@ class UICircuit(QtGui.QGraphicsItem):
         self.parameters = circuit_info.default_values.copy()
         self.parameters["Name"] = self.name
         self.ios = []
-        self.inputs = []
-        self.outputs = []
 
     def addIO(self):
         """Add inputs and outputs defined in circuit info
@@ -88,6 +87,9 @@ class UICircuit(QtGui.QGraphicsItem):
         return None
 
     def updateIO(self, new_parameters):
+        """Update the amount of io if the relevant parameters 
+        have been changed.
+        """
         info_ios = self.circuit_info.inputs + self.circuit_info.outputs
         for name in info_ios:
             number_index = name.find("#")
@@ -105,6 +107,7 @@ class UICircuit(QtGui.QGraphicsItem):
         self.scene().updateConnections()
 
     def removeIO(self, io_to_remove):
+        """Remove io_to_remove from the circuit."""
         self.scene().removeConnectionsFrom(io_to_remove)
         self.ios.remove(io_to_remove)
         parameter_name = "INPUT:"+io_to_remove.name
@@ -113,6 +116,7 @@ class UICircuit(QtGui.QGraphicsItem):
         self.scene().removeItem(io_to_remove)
 
     def addLoadedIO(self, save_state):
+        """Add io matching the save state to the circuit."""
         io = UIIO(save_state.name, save_state.io_type, self)
         save_state.loaded_item = io
         self.ios.append(io)
@@ -157,6 +161,7 @@ class UICircuit(QtGui.QGraphicsItem):
 
     def setParameters(self, parameters):
         """Save the parameters given by parameter window."""
+        status_bar = self.scene().parent().window().statusBar()
         self.updateIO(parameters)
         for label, value in parameters.iteritems():
             if value is not None and value != "" and value != []:
@@ -166,8 +171,10 @@ class UICircuit(QtGui.QGraphicsItem):
         if self.name != self.parameters["Name"]:
             self.name = self.parameters["Name"]
             self.parameter_window.setWindowTitle(self.name + " parameters")
+        status_bar.showMessage("Set parameters for %s"%self.name, 2000)
 
     def updateParameters(self):
+        """Update the parameters of the circuit to match the current state."""
         if self.parameter_window is not None:
             self.parameter_window.setParameters()
 
@@ -182,6 +189,7 @@ class UICircuit(QtGui.QGraphicsItem):
         return self.save_state
 
     def loadSaveState(self, save_state):
+        """Load the state given in save_state."""
         save_state.loaded_item = self
         self.setX(save_state.x)
         self.setY(save_state.y)
@@ -201,6 +209,7 @@ class UICircuit(QtGui.QGraphicsItem):
         return QtCore.QRectF(0, 0, self.xsize, self.ysize)
 
     def paint(self, painter, options, widget):
+        """Paint the circuit. Called automatically by the scene."""
         pen = QtGui.QPen(QtGui.QColor(0, 0, 0))
         pen.setWidth(2)
         painter.setBrush(QtGui.QColor(222, 244, 251))
@@ -282,4 +291,5 @@ class SaveCircuit(object):
         self.loaded_item = None         # Do not set this before saving
 
     def update(self, circuit):
+        """Update the save state to match the current state."""
         self.__init__(circuit)
