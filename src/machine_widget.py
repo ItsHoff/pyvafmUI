@@ -94,6 +94,7 @@ class MachineWidget(QtGui.QGraphicsScene):
             return
         name = str(item.text(0))
         if item.parent():
+            self.addToRecentlyUsed(item)
             self.addCircuit(name, pos.x(), pos.y())
 
     def addLoadedCircuit(self, save_state):
@@ -281,6 +282,19 @@ class MachineWidget(QtGui.QGraphicsScene):
             event.accept()
             dropped_item = event.source().currentItem()
             self.addDroppedCircuit(dropped_item, event.scenePos())
+            self.addToRecentlyUsed(dropped_item)
+
+    def addToRecentlyUsed(self, tree_item):
+        """Add tree item under the recently used tab if it's not allready
+        there.
+        """
+        recently = self.tree_widget.findItems("Recently Used",
+                                              QtCore.Qt.MatchExactly)[0]
+        for i in range(recently.childCount()):
+            if recently.child(i).text(0) == tree_item.text(0):
+                return
+        clone = tree_item.clone()
+        recently.addChild(clone)
 
     def mousePressEvent(self, event):
         """If user is holding down ctrl try to add circuit to the scene.
