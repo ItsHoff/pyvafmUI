@@ -72,9 +72,11 @@ class DragSelectionWindow(QtGui.QDialog):
         pass
 
     def getSaveState(self):
+        """Return the save state of the window for saving."""
         return self.selection_tree.getSaveState()
 
     def loadSaveState(self, save_state):
+        """Load the selection tree to the state given in save_state."""
         self.selection_tree.loadSaveState(save_state)
 
     def dragEnterEvent(self, event):

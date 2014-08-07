@@ -87,7 +87,7 @@ class UICircuit(QtGui.QGraphicsItem):
         return None
 
     def updateIO(self, new_parameters):
-        """Update the amount of io if the relevant parameters 
+        """Update the amount of io if the relevant parameters
         have been changed.
         """
         info_ios = self.circuit_info.inputs + self.circuit_info.outputs
@@ -119,6 +119,7 @@ class UICircuit(QtGui.QGraphicsItem):
         """Add io matching the save state to the circuit."""
         io = UIIO(save_state.name, save_state.io_type, self)
         save_state.loaded_item = io
+        io.save_state = save_state
         self.ios.append(io)
 
     def positionIO(self):
@@ -191,6 +192,7 @@ class UICircuit(QtGui.QGraphicsItem):
     def loadSaveState(self, save_state):
         """Load the state given in save_state."""
         save_state.loaded_item = self
+        self.save_state = save_state
         self.setX(save_state.x)
         self.setY(save_state.y)
         self.circuit_info = save_state.circuit_info
@@ -199,8 +201,6 @@ class UICircuit(QtGui.QGraphicsItem):
         for io in save_state.ios:
             self.addLoadedIO(io)
         self.positionIO()
-        self.parameter_window = ParameterWindow(self)
-        self.parameter_window.setParameters()           # Clear loaded items
 
     def boundingRect(self):
         """Return the bounding rectangle of the circuit.

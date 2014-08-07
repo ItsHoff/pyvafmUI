@@ -21,8 +21,6 @@ class MachineWidget(QtGui.QGraphicsScene):
         '''
         super(MachineWidget, self).__init__(parent)
         self.tree_widget = tree_widget
-        self.xsize = 1000
-        self.ysize = 1000
         self.circuits = []
         self.connections = []
         self.circuit_index = 1
@@ -61,12 +59,8 @@ class MachineWidget(QtGui.QGraphicsScene):
         self.setSceneRect(new_rect)
 
     def addCircuits(self):
-        """Add some circuits to the scene on startup.
-        Probably no use in final versions."""
-        self.addCircuit("Scanner", 300, 500)
-        self.addCircuit("3d Linear Interpolation", 500, 500)
-        self.addCircuit("Output", 700, 500)
-        self.addCircuit("Advanced Cantilever", 500, 300)
+        """Add some circuits to the scene on startup."""
+        pass
 
     def addCircuit(self, name, x, y):
         """Add a circuit with corresponding name to the scene
@@ -127,8 +121,8 @@ class MachineWidget(QtGui.QGraphicsScene):
         status_bar = self.parent().window().statusBar()
         input_ = self.new_connection.input_
         output = self.new_connection.output
-        message = "Connected %s.%s and %s.%s" % (input_.circuit.name,
-                input_.name, output.circuit.name, output.name)
+        message = "Connected %s.%s and %s.%s" % (output.circuit.name,
+                  output.name, input_.circuit.name, input_.name)
         self.connections.append(self.new_connection)
         self.new_connection = None
         self.views()[0].setMouseTracking(False)
@@ -139,7 +133,6 @@ class MachineWidget(QtGui.QGraphicsScene):
         output = save_state.output
         connection = UIConnection(output.loaded_item, output.loaded_item.pos())
         connection.loadSaveState(save_state)
-        save_state.loaded_item = connection
         self.connections.append(connection)
         self.addItem(connection)
 
@@ -261,10 +254,10 @@ class MachineWidget(QtGui.QGraphicsScene):
                 qp.drawLine(int(x), int(tl.y()), int(x), int(br.y()))
         # Draw thicklines to the middle of the scene
         qp.setPen(solid_pen)
-        qp.drawLine(int(0.5*self.xsize), int(tl.y()),
-                    int(0.5*self.xsize), int(br.y()))
-        qp.drawLine(int(tl.x()), int(0.5*self.ysize),
-                    int(br.x()), int(0.5*self.ysize))
+        qp.drawLine(0, int(tl.y()),
+                    0, int(br.y()))
+        qp.drawLine(int(tl.x()), 0,
+                    int(br.x()), 0)
 
     def dragEnterEvent(self, event):
         """Accept event for drag & drop to work."""

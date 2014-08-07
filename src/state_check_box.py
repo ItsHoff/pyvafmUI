@@ -15,7 +15,8 @@ class StateCheckBox(QtGui.QCheckBox):
         super(StateCheckBox, self).__init__()
         self.setChecked(state)
         self.setText(str(state))
-        QtCore.QObject.connect(self, QtCore.SIGNAL("stateChanged(int)"), self.changeText)
+        QtCore.QObject.connect(self, QtCore.SIGNAL("stateChanged(int)"),
+                               self.changeText)
 
     def changeText(self):
         """Change text to match the state of the checkbox."""

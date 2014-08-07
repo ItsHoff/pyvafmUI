@@ -23,7 +23,8 @@ class LabelDirDialog(LabelFileDialog):
     def openDialog(self):
         """Open the dialog for selecting directories. If selected
         call setFileName to change label."""
-        filename = QtGui.QFileDialog.getExistingDirectory(self, "Select folder", "/home/keisano1/Project/pyvafm-master/src")
+        filename = QtGui.QFileDialog.getExistingDirectory(self, "Select folder",
+                   "/home/keisano1/Project/pyvafm-master/src")
         if filename:
             self.setFileName(filename)
 

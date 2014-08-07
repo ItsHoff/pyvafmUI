@@ -134,6 +134,7 @@ class RegisterSelectionSaveItem(object):
         self.channel = tree_item.channel
 
     def update(self, tree_item):
+        """Update the save state to match the current state."""
         self.__init__(tree_item)
 
     def __str__(self):
@@ -141,6 +142,9 @@ class RegisterSelectionSaveItem(object):
 
 
 class RegisterSelectionSaveList(list):
+    """Convinience class for handling save items. Reimplements __str__
+    to print out proper info for script.
+    """
 
     def __init__(self):
         super(RegisterSelectionSaveList, self).__init__()
@@ -165,12 +169,15 @@ class GlobalDummy(object):
         self.loaded_item = self
 
     def getSaveState(self):
+        """Return the save state of the object for saving."""
         return self.save_state
 
     def findMatchingIO(self, channel):
-        return self
+        """Return something not None to signal that the channel is valid."""
+        return "Global"
 
     def scene(self):
+        """Return something not None to tell it's part of a scene."""
         return "Global"
 
 

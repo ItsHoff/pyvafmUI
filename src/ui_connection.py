@@ -10,7 +10,6 @@ from PyQt4 import QtGui, QtCore
 class UIConnection(QtGui.QGraphicsPathItem):
     """Graphics item that represents the connections of the machine."""
 
-    # TODO: Make this init less awfull...
     def __init__(self, origin, mouse_pos, parent=None):
         """Create a new connection starting from input or output origin and
         ending at mouse_pos. Will give ValueError if trying to connect
@@ -83,6 +82,8 @@ class UIConnection(QtGui.QGraphicsPathItem):
 
     def loadSaveState(self, save_state):
         """Load the state given in save_state."""
+        save_state.loaded_item = self
+        self.save_state = save_state
         self.input_ = save_state.input_.loaded_item
         self.output = save_state.output.loaded_item
         self.updatePath()
