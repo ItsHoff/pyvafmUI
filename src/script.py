@@ -26,7 +26,6 @@ The required format:
       if no OPTIONAL parameters are contained inside.
       example: £%name%.Configure($parameter = %Parameter%$)£
 """
-# TODO: Make this cleaner
 # TODO: Handle invalid formats
 
 
@@ -62,7 +61,7 @@ def createCleanLine(line, parameters):
         line = cleanOptionalBlocks(line, parameters)
     for label, value in parameters.iteritems():
         replaced = '%'+label+'%'
-        line = line.replace(replaced, str(value))
+        line = line.replace(str(replaced), str(value))
     line = line.replace('£', '')
     line = line.replace('$', '')
     return line

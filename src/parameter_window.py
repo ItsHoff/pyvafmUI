@@ -6,12 +6,9 @@ Created on Jun 19, 2014
 
 from PyQt4 import QtGui, QtCore
 
-from state_check_box import StateCheckBox
-from label_file_dialog import LabelFileDialog
-from label_dir_dialog import LabelDirDialog
-from register_selection_window import RegisterSelectionWindow
-from mode_setup_window import ModeSetupWindow
 import ui_circuit
+import widget_creator
+from custom_line_edit import CustomLineEdit
 
 
 class ParameterWindow(QtGui.QDialog):
@@ -37,7 +34,8 @@ class ParameterWindow(QtGui.QDialog):
             self.addWidgets(self.circuit.param_window_style)
 
     def showWindow(self):
-        """Show the window and make sure it's activated and on top."""
+        """Update the widgets to show the current parameter values and
+        show the window and make sure it's activated and on top."""
         self.show()
         self.raise_()
         self.activateWindow()
@@ -50,18 +48,19 @@ class ParameterWindow(QtGui.QDialog):
         # Create all the necessary widgets and add them to the temporary
         # widgets container.
         for name, widget_type in param_window_style.iteritems():
-            if widget_type == "LineEdit":
-                widgets.append(self.createLineEdit(name))
+            if widget_type.endswith("LineEdit"):
+                widgets.append(widget_creator.createLineEdit(name, widget_type))
             elif widget_type == "CheckBox":
-                widgets.append(self.createCheckBox(name))
+                widgets.append(widget_creator.createCheckBox(name))
             elif widget_type == "FileDialog":
-                widgets.append(self.createFileDialog(name))
+                widgets.append(widget_creator.createFileDialog(name))
             elif widget_type == "DirDialog":
-                widgets.append(self.createDirDialog(name))
+                widgets.append(widget_creator.createDirDialog(name))
             elif widget_type == "RegisterDialog":
-                widgets.append(self.createRegisterDialog(name))
+                widgets.append(widget_creator.createRegisterDialog(name,
+                                self.parent().centralWidget(), self))
             elif widget_type == "ModeSetup":
-                widgets.append(self.createModeSetup(name))
+                widgets.append(widget_creator.createModeSetup(name, self))
             else:
                 print "Incorrect widget type on circuit " + self.circuit.name
         # Add the widgets from the container into the window layout.
@@ -81,61 +80,7 @@ class ParameterWindow(QtGui.QDialog):
         #                        self.cancel)
         grid.addWidget(ok_button, row, 0, 1, 2)
         # grid.addWidget(cancel_button, row, 1)
-
-    def createLineEdit(self, label_text):
-        """Create a line edit and a label with label_text."""
-        label = QtGui.QLabel(label_text)
-        text_edit = QtGui.QLineEdit()
-        if label_text in self.circuit.parameters:
-            text_edit.setText(str(self.circuit.parameters[label_text]))
-        return [label, text_edit]
-
-    def createCheckBox(self, label_text):
-        """Create a check box and a label with label_text."""
-        label = QtGui.QLabel(label_text)
-        check_box = StateCheckBox()
-        if label_text in self.circuit.parameters:
-            check_box.setChecked(bool(self.circuit.parameters[label_text]))
-        return [label, check_box]
-
-    def createFileDialog(self, label_text):
-        """Create a file dialog and a label with label_text."""
-        label = QtGui.QLabel(label_text)
-        file_dialog = LabelFileDialog()
-        if label_text in self.circuit.parameters:
-            file_dialog.setFileName(self.circuit.parameters[label_text])
-        return [label, file_dialog]
-
-    def createDirDialog(self, label_text):
-        """Create a directory dialog and a label with label_text."""
-        label = QtGui.QLabel(label_text)
-        dir_dialog = LabelDirDialog()
-        if label_text in self.circuit.parameters:
-            dir_dialog.setFileName(self.circuit.parameters[label_text])
-        return [label, dir_dialog]
-
-    def createRegisterDialog(self, label_text):
-        """Initialize the register window and create a button to open it."""
-        label = QtGui.QLabel(label_text)
-        button = QtGui.QPushButton("Select Channels")
-        self.extra_window = RegisterSelectionWindow(self.parent().centralWidget(),
-                                                       self)
-        QtCore.QObject.connect(button, QtCore.SIGNAL("clicked()"),
-                               self.extra_window.showWindow)
-        if label_text in self.circuit.parameters:
-            self.extra_window.loadSaveState(self.circuit.parameters[label_text])
-        return [label, button]
-
-    def createModeSetup(self, label_text):
-        """Initialize the mode setup window and create a button to open it."""
-        label = QtGui.QLabel(label_text)
-        button = QtGui.QPushButton("Setup Modes")
-        self.extra_window = ModeSetupWindow(self)
-        QtCore.QObject.connect(button, QtCore.SIGNAL("clicked()"),
-                               self.extra_window.showWindow)
-        if label_text in self.circuit.parameters:
-            self.extra_window.loadSaveState(self.circuit.parameters[label_text])
-        return [label, button]
+        self.setValues()
 
     def setParameters(self):
         """Collect all the parameters given and call the circuits
@@ -146,19 +91,32 @@ class ParameterWindow(QtGui.QDialog):
         for row in range(0, rows - 1):
             label = self.layout().itemAtPosition(row, 0).widget()
             edit = self.layout().itemAtPosition(row, 1).widget()
-            if isinstance(edit, QtGui.QLineEdit):
-                parameters[str(label.text())] = edit.text()
-            elif isinstance(edit, StateCheckBox):
-                parameters[str(label.text())] = edit.isChecked()
-            elif isinstance(edit, LabelFileDialog):
-                parameters[str(label.text())] = edit.file_path
-            elif isinstance(edit, QtGui.QPushButton):
+            parameters[label.text()] = edit.getValue()
+            # if isinstance(edit, QtGui.QLineEdit):
+                # parameters[str(label.text())] = edit.text()
+            # elif isinstance(edit, StateCheckBox):
+                # parameters[str(label.text())] = edit.isChecked()
+            # elif isinstance(edit, LabelFileDialog):
+                # parameters[str(label.text())] = edit.file_path
+            # elif isinstance(edit, QtGui.QPushButton):
                 # Get the save state from the extra window if its initialised
-                if self.extra_window is not None:
-                    selection_tree = self.extra_window.selection_tree
-                    parameters[str(label.text())] = selection_tree.getSaveState()
+                # if self.extra_window is not None:
+                    # selection_tree = self.extra_window.selection_tree
+                    # parameters[str(label.text())] = selection_tree.getSaveState()
         self.circuit.setParameters(parameters)
         self.close()
+
+    def setValues(self):
+        """Iterate through all the window widgets and set the widget value
+        to match the current parameter value."""
+        rows = self.layout().rowCount()
+        for row in range(0, rows - 1):
+            label_text = self.layout().itemAtPosition(row, 0).widget().text()
+            edit = self.layout().itemAtPosition(row, 1).widget()
+            if label_text in self.circuit.parameters:
+                edit.setValue(self.circuit.parameters[str(label_text)])
+            else:
+                edit.clearValue()
 
     def cancel(self):
         """Close the window without action when cancel is pressed."""
@@ -166,6 +124,7 @@ class ParameterWindow(QtGui.QDialog):
 
 
 class InputValueWindow(QtGui.QDialog):
+    """Small dialog window for manually setting input values."""
 
     def __init__(self, input_):
         self.input_ = input_
@@ -175,9 +134,10 @@ class InputValueWindow(QtGui.QDialog):
         self.initUI()
 
     def initUI(self):
+        """Initialise the UI elements of the window."""
         layout = QtGui.QGridLayout()
         label = QtGui.QLabel("Value")
-        self.edit = QtGui.QLineEdit()
+        self.edit = CustomLineEdit("FloatLineEdit")
         if "INPUT:"+self.input_.name in self.circuit.parameters:
             self.edit.setText(self.circuit.parameters["INPUT:"+self.input_.name])
         done_button = QtGui.QPushButton("Done")
@@ -197,6 +157,7 @@ class InputValueWindow(QtGui.QDialog):
         self.activateWindow()
 
     def setParameters(self):
+        """Set the input value in circuit parameters."""
         parameters = {"INPUT:"+self.input_.name: self.edit.text()}
         self.circuit.setParameters(parameters)
         self.close()

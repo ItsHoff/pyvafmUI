@@ -94,7 +94,7 @@ class RunSelectionTree(drag_selection_window.SelectionTree):
         with the item.
         """
         new_item = QtGui.QTreeWidgetItem()
-        circuit = parent_item.data(0, QtCore.Qt.UserRole).toPyObject()
+        circuit = parent_item.data(0, QtCore.Qt.UserRole)
         item_widget = RunSelectionTreeItem(circuit, dropped_item.text(0))
         # Set the tree item size hint to match the widget size hint.
         size_hint = item_widget.sizeHint()
@@ -171,6 +171,7 @@ class RunSelectionSaveItem(object):
         self.edit_text = tree_item.getEdit()
 
     def update(self, tree_item):
+        """Update the save state to match the current state."""
         self.__init__(tree_item)
 
 
@@ -183,9 +184,13 @@ class MachineDummy(object):
         self.loaded_item = self
 
     def getSaveState(self):
+        """Return the save state of the object."""
         return self.save_state
 
     def scene(self):
+        """Return something not None to signal that the dummy is
+        part of a scene.
+        """
         return "Global"
 
 if __name__ == '__main__':

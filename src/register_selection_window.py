@@ -15,6 +15,29 @@ import drag_selection_window
 import circuits
 
 
+class RegisterSelectionButton(QtGui.QPushButton):
+    """Button wrapper for the window. Its purpose is to give a common interface
+    for all parameter window widgets."""
+
+    def __init__(self, central_widget, parent):
+        super(RegisterSelectionButton, self).__init__("Select Channels")
+        self.window = RegisterSelectionWindow(central_widget, parent)
+        QtCore.QObject.connect(self, QtCore.SIGNAL("clicked()"),
+                               self.window.showWindow)
+
+    def getValue(self):
+        """Return the save state of the window."""
+        return self.window.getSaveState()
+
+    def setValue(self, value):
+        """Load the save state of the window."""
+        self.window.loadSaveState(value)
+
+    def clearValue(self):
+        """Clear the value of the widget."""
+        self.window.clearSelections()
+
+
 class RegisterSelectionWindow(drag_selection_window.DragSelectionWindow):
     """Subclass of DragSelectionWindow for selecting channels to
     register for the output.
@@ -96,7 +119,7 @@ class RegisterSelectionTree(drag_selection_window.SelectionTree):
         """Create a new tree item for the tree. Return new_item, None since
         no custom widget is used.
         """
-        circuit = parent_item.data(0, QtCore.Qt.UserRole).toPyObject()
+        circuit = parent_item.data(0, QtCore.Qt.UserRole)
         new_item = RegisterSelectionTreeItem(circuit, dropped_item.text(0))
         return new_item, None
 
@@ -174,7 +197,7 @@ class GlobalDummy(object):
 
     def findMatchingIO(self, channel):
         """Return something not None to signal that the channel is valid."""
-        return "Global"
+        return self
 
     def scene(self):
         """Return something not None to tell it's part of a scene."""

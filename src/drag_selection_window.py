@@ -95,6 +95,10 @@ class DragSelectionWindow(QtGui.QDialog):
                 self.selection_tree.deleted_item = deleted_item
                 self.selection_tree.setCurrentItem(None)
 
+    def clearSelections(self):
+        """Clear all the selections from the selection tree."""
+        self.selection_tree.clear()
+
 
 class SelectionTree(QtGui.QTreeWidget):
     """Tree widget that holds the selections of the window."""

@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 '''
 Created on Jun 6, 2014
 
@@ -9,6 +11,11 @@ import sys
 import subprocess
 import cPickle as pickle
 
+import sip
+API_NAMES = ["QDate", "QDateTime", "QString", "QTextStream", "QTime", "QUrl", "QVariant"]
+API_VERSION = 2
+for name in API_NAMES:
+    sip.setapi(name, API_VERSION)
 from PyQt4 import QtGui, QtCore
 
 from machine_widget import MachineWidget
@@ -79,7 +86,8 @@ class MainWindow(QtGui.QMainWindow):
     def load(self):
         """Load the save state of users choice."""
         self.statusBar().showMessage("Loading save state...", 10000)
-        load_file = QtGui.QFileDialog().getOpenFileName(self, "Load Setup", "..")
+        load_file = QtGui.QFileDialog().getOpenFileName(self, "Load Setup",
+                                                        "../saves")
         if load_file:
             with open(load_file, "r") as f:
                 save_state = pickle.load(f)
@@ -189,7 +197,8 @@ class MainWidget(QtGui.QWidget):
         """Create pyvafm script from the current machine state."""
         status_bar = self.window().statusBar()
         status_bar.showMessage("Creating script...", 10000)
-        savefile = QtGui.QFileDialog.getSaveFileName(self, "Save script", "..")
+        savefile = QtGui.QFileDialog.getSaveFileName(self, "Save script",
+                                                     "../scripts")
         if not savefile:
             status_bar.showMessage("Creating script... Failed!", 2000)
             return
@@ -240,7 +249,7 @@ class MainWidget(QtGui.QWidget):
         """
         savefile = self.createScript()
         if savefile:
-            end = savefile.lastIndexOf('/')
+            end = savefile.rfind('/')
             savedir = savefile[:end]
             self.window().statusBar().showMessage("Running script", 4000)
             subprocess.Popen(["python", str(savefile)], cwd=savedir)

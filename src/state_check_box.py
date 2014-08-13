@@ -21,3 +21,16 @@ class StateCheckBox(QtGui.QCheckBox):
     def changeText(self):
         """Change text to match the state of the checkbox."""
         self.setText(str(self.isChecked()))
+
+    def getValue(self):
+        """Define a unified interface for getting widget values."""
+        return self.text()
+
+    def setValue(self, value):
+        """Define a unified interface for setting widget values."""
+        self.setText(str(value))
+        self.setChecked(bool(value))
+
+    def clearValue(self):
+        """Revert the state to the defaul value."""
+        self.setValue(True)

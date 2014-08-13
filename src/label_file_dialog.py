@@ -25,7 +25,8 @@ class LabelFileDialog(QtGui.QWidget):
         self.layout = QtGui.QHBoxLayout(self)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.button)
-        QtCore.QObject.connect(self.button, QtCore.SIGNAL("clicked()"), self.openDialog)
+        QtCore.QObject.connect(self.button, QtCore.SIGNAL("clicked()"),
+                               self.openDialog)
 
     def openDialog(self):
         """Open a file dialog to select a file. If file was selected
@@ -33,10 +34,21 @@ class LabelFileDialog(QtGui.QWidget):
         """
         filename = QtGui.QFileDialog.getOpenFileName(self, "Select file", "..")
         if filename:
-            self.setFileName(filename)
+            self.setValue(filename)
 
-    def setFileName(self, path):
-        """Set label to match the selected file. Remove the path."""
-        self.file_path = path
-        split = path.split("/")
-        self.label.setText(split.last())
+    def setValue(self, value):
+        """Set the value of the widget to match value. Display the folder
+        and filename of the given path on the label.
+        """
+        self.file_path = value
+        split = value.split("/")
+        self.label.setText(split[-1])
+
+    def getValue(self):
+        """Return the value of the widget."""
+        return self.file_path
+
+    def clearValue(self):
+        """Clear the value of the widget."""
+        self.file_path = None
+        self.label.setText("No file selected")

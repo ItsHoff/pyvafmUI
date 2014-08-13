@@ -26,11 +26,18 @@ class LabelDirDialog(LabelFileDialog):
         filename = QtGui.QFileDialog.getExistingDirectory(self, "Select folder",
                    "/home/keisano1/Project/pyvafm-master/src")
         if filename:
-            self.setFileName(filename)
+            self.setValue(filename)
 
-    def setFileName(self, path):
-        """Set label to show the last two directories of the path."""
-        self.file_path = path
-        split = path.split("/")
+    def setValue(self, value):
+        """Set the value of the widget to value and set label to show the
+        last two directories of the path.
+        """
+        self.file_path = value
+        split = value.split("/")
         length = len(split)
         self.label.setText(split[length-2] + '/' + split[length-1])
+
+    def clearValue(self):
+        """Clear the value of the widget."""
+        self.file_path = None
+        self.label.setText("No directory selected")
