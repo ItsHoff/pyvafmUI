@@ -12,11 +12,11 @@ groups = ["Mathematics", "Signal Generation", "Signal Processing",
 class CircuitInfo(object):
     """Container for all the general circuit parameters."""
 
-    def __init__(self, type_, group, inputs=[], outputs=[],
+    def __init__(self, name, group, inputs=[], outputs=[],
                  param_window_style={}, default_values={},
                  script_format=None):
         """Save all the parameters."""
-        self.circuit_type = type_
+        self.circuit_type = name
         self.group = group
         self.params = []
         self.default_values = default_values
