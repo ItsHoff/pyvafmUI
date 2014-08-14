@@ -75,7 +75,8 @@ class MainWindow(QtGui.QMainWindow):
         self.statusBar().showMessage("Creating save state...", 10000)
         save_state = SaveState()
         save_state.create(self)
-        save_file = QtGui.QFileDialog().getSaveFileName(self, "Save Setup", "..")
+        save_file = QtGui.QFileDialog().getSaveFileName(self, "Save Setup",
+                                                        "../saves")
         if save_file:
             with open(save_file, "w") as f:
                 pickle.dump(save_state, f)

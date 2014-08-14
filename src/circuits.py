@@ -151,35 +151,38 @@ circuits = OrderedDict([
                      )
  ),
 ("Or", CircuitInfo("OR", "Mathematics",
-                  ["in1", "in2"],
+                  ["in#Factors"],
                   ["out"],
                      param_window_style = OrderedDict([
                                          ("Name", "NameLineEdit"),
                                          ("Factors", "IntLineEdit"),
                                          ("Pushed", "CheckBox")
                                          ]),
+                     default_values = {"Factors": 2},
                      script_format = "formats/OR.format"
                      )
  ),
 ("XOr", CircuitInfo("XOR", "Mathematics",
-                   ["in1", "in2"],
+                   ["in#Factors"],
                    ["out"],
                      param_window_style = OrderedDict([
                                          ("Name", "NameLineEdit"),
                                          ("Factors", "IntLineEdit"),
                                          ("Pushed", "CheckBox")
                                          ]),
+                     default_values = {"Factors": 2},
                      script_format = "formats/XOR.format"
                      )
  ),
 ("NOr", CircuitInfo("NOR", "Mathematics",
-                   ["in1", "in2"],
+                   ["in#Factors"],
                    ["out"],
                      param_window_style = OrderedDict([
                                          ("Name", "NameLineEdit"),
                                          ("Factors", "IntLineEdit"),
                                          ("Pushed", "CheckBox")
                                          ]),
+                     default_values = {"Factors": 2},
                      script_format = "formats/NOR.format"
                      )
  ),
@@ -323,7 +326,7 @@ circuits = OrderedDict([
                                         ("Name", "NameLineEdit"),
                                         ("Pushed", "CheckBox")
                                         ]),
-                    script_format = "formats/derivate.format"
+                    script_format = "formats/derivative.format"
                     )
  ),
 ("Integral", CircuitInfo("integral", "Signal Processing",
@@ -522,7 +525,7 @@ circuits = OrderedDict([
                                         ("Name", "NameLineEdit"),
                                         ("NumberOfModesV", "IntLineEdit"),
                                         ("NumberOfModesL", "IntLineEdit"),
-                                        ("StartingPos", "FloatLineEdit"),
+                                        ("StartingPos", "TripleFloatLineEdit"),
                                         ("Modes", "ModeSetup"),
                                         ("Pushed", "CheckBox")
                                         ]),
@@ -556,7 +559,7 @@ circuits = OrderedDict([
                                         ("Name", "NameLineEdit"),
                                         ("Components", "IntLineEdit"),
                                         ("Step", "FloatLineEdit"),
-                                        ("Data", "FileDialog"),
+                                        ("Data", "LineEdit"),
                                         ("PBC", "CheckBox"),
                                         ("Pushed", "CheckBox")
                                         ]),

@@ -1,4 +1,5 @@
 #1
+
 %Name% = machine.AddCircuit(type='output', name='%Name%', $file = '%File%'$, $dump = %Dump%$, $%INPUTS%$, $pushed = %Pushed%$)
 
 #3
