@@ -1,6 +1,6 @@
 """Module containing the ParameterCompleter."""
 
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 
 
 class ParameterCompleter(QtGui.QCompleter):
@@ -28,12 +28,16 @@ class ParameterCompleter(QtGui.QCompleter):
         is selected."""
         prefix = self.completionPrefix()
         prefix_split = prefix.split(",")
-        # If the last item allready contains the index data
-        # nothing should be inserted.
-        if prefix_split[-1].find(index.data()) != -1:
-            return None
-        # Strip the last item of partial index data so
-        # the text won't be dublicated.
-        prefix_split[-1] = prefix_split[-1].strip(index.data())
+        # If an item is a substring of index data the replace it with
+        # the index data.
+        for item in prefix_split:
+            if item.lstrip() in index.data():
+                i = prefix_split.index(item)
+                prefix_split[i] = prefix_split[i].replace(item.lstrip(), "")
+                prefix_split[i] += index.data()
         prefix = ",".join(prefix_split)
-        return prefix + index.data()
+        return prefix
+
+    def getRecievers(self, signal):
+        """Return the number of recievers for the given signal."""
+        return self.receivers(QtCore.SIGNAL(signal))

@@ -6,8 +6,11 @@ Classes:
     - RunSelectionTreeItem
 """
 
-from PyQt4 import QtGui, QtCore
 import sys
+
+from PyQt4 import QtGui, QtCore
+
+from custom_line_edit import CustomLineEdit
 import drag_selection_window
 import circuits
 
@@ -122,7 +125,7 @@ class RunSelectionTreeItem(QtGui.QWidget):
         super(RunSelectionTreeItem, self).__init__()
         main_layout = QtGui.QHBoxLayout()
         self.label = QtGui.QLabel()
-        self.line_edit = QtGui.QLineEdit()
+        self.line_edit = CustomLineEdit()
         close = QtGui.QLabel(')')
 
         main_layout.addWidget(self.label)
