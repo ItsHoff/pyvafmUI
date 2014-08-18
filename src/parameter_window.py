@@ -23,7 +23,6 @@ class ParameterWindow(QtGui.QDialog):
         circuits.
         """
         self.circuit = circuit
-        self.extra_window = None
         if isinstance(self.circuit, ui_circuit.UICircuit):
             super(ParameterWindow, self).__init__(circuit.scene().parent().window())
             self.setWindowTitle(self.circuit.name + " parameters")
@@ -92,17 +91,6 @@ class ParameterWindow(QtGui.QDialog):
             label = self.layout().itemAtPosition(row, 0).widget()
             edit = self.layout().itemAtPosition(row, 1).widget()
             parameters[label.text()] = edit.getValue()
-            # if isinstance(edit, QtGui.QLineEdit):
-                # parameters[str(label.text())] = edit.text()
-            # elif isinstance(edit, StateCheckBox):
-                # parameters[str(label.text())] = edit.isChecked()
-            # elif isinstance(edit, LabelFileDialog):
-                # parameters[str(label.text())] = edit.file_path
-            # elif isinstance(edit, QtGui.QPushButton):
-                # Get the save state from the extra window if its initialised
-                # if self.extra_window is not None:
-                    # selection_tree = self.extra_window.selection_tree
-                    # parameters[str(label.text())] = selection_tree.getSaveState()
         self.circuit.setParameters(parameters)
         self.close()
 

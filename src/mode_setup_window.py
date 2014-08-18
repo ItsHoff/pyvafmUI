@@ -2,6 +2,7 @@
 
 from PyQt4 import QtGui, QtCore
 
+from custom_line_edit import CustomLineEdit
 import drag_selection_window
 
 
@@ -10,7 +11,7 @@ class ModeSetupButton(QtGui.QPushButton):
     for all parameter window widgets."""
 
     def __init__(self, parent):
-        super(ModeSetupButton, self).__init__("Select Channels")
+        super(ModeSetupButton, self).__init__("Setup Modes")
         self.window = ModeSetupWindow(parent)
         QtCore.QObject.connect(self, QtCore.SIGNAL("clicked()"),
                                self.window.showWindow)
@@ -36,7 +37,7 @@ class ModeSetupWindow(drag_selection_window.DragSelectionWindow):
 
     def initUI(self):
         self.setWindowTitle("Setup Modes")
-        self.resize(400, 400)
+        self.resize(600, 400)
         grid = QtGui.QGridLayout()
         self.selection_tree = ModeSetupTree()
         self.selection_tree.setHeaderLabel("Current Modes")
@@ -117,7 +118,7 @@ class ModeSetupTreeItem(QtGui.QWidget):
         self.circuit = circuit
         main_layout = QtGui.QHBoxLayout()
         self.label = QtGui.QLabel("AddMode(")
-        self.line_edit = QtGui.QLineEdit()
+        self.line_edit = CustomLineEdit("ModeSetupLineEdit")
         close = QtGui.QLabel(')')
 
         main_layout.addWidget(self.label)

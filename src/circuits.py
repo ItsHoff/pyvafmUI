@@ -12,8 +12,10 @@ machine_param_window_style = OrderedDict([
                             ("Pushed", "CheckBox")
                             ])
 
-run_time_functions = {"Machine": ["Wait"],
-                      "Scanner": ["Place", "Move", "MoveTo", "MoveRecord", "ScanArea"],
+run_time_functions = {"Machine": ["Wait#FloatLineEdit"],
+                      "Scanner": ["Place#ThreeDimensionLineEdit",
+                                  "Move#MoveLineEdit", "MoveTo#MoveLineEdit",
+                                  "MoveRecord#MoveRecordLineEdit", "ScanArea"],
                       "output" : ["Dump", "Stop", "Start"]
                       }
 

@@ -22,6 +22,7 @@ class RunSelectionWindow(drag_selection_window.DragSelectionWindow):
     def __init__(self, main_widget):
         self.main_widget = main_widget
         super(RunSelectionWindow, self).__init__(main_widget)
+        self.resize(700, 400)
         self.setWindowTitle("Select runtime operations")
         self.selection_tree = RunSelectionTree()
         self.selection_tree.setHeaderLabel("Selected operations")
@@ -36,8 +37,10 @@ class RunSelectionWindow(drag_selection_window.DragSelectionWindow):
         new_item.setFlags(new_item.flags() &
                           ~QtCore.Qt.ItemIsDragEnabled)
         for function in circuits.run_time_functions["Machine"]:
+            function_split = function.split("#")
             sub_item = QtGui.QTreeWidgetItem(new_item)
-            sub_item.setText(0, function)
+            sub_item.setText(0, function_split[0])
+            sub_item.setData(0, QtCore.Qt.UserRole, function)
 
         for circuit in self.main_widget.machine_widget.circuits:
             circuit_type = circuit.circuit_info.circuit_type
@@ -48,8 +51,10 @@ class RunSelectionWindow(drag_selection_window.DragSelectionWindow):
                 new_item.setFlags(new_item.flags() &
                                   ~QtCore.Qt.ItemIsDragEnabled)
                 for function in circuits.run_time_functions[circuit_type]:
+                    function_split = function.split("#")
                     sub_item = QtGui.QTreeWidgetItem(new_item)
-                    sub_item.setText(0, function)
+                    sub_item.setText(0, function_split[0])
+                    sub_item.setData(0, QtCore.Qt.UserRole, function)
 
     def loadSelections(self):
         """Currently not required since window should never have to be
@@ -98,7 +103,8 @@ class RunSelectionTree(drag_selection_window.SelectionTree):
         """
         new_item = QtGui.QTreeWidgetItem()
         circuit = parent_item.data(0, QtCore.Qt.UserRole)
-        item_widget = RunSelectionTreeItem(circuit, dropped_item.text(0))
+        function = dropped_item.data(0, QtCore.Qt.UserRole)
+        item_widget = RunSelectionTreeItem(circuit, function)
         # Set the tree item size hint to match the widget size hint.
         size_hint = item_widget.sizeHint()
         new_item.setSizeHint(0, size_hint)
@@ -120,17 +126,21 @@ class RunSelectionTreeItem(QtGui.QWidget):
     function and a line edit to edit the function parameters."""
 
     def __init__(self, circuit, function):
+        super(RunSelectionTreeItem, self).__init__()
         self.circuit = circuit
         self.function = function
-        super(RunSelectionTreeItem, self).__init__()
         main_layout = QtGui.QHBoxLayout()
         self.label = QtGui.QLabel()
-        self.line_edit = CustomLineEdit()
-        close = QtGui.QLabel(')')
 
         main_layout.addWidget(self.label)
-        main_layout.addWidget(self.line_edit)
-        main_layout.addWidget(close)
+        function_split = function.split("#")
+        if len(function_split) > 1:
+            self.line_edit = CustomLineEdit(function_split[1])
+            main_layout.addWidget(self.line_edit)
+            close = QtGui.QLabel(')')
+            main_layout.addWidget(close)
+        else:
+            self.line_edit = None
         self.setLayout(main_layout)
         self.updateText()
 
@@ -140,13 +150,18 @@ class RunSelectionTreeItem(QtGui.QWidget):
 
     def setEdit(self, text):
         """Set the value of the line edit to match text."""
-        self.line_edit.setText(text)
+        if self.line_edit is not None:
+            self.line_edit.setText(text)
 
     def updateText(self):
         """Update the text of the widget to match the current name of
         self.circuit.
         """
-        self.label.setText(self.circuit.name + '.' + self.function + '(')
+        function_split = self.function.split("#")
+        if self.line_edit is None:
+            self.label.setText(self.circuit.name + '.' + function_split[0] + '()')
+        else:
+            self.label.setText(self.circuit.name + '.' + function_split[0] + '(')
 
     def text(self):
         """Reimplementation. Return the text of the labels and parameters
@@ -158,8 +173,8 @@ class RunSelectionTreeItem(QtGui.QWidget):
     def copy(self):
         """Return a copy of the widget. Needed when moving widgets around."""
         new_item = RunSelectionTreeItem(self.circuit, self.function)
-        new_item.label.setText(self.label.text())
-        new_item.line_edit.setText(self.line_edit.text())
+        if self.line_edit is not None:
+            new_item.setEdit(self.line_edit.text())
         return new_item
 
 
