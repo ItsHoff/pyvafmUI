@@ -265,7 +265,7 @@ circuits = OrderedDict([
     param_window_style  =   OrderedDict([
                             ("Name", "NameLineEdit"),
                             ("Gain", "IntLineEdit"),
-                            ("FC", "IntLineEdit"),
+                            ("FCut", "IntLineEdit"),
                             ("Band", "IntLineEdit"),
                             ("Pushed", "CheckBox")
                             ]),
@@ -388,7 +388,7 @@ circuits = OrderedDict([
     outputs             =   ["tick", "peak", "delay"],
     param_window_style  =   OrderedDict([
                             ("Name", "NameLineEdit"),
-                            ("Up", "BitLineEdit"),
+                            ("Up", "CheckBox"),
                             ("Pushed", "CheckBox")
                             ]),
     script_format       =   "formats/peaker.format"
