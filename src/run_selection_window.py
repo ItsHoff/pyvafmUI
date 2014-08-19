@@ -168,7 +168,10 @@ class RunSelectionTreeItem(QtGui.QWidget):
         given in line edit as one string.
         """
         self.updateText()
-        return self.label.text() + self.line_edit.text() + ')'
+        if self.line_edit is not None:
+            return self.label.text() + self.line_edit.text() + ')'
+        else:
+            return self.label.text()
 
     def copy(self):
         """Return a copy of the widget. Needed when moving widgets around."""

@@ -43,10 +43,12 @@ class CustomLineEdit(QtGui.QLineEdit):
 
     def event(self, event):
         """Reimplement the default behaviour of tab."""
-        if event.type() == event.KeyPress and event.key() == QtCore.Qt.Key_Tab:
-            return self.tabMove()
-        else:
-            return super(CustomLineEdit, self).event(event)
+        if event.type() == event.KeyPress:
+            if event.key() == QtCore.Qt.Key_Tab:
+                return self.tabMove()
+            elif event.key() == QtCore.Qt.Key_Backtab:
+                return self.reverseTabMove()
+        return super(CustomLineEdit, self).event(event)
 
     def tabMove(self):
         """Select the next parameter value when tab is pressed. Return True
@@ -69,30 +71,59 @@ class CustomLineEdit(QtGui.QLineEdit):
         # We're at the end of a item so move to the next one.
         if text[pos] == ',':
             pos += 1
-        eq_pos = text.find('=', pos) + 1
-        # If there's no equality signs select the text surrounded by the
-        # closest delimiter (comma, eol, bol). If we've gone past the last
-        # equality sign return False to jump to next widget.
-        if eq_pos == 0:
-            comma_pos = text.find(',', pos)
-            left_comma = text.rfind(',', 0, comma_pos) + 1
-            if comma_pos == -1:
-                left_eq = text.rfind('=', 0, pos)
-                if left_comma < left_eq:
-                    return False
-                else:
-                    self.setSelection(left_comma, len(text)-left_comma)
-            else:
-                self.setSelection(left_comma, comma_pos-left_comma)
-        # If equality sign was found select text from the sign untill the
-        # next delimiter (comma or eol).
+        start, length = self.findParameter(pos)
+        if start is None:
+            return False
         else:
-            comma_pos = text.find(',', eq_pos)
-            if comma_pos == -1:
-                self.setSelection(eq_pos, len(text)-eq_pos)
-            else:
-                self.setSelection(eq_pos, comma_pos-eq_pos)
+            self.setSelection(start, length)
         return True
+
+    def reverseTabMove(self):
+        """Select the previous parameter value when shift + tab is pressed.
+        Return True if operation was succesfull. If first parameter is
+        allready selected or operation failed return False to signal default
+        movement.
+        """
+        text = self.text()
+        # If there is no list present we don't need any special movement.
+        if ',' not in text:
+            return False
+        # If we have selected multiple items tab will select the last
+        # partially selected one.
+        if "," in self.selectedText() or "=" in self.selectedText():
+            pos = self.selectionEnd()
+        else:
+            pos = self.selectionStart()
+            if pos == -1:
+                pos = self.cursorPosition()
+        # We're at the beginning.
+        if pos == 0:
+            return False
+        # We're at the start of an item so move to the previous one.
+        if text[pos-1] == ',' or text[pos-1] == '=':
+            pos = text.rfind(',', 0, pos)
+            if pos == -1:
+                return False
+        start, length = self.findParameter(pos)
+        if start is None:
+            return False
+        else:
+            self.setSelection(start, length)
+        return True
+
+    def findParameter(self, pos):
+        """Find the parameter contained in the same block as pos.
+        Return the start and length of the parameter."""
+        text = self.text()
+        comma_pos = text.find(',', pos)
+        if comma_pos == -1:
+            comma_pos = len(text)
+        left_comma = text.rfind(',', 0, comma_pos) + 1
+        left_eq = text.rfind('=', 0, comma_pos) + 1
+        left_delim = max(left_comma, left_eq)
+        start = left_delim
+        length = comma_pos - left_delim
+        return start, length
 
     def selectionEnd(self):
         """Return the end index of selection or if nothing is selected

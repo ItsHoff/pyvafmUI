@@ -284,7 +284,7 @@ class SaveState(object):
         machine_widget = main_window.centralWidget().machine_widget
         machine_widget.clearAll()
         machine_widget.circuit_index = self.circuit_index
-        main_window.centralWidget().parameters = self.machine_parameters
+        # main_window.centralWidget().parameters = self.machine_parameters
         for circuit in self.circuits:
             machine_widget.addLoadedCircuit(circuit)
         for connection in self.connections:
