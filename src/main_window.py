@@ -52,6 +52,11 @@ class MainWindow(QtGui.QMainWindow):
         QtCore.QObject.connect(load_action, QtCore.SIGNAL("triggered()"),
                                self.load)
 
+        insert_action = QtGui.QAction("Insert", self)
+        insert_action.setShortcut(QtGui.QKeySequence("Ctrl+I"))
+        QtCore.QObject.connect(insert_action, QtCore.SIGNAL("triggered()"),
+                               self.insert)
+
         quit_action = QtGui.QAction("Quit", self)
         quit_action.setShortcut(QtGui.QKeySequence("Ctrl+Q"))
         QtCore.QObject.connect(quit_action, QtCore.SIGNAL("triggered()"),
@@ -59,6 +64,7 @@ class MainWindow(QtGui.QMainWindow):
 
         file_menu.addAction(save_action)
         file_menu.addAction(load_action)
+        file_menu.addAction(insert_action)
         file_menu.addSeparator()
         file_menu.addAction(quit_action)
         self.menuBar().addMenu(file_menu)
@@ -96,6 +102,19 @@ class MainWindow(QtGui.QMainWindow):
                 self.statusBar().showMessage("Loading save state... Done!", 2000)
         else:
             self.statusBar().showMessage("Loading save state... Failed!", 2000)
+
+    def insert(self):
+        """Insert the save state of users choice into the current setup."""
+        self.statusBar().showMessage("Inserting save state...", 10000)
+        load_file = QtGui.QFileDialog().getOpenFileName(self, "Insert Setup",
+                                                        "../saves")
+        if load_file:
+            with open(load_file, "r") as f:
+                save_state = pickle.load(f)
+                save_state.insert(self)
+                self.statusBar().showMessage("Inserting save state... Done!", 2000)
+        else:
+            self.statusBar().showMessage("Inserting save state... Failed!", 2000)
 
 
 class MainWidget(QtGui.QWidget):
@@ -292,6 +311,17 @@ class SaveState(object):
         run_selection_window = main_window.centralWidget().run_selection_window
         run_selection_window.loadSaveState(self.run_selections)
         machine_widget.updateSceneRect()
+
+    def insert(self, main_window):
+        """Insert the save state into the current setup."""
+        machine_widget = main_window.centralWidget().machine_widget
+        machine_widget.circuit_index += self.circuit_index
+        for circuit in self.circuits:
+            machine_widget.addLoadedCircuit(circuit)
+        for connection in self.connections:
+            machine_widget.addLoadedConnection(connection)
+        machine_widget.updateSceneRect()
+        machine_widget.saveSelection(0)
 
 
 def main():

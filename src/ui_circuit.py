@@ -159,7 +159,13 @@ class UICircuit(QtGui.QGraphicsItem):
 
     def remove(self):
         """Call the scene to remove the circuit."""
-        self.scene().removeCircuit(self)
+        message_box = QtGui.QMessageBox()
+        message_box.setWindowTitle("Remove " + self.name)
+        message_box.setText("Do you want to remove %s?" % self.name)
+        message_box.setStandardButtons(message_box.Yes | message_box.No)
+        value = message_box.exec_()
+        if value == message_box.Yes:
+            self.scene().removeCircuit(self)
 
     def setParameters(self, parameters):
         """Save the parameters given by parameter window."""

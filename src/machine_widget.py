@@ -100,6 +100,7 @@ class MachineWidget(QtGui.QGraphicsScene):
         self.circuits.append(circuit)
         self.addItem(circuit)
         circuit.loadSaveState(save_state)
+        circuit.setSelected(True)
         self.circuit_index += 1
 
     def createNewConnection(self, origin, mouse_pos):
@@ -168,34 +169,56 @@ class MachineWidget(QtGui.QGraphicsScene):
         """Add widget specific context actions to the
         context menu given as parameter.
         """
-        clear_all = QtGui.QAction("Clear All", menu)
-        QtCore.QObject.connect(clear_all, QtCore.SIGNAL("triggered()"),
-                               self.clearAll)
+        clear_all = QtGui.QAction("Delete All", menu)
+        self.connect(clear_all, QtCore.SIGNAL("triggered()"), self.deleteAll)
 
-        clear_connections = QtGui.QAction("Clear Connections", menu)
-        QtCore.QObject.connect(clear_connections, QtCore.SIGNAL("triggered()"),
-                               self.removeConnections)
+        clear_connections = QtGui.QAction("Delete All Connections", menu)
+        self.connect(clear_connections, QtCore.SIGNAL("triggered()"),
+                     self.removeConnections)
+
+        delete_selected = QtGui.QAction("Delete Selected", menu)
+        self.connect(delete_selected, QtCore.SIGNAL("triggered()"),
+                     self.deleteSelected)
 
         menu.addAction(clear_connections)
+        if self.selectedItems():
+            menu.addAction(delete_selected)
         menu.addAction(clear_all)
+
+    def deleteAll(self):
+        """Clear everything from the scene after confirmation."""
+        message_box = QtGui.QMessageBox()
+        message_box.setWindowTitle("Delete All")
+        message_box.setText("Do you want to delete everything?")
+        message_box.setStandardButtons(message_box.Yes | message_box.No)
+        value = message_box.exec_()
+        if value == message_box.Yes:
+            self.clearAll()
 
     def clearAll(self):
         """Clear everything from the scene."""
         status_bar = self.parent().window().statusBar()
         for circuit in self.circuits[:]:
             self.removeCircuit(circuit)
-        # self.updateSceneRect()
-        status_bar.showMessage("Cleared all", 3000)
+            # self.updateSceneRect()
+            status_bar.showMessage("Cleared all", 3000)
         self.update()
+
 
     def removeConnections(self):
         """Clear all connections from the scene."""
-        status_bar = self.parent().window().statusBar()
-        for connection in self.connections:
-            self.removeItem(connection)
-        self.connections = []
-        status_bar.showMessage("Removed all connections", 3000)
-        self.update()
+        message_box = QtGui.QMessageBox()
+        message_box.setWindowTitle("Delete All Connections")
+        message_box.setText("Do you want to delete all connections?")
+        message_box.setStandardButtons(message_box.Yes | message_box.No)
+        value = message_box.exec_()
+        if value == message_box.Yes:
+            status_bar = self.parent().window().statusBar()
+            for connection in self.connections:
+                self.removeItem(connection)
+            self.connections = []
+            status_bar.showMessage("Removed all connections", 3000)
+            self.update()
 
     def removeConnectionsFrom(self, IO):
         """Remove all connections from input or output
@@ -240,6 +263,21 @@ class MachineWidget(QtGui.QGraphicsScene):
         selected = self.selectedItems()
         for circuit in selected:
             circuit.moveBy(amount)
+
+    def deleteSelected(self):
+        """Delete all currently selected circuits."""
+        message_box = QtGui.QMessageBox()
+        message_box.setWindowTitle("Delete Selected")
+        message_box.setText("Do you want to delete all selected circuits?")
+        message_box.setStandardButtons(message_box.Yes | message_box.No)
+        value = message_box.exec_()
+        if value == message_box.Yes:
+            for circuit in self.selectedItems():
+                self.removeCircuit(circuit)
+
+    def saveSelection(self, key):
+        """Save current selection on key."""
+        self.saved_selections[key] = self.selectedItems()
 
     def drawBackground(self, qp, rect):
         """Draw the background white and call a grid draw"""
@@ -349,7 +387,7 @@ class MachineWidget(QtGui.QGraphicsScene):
         self.views()[0].scroll_dir = None
         if self.selection_box is not None:
             if self.selection_box.boundingRect().isValid():
-                self.saved_selections[0] = self.selectedItems()
+                self.saveSelection(0)
             self.removeItem(self.selection_box)
             self.selection_box = None
             self.update()
@@ -372,7 +410,7 @@ class MachineWidget(QtGui.QGraphicsScene):
         key = event.key()
         if key >= zero and key <= zero + 9:
             if event.modifiers() & QtCore.Qt.ControlModifier:
-                self.saved_selections[key-zero] = self.selectedItems()
+                self.saveSelection(key-zero)
             else:
                 self.clearSelection()
                 if self.saved_selections[key-zero] is not None:
