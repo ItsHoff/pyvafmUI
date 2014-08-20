@@ -9,6 +9,7 @@ from PyQt4 import QtGui, QtCore
 from ui_circuit import UICircuit
 from ui_IO import UIIO
 from ui_connection import UIConnection
+from selection_box import SelectionBox
 import circuits
 
 
@@ -25,6 +26,8 @@ class MachineWidget(QtGui.QGraphicsScene):
         self.connections = []
         self.circuit_index = 1
         self.new_connection = None
+        self.selection_box = None
+        self.saved_selections = [None]*10
         self.initWidget()
 
     def initWidget(self):
@@ -232,6 +235,12 @@ class MachineWidget(QtGui.QGraphicsScene):
         self.updateSceneRect()
         self.update()
 
+    def moveSelected(self, amount):
+        """Move all the selected items by amount."""
+        selected = self.selectedItems()
+        for circuit in selected:
+            circuit.moveBy(amount)
+
     def drawBackground(self, qp, rect):
         """Draw the background white and call a grid draw"""
         qp.setPen(QtGui.QColor(255, 255, 255))
@@ -291,12 +300,18 @@ class MachineWidget(QtGui.QGraphicsScene):
 
     def mousePressEvent(self, event):
         """If user is holding down ctrl try to add circuit to the scene.
+        Regular left clicks will start a rubberband selection.
         Otherwise call the super function to send signal forward.
         """
         if (event.modifiers() & QtCore.Qt.ControlModifier and
                 event.button() == QtCore.Qt.LeftButton):
             event.accept()
             self.addClickedCircuit(event.scenePos())
+        elif (event.button() == QtCore.Qt.LeftButton and
+              self.itemAt(event.scenePos()) is None):
+            self.clearSelection()
+            self.selection_box = SelectionBox(event.scenePos(), None, self)
+            self.update()
         else:
             super(MachineWidget, self).mousePressEvent(event)
             # If user was trying to create a new connection
@@ -310,15 +325,38 @@ class MachineWidget(QtGui.QGraphicsScene):
 
     def mouseMoveEvent(self, event):
         """If user is trying to create a connection update connections
-        end point when mouse is moved. Remember to call super.
+        end point when mouse is moved. With rubberband selection
+        update the selection.
         """
         super(MachineWidget, self).mouseMoveEvent(event)
         if self.new_connection is not None:
             self.new_connection.updateMousePos(event.scenePos())
             self.update()
+        elif self.selection_box is not None:
+            self.views()[0].autoScroll(event.scenePos())
+            self.selection_box.setCorner(event.scenePos())
+            selection_area = self.selection_box.selectionArea()
+            area = QtGui.QPainterPath()
+            area.addPolygon(selection_area)
+            self.setSelectionArea(area)
+            self.update()
+
+    def mouseReleaseEvent(self, event):
+        """Remove the selection box and save the most recent valid
+        selection on 0.
+        """
+        super(MachineWidget, self).mouseReleaseEvent(event)
+        self.views()[0].scroll_dir = None
+        if self.selection_box is not None:
+            if self.selection_box.boundingRect().isValid():
+                self.saved_selections[0] = self.selectedItems()
+            self.removeItem(self.selection_box)
+            self.selection_box = None
+            self.update()
 
     def contextMenuEvent(self, event):
         """Create a new context menu and open it under mouse"""
+        self.views()[0].scroll_dir = None
         menu = QtGui.QMenu()
         # Insert actions to the menu from all the items under the mouse
         for item in self.items(event.scenePos()):
@@ -326,3 +364,22 @@ class MachineWidget(QtGui.QGraphicsScene):
         self.addContextActions(menu)
         # Show the menu under mouse
         menu.exec_(event.screenPos())
+
+    def keyPressEvent(self, event):
+        """Save the current selection with control + number and load the
+        selection with the corresponding number."""
+        zero = QtCore.Qt.Key_0
+        key = event.key()
+        if key >= zero and key <= zero + 9:
+            if event.modifiers() & QtCore.Qt.ControlModifier:
+                self.saved_selections[key-zero] = self.selectedItems()
+            else:
+                self.clearSelection()
+                if self.saved_selections[key-zero] is not None:
+                    bounding_rect = QtCore.QRectF()
+                    for item in self.saved_selections[key-zero]:
+                        rect = item.boundingRect()
+                        rect.moveTo(item.pos())
+                        bounding_rect = bounding_rect.united(rect)
+                        item.setSelected(True)
+                    self.views()[0].ensureVisible(bounding_rect, 0, 0)

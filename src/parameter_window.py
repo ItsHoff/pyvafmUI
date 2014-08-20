@@ -35,6 +35,7 @@ class ParameterWindow(QtGui.QDialog):
     def showWindow(self):
         """Update the widgets to show the current parameter values and
         show the window and make sure it's activated and on top."""
+        self.setValues()
         self.show()
         self.raise_()
         self.activateWindow()

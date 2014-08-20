@@ -146,7 +146,10 @@ class RunSelectionTreeItem(QtGui.QWidget):
 
     def getEdit(self):
         """Return the text value of the line edit."""
-        return self.line_edit.text()
+        if self.line_edit is not None:
+            return self.line_edit.text()
+        else:
+            return None
 
     def setEdit(self, text):
         """Set the value of the line edit to match text."""

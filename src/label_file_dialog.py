@@ -32,7 +32,8 @@ class LabelFileDialog(QtGui.QWidget):
         """Open a file dialog to select a file. If file was selected
         call setFileName to change the label.
         """
-        filename = QtGui.QFileDialog.getOpenFileName(self, "Select file", "..")
+        filename = QtGui.QFileDialog.getOpenFileName(self, "Select file",
+                                                     self.file_path)
         if filename:
             self.setValue(filename)
 

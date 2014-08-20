@@ -19,13 +19,13 @@ class UICircuit(QtGui.QGraphicsItem):
         super(UICircuit, self).__init__()
         self.setX(x)
         self.setY(y)
+        self.setFlag(self.ItemIsSelectable, True)
         # self.setFlag(self.ItemIsMovable, True)
         # self.setFlag(self.ItemSendsScenePositionChanges, True)
         self.xsize = 130
         self.ysize = 100
         self.circuit_info = circuit_info
         self.parameter_window = None
-        self.save_state = None
         if parent:
             self.name = circuit_info.circuit_type + str(parent.circuit_index)
         else:
@@ -34,6 +34,7 @@ class UICircuit(QtGui.QGraphicsItem):
         self.parameters = circuit_info.default_values.copy()
         self.parameters["Name"] = self.name
         self.ios = []
+        self.save_state = SaveCircuit(self)
 
     def addIO(self):
         """Add inputs and outputs defined in circuit info
@@ -183,10 +184,15 @@ class UICircuit(QtGui.QGraphicsItem):
         """Return the current state of the circuit without the Qt bindings
         for saving.
         """
-        if self.save_state is None:
-            self.save_state = SaveCircuit(self)
-        else:
-            self.save_state.update(self)
+        self.save_state.update(self)
+        return self.save_state
+
+    def getCleanSaveState(self):
+        """Return the current state of the circuit without the Qt bindings
+        for saving.
+        """
+        self.save_state.update(self)
+        self.save_state.clean()
         return self.save_state
 
     def loadSaveState(self, save_state):
@@ -210,12 +216,14 @@ class UICircuit(QtGui.QGraphicsItem):
 
     def paint(self, painter, options, widget):
         """Paint the circuit. Called automatically by the scene."""
+        if self.isSelected():
+            painter.setBrush(QtGui.QColor(165, 198, 255))
+        else:
+            painter.setBrush(QtGui.QColor(222, 244, 251))
         pen = QtGui.QPen(QtGui.QColor(0, 0, 0))
         pen.setWidth(2)
-        painter.setBrush(QtGui.QColor(222, 244, 251))
         painter.setPen(pen)
-        painter.drawRoundedRect(0, 0, self.xsize, self.ysize,
-                                10, 10)
+        painter.drawRoundedRect(0, 0, self.xsize, self.ysize, 10, 10)
         painter.drawText(0, 0, self.xsize, self.ysize,
                          QtCore.Qt.AlignCenter, self.name)
 
@@ -223,6 +231,9 @@ class UICircuit(QtGui.QGraphicsItem):
         """If left mouse button is pressed down start dragging
         the circuit.
         """
+        if not self.isSelected():
+            self.scene().clearSelection()
+            self.scene().update()
         if event.button() == QtCore.Qt.LeftButton:
             self.dragged = True
         # super(UICircuit, self).mousePressEvent(event)
@@ -231,6 +242,7 @@ class UICircuit(QtGui.QGraphicsItem):
         """End drag when mouse is released."""
         if event.button() == QtCore.Qt.LeftButton:
             self.dragged = False
+            self.scene().views()[0].scroll_dir = None
             self.ensureVisible()
             self.scene().updateSceneRect()
         super(UICircuit, self).mouseReleaseEvent(event)
@@ -250,9 +262,13 @@ class UICircuit(QtGui.QGraphicsItem):
             # return to old position.
             for circuit in self.scene().circuits:
                 if (self.collidesWithItem(circuit) and
-                   circuit != self):
+                   circuit != self and not circuit.isSelected()):
                     self.setPos(old_pos)
                     break
+            # Relay the movement to all other selected circuits
+            if self.isSelected() and self.pos() != old_pos:
+                self.setPos(old_pos)
+                self.scene().moveSelected(pos - old_pos)
             # Update the connections since some of them might
             # have to be moved with the circuit.
             self.scene().updateConnections()
@@ -260,6 +276,10 @@ class UICircuit(QtGui.QGraphicsItem):
             self.scene().views()[0].autoScroll(event.scenePos())
             self.scene().update()
         # super(UICircuit, self).mouseMoveEvent(event)
+
+    def moveBy(self, amount):
+        """Move the circuit by amount."""
+        self.setPos(self.pos() +  amount)
 
     def mouseDoubleClickEvent(self, event):
         """Open the parameter window when circuit is double
@@ -288,8 +308,12 @@ class SaveCircuit(object):
         self.ios = []
         for io in circuit.ios:
             self.ios.append(io.getSaveState())
-        self.loaded_item = None         # Do not set this before saving
+        self.loaded_item = circuit         # Clear this before saving
 
     def update(self, circuit):
         """Update the save state to match the current state."""
         self.__init__(circuit)
+
+    def clean(self):
+        """Remove the reference to the circuit."""
+        self.loaded_item = None

@@ -273,7 +273,7 @@ class SaveState(object):
         self.machine_parameters = main_window.centralWidget().parameters
         for circuit in machine_widget.circuits:
             circuit.updateParameters()
-            self.circuits.append(circuit.getSaveState())
+            self.circuits.append(circuit.getCleanSaveState())
         for connection in machine_widget.connections:
             self.connections.append(connection.getSaveState())
         run_selection_window = main_window.centralWidget().run_selection_window
@@ -284,7 +284,7 @@ class SaveState(object):
         machine_widget = main_window.centralWidget().machine_widget
         machine_widget.clearAll()
         machine_widget.circuit_index = self.circuit_index
-        # main_window.centralWidget().parameters = self.machine_parameters
+        main_window.centralWidget().parameters = self.machine_parameters
         for circuit in self.circuits:
             machine_widget.addLoadedCircuit(circuit)
         for connection in self.connections:
