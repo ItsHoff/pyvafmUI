@@ -107,6 +107,15 @@ class ParameterWindow(QtGui.QDialog):
             else:
                 edit.clearValue()
 
+    def getValue(self, label):
+        """Return the value of the item with matching label."""
+        rows = self.layout().rowCount()
+        for row in range(0, rows - 1):
+            label_text = self.layout().itemAtPosition(row, 0).widget().text()
+            if label == label_text:
+                edit = self.layout().itemAtPosition(row, 1).widget()
+                return edit.getValue()
+
     def cancel(self):
         """Close the window without action when cancel is pressed."""
         self.close()

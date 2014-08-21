@@ -107,7 +107,6 @@ class RegisterSelectionTree(drag_selection_window.SelectionTree):
         super(RegisterSelectionTree, self).__init__()
 
     def getSaveState(self):
-        self.parent().updateNames()
         save_state = RegisterSelectionSaveList()
         for i in range(self.topLevelItemCount()):
             top_item = self.topLevelItem(i)

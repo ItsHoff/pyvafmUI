@@ -23,15 +23,17 @@ MOVE_BASE = "[x-zv]?=[+-]?[0-9.]*"
 MOVE_REGEXP = XFOUR % (MOVE_BASE, MOVE_BASE)
 MOVE_RECORD_BASE = "([x-zv]|p?o?i?n?t?s?)?=[+-]?[0-9.]*"
 MOVE_RECORD_REGEXP = XFIVE % (MOVE_RECORD_BASE, MOVE_RECORD_BASE)
-MODE_SETUP_BASE = "V?e?r?t?i?c?a?l?=(%s)?|(([kQM]|f?0?)?=[0-9.]*)" % BOOL_REGEXP
-MODE_SETUP_REGEXP = XFIVE % (MODE_SETUP_BASE, MODE_SETUP_BASE)
+# MODE_SETUP_BASE = "V?e?r?t?i?c?a?l?=(%s)?|(([kQM]|f?0?)?=[0-9.]*)" % BOOL_REGEXP
+MODE_SETUP_BASE = "([kQM]|f?0?)?=[0-9.]*"
+MODE_SETUP_REGEXP = XFOUR % (MODE_SETUP_BASE, MODE_SETUP_BASE)
 
 
 DIMENSION_LIST = ["x=", "y=", "z="]
 BOOL_LIST = ["True", "False"]
 MOVE_LIST = DIMENSION_LIST + ["v="]
 MOVE_RECORD_LIST = MOVE_LIST + ["points="]
-MODE_SETUP_LIST = ["Vertical=", "k=", "Q=", "M=", "f0="]
+# MODE_SETUP_LIST = ["Vertical=", "k=", "Q=", "M=", "f0="]
+MODE_SETUP_LIST = ["k=", "Q=", "M=", "f0="]
 
 line_edits = {
     "LineEdit":{
@@ -107,6 +109,7 @@ line_edits = {
     "ModeSetupLineEdit":{
         "CompletionModel"   : ParameterCompletionModel(MODE_SETUP_LIST),
         "RegExp"            : QRegExp(MODE_SETUP_REGEXP),
-        "PlaceholderText"   : "Vertical=bool, k=float, Q=float, M=float, f0=float"
+        # "PlaceholderText"   : "Vertical=bool, k=float, Q=float, M=float, f0=float"
+        "PlaceholderText"   : "k=float, Q=float, M=float, f0=float"
     },
 }

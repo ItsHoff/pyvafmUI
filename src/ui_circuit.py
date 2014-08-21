@@ -87,7 +87,7 @@ class UICircuit(QtGui.QGraphicsItem):
                 return io
         return None
 
-    def updateIO(self, new_parameters):
+    def updateIO(self, old_parameters):
         """Update the amount of io if the relevant parameters
         have been changed.
         """
@@ -96,9 +96,9 @@ class UICircuit(QtGui.QGraphicsItem):
             number_index = name.find("#")
             if number_index != -1:
                 parameter = name[number_index+1:]
-                if parameter in new_parameters:
-                    new_n = int(new_parameters[parameter])
-                    old_n = int(self.parameters[parameter])
+                if parameter in self.parameters:
+                    new_n = int(self.parameters[parameter])
+                    old_n = int(old_parameters[parameter])
                     if new_n == old_n:
                         continue
                     else:
@@ -170,15 +170,19 @@ class UICircuit(QtGui.QGraphicsItem):
     def setParameters(self, parameters):
         """Save the parameters given by parameter window."""
         status_bar = self.scene().parent().window().statusBar()
-        self.updateIO(parameters)
+        old_parameters = self.parameters.copy()
         for label, value in parameters.iteritems():
             if value is not None and value != "" and value != []:
                 self.parameters[label] = value
             elif label != "Name" and label in self.parameters:
-                del self.parameters[label]
+                if label in self.circuit_info.default_values:
+                    self.parameters[label] = self.circuit_info.default_values[label]
+                else:
+                    del self.parameters[label]
         if self.name != self.parameters["Name"]:
             self.name = self.parameters["Name"]
             self.parameter_window.setWindowTitle(self.name + " parameters")
+        self.updateIO(old_parameters)
         status_bar.showMessage("Set parameters for %s"%self.name, 2000)
 
     def updateParameters(self):

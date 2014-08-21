@@ -73,6 +73,7 @@ class DragSelectionWindow(QtGui.QDialog):
 
     def getSaveState(self):
         """Return the save state of the window for saving."""
+        self.updateNames()
         return self.selection_tree.getSaveState()
 
     def loadSaveState(self, save_state):

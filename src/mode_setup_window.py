@@ -45,18 +45,22 @@ class ModeSetupWindow(drag_selection_window.DragSelectionWindow):
         done_button = QtGui.QPushButton("Done")
         QtCore.QObject.connect(done_button, QtCore.SIGNAL("clicked()"),
                                self.hide)
-        addV_button = QtGui.QPushButton("Add Vertical Mode")
-        QtCore.QObject.connect(addV_button, QtCore.SIGNAL("clicked()"),
-                               self.selection_tree.addVerticalMode)
-        addL_button = QtGui.QPushButton("Add Lateral Mode")
-        QtCore.QObject.connect(addL_button, QtCore.SIGNAL("clicked()"),
-                               self.selection_tree.addLateralMode)
 
         grid.addWidget(self.selection_tree, 0, 0)
-        grid.addWidget(addV_button, 1, 0)
-        grid.addWidget(addL_button, 2, 0)
-        grid.addWidget(done_button, 3, 0)
+        grid.addWidget(done_button, 1, 0)
         self.setLayout(grid)
+
+    def updateNames(self):
+        n_vertical = self.parent().getValue("NumberOfModesV")
+        if n_vertical == "":
+            n_vertical = self.parent().circuit.parameters["NumberOfModesV"]
+        n_lateral = self.parent().getValue("NumberOfModesL")
+        if n_lateral == "":
+            n_lateral = self.parent().circuit.parameters["NumberOfModesL"]
+        modes_vertical = self.selection_tree.nAddedModes(True)
+        modes_lateral = self.selection_tree.nAddedModes(False)
+        self.selection_tree.changeNofModes(True, int(n_vertical)-modes_vertical)
+        self.selection_tree.changeNofModes(False, int(n_lateral)-modes_lateral)
 
 
 class ModeSetupTree(drag_selection_window.SelectionTree):
@@ -65,10 +69,10 @@ class ModeSetupTree(drag_selection_window.SelectionTree):
     def __init__(self):
         super(ModeSetupTree, self).__init__()
 
-    def createNewItem(self):
+    def createNewItem(self, vertical):
         """Create a new empty tree item."""
         new_item = QtGui.QTreeWidgetItem()
-        item_widget = ModeSetupTreeItem(self.window().parent().circuit)
+        item_widget = ModeSetupTreeItem(self.window().parent().circuit, vertical)
         # Set the tree item size hint to match the widget size hint.
         size_hint = item_widget.sizeHint()
         new_item.setSizeHint(0, size_hint)
@@ -77,7 +81,8 @@ class ModeSetupTree(drag_selection_window.SelectionTree):
     def createLoadedItem(self, save_state):
         """Create a new item matching the save state."""
         new_item = QtGui.QTreeWidgetItem()
-        item_widget = ModeSetupTreeItem(save_state.circuit.loaded_item)
+        item_widget = ModeSetupTreeItem(save_state.circuit.loaded_item,
+                                        save_state.vertical)
         size_hint = item_widget.sizeHint()
         new_item.setSizeHint(0, size_hint)
         item_widget.setText(save_state.edit_text)
@@ -85,19 +90,30 @@ class ModeSetupTree(drag_selection_window.SelectionTree):
 
     def addVerticalMode(self):
         """Add a vertical mode to the tree."""
-        new_item, widget = self.createNewItem()
-        widget.setText("Vertical=True, k= , Q= , M= , f0= ")
+        new_item, widget = self.createNewItem(True)
+        # widget.setText("Vertical=True, k= , Q= , M= , f0= ")
         self.addTopLevelItem(new_item)
         self.setItemWidget(new_item, 0, widget)
         self.setCurrentItem(new_item)
 
-    def addLateralMode(self):
+    def addMode(self, vertical):
         """Add a lateral mode to the tree."""
-        new_item, widget = self.createNewItem()
-        widget.setText("Vertical=False, k= , Q= , M= , f0= ")
+        new_item, widget = self.createNewItem(vertical)
+        # widget.setText("Vertical=False, k= , Q= , M= , f0= ")
         self.addTopLevelItem(new_item)
         self.setItemWidget(new_item, 0, widget)
         self.setCurrentItem(new_item)
+
+    def removeMode(self, vertical):
+        """Remove the bottom most mode with matching vertical."""
+        item_count = self.topLevelItemCount()
+        for i in range(item_count):
+            index = item_count-1 - i
+            top_item = self.topLevelItem(index)
+            item_widget = self.itemWidget(top_item, 0)
+            if item_widget.vertical == vertical:
+                self.takeTopLevelItem(index)
+                return
 
     def getSaveState(self):
         """Return the save state of the tree."""
@@ -109,15 +125,35 @@ class ModeSetupTree(drag_selection_window.SelectionTree):
             save_state.append(save_item)
         return save_state
 
+    def nAddedModes(self, vertical):
+        """Return the number of modes matching vertical state."""
+        number = 0
+        for i in range(self.topLevelItemCount()):
+            top_item = self.topLevelItem(i)
+            item_widget = self.itemWidget(top_item, 0)
+            if item_widget.vertical == vertical:
+                number += 1
+        return number
+
+    def changeNofModes(self, vertical, amount):
+        """Change the number of modes matching vertical by amount."""
+        if amount < 0:
+            for i in range(abs(amount)):
+                self.removeMode(vertical)
+        else:
+            for i in range(amount):
+                self.addMode(vertical)
+
 
 class ModeSetupTreeItem(QtGui.QWidget):
     """Widget used in the ModeSetupTree."""
 
-    def __init__(self, circuit):
+    def __init__(self, circuit, vertical):
         super(ModeSetupTreeItem, self).__init__()
         self.circuit = circuit
+        self.vertical = vertical
         main_layout = QtGui.QHBoxLayout()
-        self.label = QtGui.QLabel("AddMode(")
+        self.label = QtGui.QLabel("AddMode(Vertical=%s," % vertical)
         self.line_edit = CustomLineEdit("ModeSetupLineEdit")
         close = QtGui.QLabel(')')
 
@@ -133,6 +169,10 @@ class ModeSetupTreeItem(QtGui.QWidget):
     def setText(self, text):
         """Set the value of the text edit."""
         self.line_edit.setText(text)
+
+    def getText(self):
+        """Return the whole text of the widget."""
+        return self.label.text() + ' ' + self.line_edit.text() + ')'
 
     def copy(self):
         """Return a copy of the widget. Needed when moving widgets around."""
@@ -150,13 +190,15 @@ class ModeSetupSaveItem(object):
     def __init__(self, tree_item):
         self.circuit = tree_item.circuit.getSaveState()
         self.edit_text = tree_item.getEdit()
+        self.vertical = tree_item.vertical
 
     def update(self, tree_item):
         """Update the save state to match the current state."""
         self.__init__(tree_item)
 
     def __str__(self):
-        return str(self.circuit.name + ".AddMode(" + self.edit_text + ")")
+        return "%s.AddMode(Vertical=%s, %s)" % (self.circuit.name, self.vertical,
+                                                self.edit_text)
 
 
 class ModeSetupSaveList(list):
