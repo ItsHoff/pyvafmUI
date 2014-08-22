@@ -24,7 +24,6 @@ class MachineWidget(QtGui.QGraphicsScene):
         self.tree_widget = tree_widget
         self.circuits = []
         self.connections = []
-        self.circuit_index = 1
         self.new_connection = None
         self.selection_box = None
         self.saved_selections = [None]*10
@@ -69,11 +68,11 @@ class MachineWidget(QtGui.QGraphicsScene):
         """Add a circuit with corresponding name to the scene
         and update the scene.
         """
-        circuit = UICircuit(x-x%100, y-y%100, circuits.circuits[name], self)
+        circuit = UICircuit(x-x%100, y-y%100, circuits.circuits[name])
         circuit.addIO()
         self.circuits.append(circuit)
         self.addItem(circuit)
-        self.circuit_index += 1
+        self.resolveNameConflicts(circuit)
         self.updateSceneRect()
         self.update()
 
@@ -101,7 +100,24 @@ class MachineWidget(QtGui.QGraphicsScene):
         self.addItem(circuit)
         circuit.loadSaveState(save_state)
         circuit.setSelected(True)
-        self.circuit_index += 1
+        self.resolveNameConflicts(circuit)
+
+    def resolveNameConflicts(self, check_circuit):
+        """Make sure that the name of the circuit doesn't conflict
+        with any other circuit."""
+        conflict_found = True
+        name = check_circuit.name
+        number = 0
+        while conflict_found:
+            if number != 0:
+                name = check_circuit.name + str(number)
+            conflict_found = False
+            for circuit in self.circuits:
+                if circuit.name == name and circuit is not check_circuit:
+                    conflict_found = True
+                    number += 1
+                    continue
+        check_circuit.setName(name)
 
     def createNewConnection(self, origin, mouse_pos):
         """Try to create a new connection starting from mouse_pos.
@@ -296,8 +312,15 @@ class MachineWidget(QtGui.QGraphicsScene):
                 self.removeCircuit(circuit)
 
     def saveSelection(self, key):
-        """Save current selection on key."""
+        """Save current selection under key."""
         self.saved_selections[key] = self.selectedItems()
+
+    def appendSelection(self, key):
+        """Add current selection to the selection under key."""
+        if self.saved_selections[key] is not None:
+            self.saved_selections[key].append(self.selectedItems())
+        else:
+            self.saveSelection(key)
 
     def drawBackground(self, qp, rect):
         """Draw the background white and call a grid draw"""
@@ -357,11 +380,11 @@ class MachineWidget(QtGui.QGraphicsScene):
         recently.addChild(clone)
 
     def mousePressEvent(self, event):
-        """If user is holding down ctrl try to add circuit to the scene.
+        """If user is holding down shift try to add circuit to the scene.
         Regular left clicks will start a rubberband selection.
         Otherwise call the super function to send signal forward.
         """
-        if (event.modifiers() & QtCore.Qt.ControlModifier and
+        if (event.modifiers() & QtCore.Qt.ShiftModifier and
                 event.button() == QtCore.Qt.LeftButton):
             event.accept()
             self.addClickedCircuit(event.scenePos())
@@ -370,16 +393,16 @@ class MachineWidget(QtGui.QGraphicsScene):
             self.clearSelection()
             self.selection_box = SelectionBox(event.scenePos(), None, self)
             self.update()
-        else:
+        # If user was trying to create a new connection
+        # and clicked something other than input or output
+        # destroy the connection. Also non left clicks
+        # destroy the connection.
+        elif (self.new_connection is not None and
+             (not self.hasIOatPos(event.scenePos()) or
+              event.button() != QtCore.Qt.LeftButton)):
+            self.deleteNewConnection()
+        elif self.itemAt(event.scenePos()) is not None:
             super(MachineWidget, self).mousePressEvent(event)
-            # If user was trying to create a new connection
-            # and clicked something other than input or output
-            # destroy the connection. Also non left clicks
-            # destroy the connection.
-            if (self.new_connection is not None and
-                    (not self.hasIOatPos(event.scenePos()) or
-                     event.button() != QtCore.Qt.LeftButton)):
-                self.deleteNewConnection()
 
     def mouseMoveEvent(self, event):
         """If user is trying to create a connection update connections
@@ -425,7 +448,8 @@ class MachineWidget(QtGui.QGraphicsScene):
 
     def keyPressEvent(self, event):
         """Save the current selection with control + number and load the
-        selection with the corresponding number."""
+        selection with the corresponding number.
+        """
         zero = QtCore.Qt.Key_0
         key = event.key()
         if key >= zero and key <= zero + 9:

@@ -297,12 +297,10 @@ class SaveState(object):
         self.connections = []
         self.run_selections = []
         self.machine_parameters = {}
-        self.circuit_index = 0
 
     def create(self, main_window):
         """Gather all the data for saving without Qt bindings."""
         machine_widget = main_window.centralWidget().machine_widget
-        self.circuit_index = machine_widget.circuit_index
         self.machine_parameters = main_window.centralWidget().parameters
         for circuit in machine_widget.circuits:
             circuit.updateParameters()
@@ -317,7 +315,6 @@ class SaveState(object):
         without Qt bindings.
         """
         machine_widget = main_window.centralWidget().machine_widget
-        self.circuit_index = machine_widget.circuit_index
         self.machine_parameters = main_window.centralWidget().parameters
         for circuit in machine_widget.selectedItems():
             circuit.updateParameters()
@@ -330,7 +327,6 @@ class SaveState(object):
         """Load the save state stored in this object."""
         machine_widget = main_window.centralWidget().machine_widget
         machine_widget.clearAll()
-        machine_widget.circuit_index = self.circuit_index
         main_window.centralWidget().parameters = self.machine_parameters
         for circuit in self.circuits:
             machine_widget.addLoadedCircuit(circuit)
@@ -343,7 +339,7 @@ class SaveState(object):
     def insert(self, main_window):
         """Insert the save state into the current setup."""
         machine_widget = main_window.centralWidget().machine_widget
-        machine_widget.circuit_index += self.circuit_index
+        machine_widget.clearSelection()
         for circuit in self.circuits:
             machine_widget.addLoadedCircuit(circuit)
         for connection in self.connections:

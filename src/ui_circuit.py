@@ -12,7 +12,7 @@ from parameter_window import ParameterWindow
 class UICircuit(QtGui.QGraphicsItem):
     """Graphics item that represents the circuits of the machine."""
 
-    def __init__(self, x, y, circuit_info, parent=None):
+    def __init__(self, x, y, circuit_info):
         """Create a circuit defined by the circuit_info and
         place it into the at (x, y)
         """
@@ -26,10 +26,7 @@ class UICircuit(QtGui.QGraphicsItem):
         self.ysize = 100
         self.circuit_info = circuit_info
         self.parameter_window = None
-        if parent:
-            self.name = circuit_info.circuit_type + str(parent.circuit_index)
-        else:
-            self.name = circuit_info.circuit_type
+        self.name = circuit_info.circuit_type
         self.dragged = False
         self.parameters = circuit_info.default_values.copy()
         self.parameters["Name"] = self.name
@@ -180,15 +177,29 @@ class UICircuit(QtGui.QGraphicsItem):
                 else:
                     del self.parameters[label]
         if self.name != self.parameters["Name"]:
-            self.name = self.parameters["Name"]
-            self.parameter_window.setWindowTitle(self.name + " parameters")
+            self.setName(self.parameters["Name"])
+            self.scene().resolveNameConflicts(self)
         self.updateIO(old_parameters)
-        status_bar.showMessage("Set parameters for %s"%self.name, 2000)
+        status_bar.showMessage("Set parameters for %s" % self.name, 2000)
 
     def updateParameters(self):
         """Update the parameters of the circuit to match the current state."""
         if self.parameter_window is not None:
             self.parameter_window.setParameters()
+
+    def setName(self, new_name):
+        """Change the name of the circuit."""
+        self.name = new_name
+        self.parameters["Name"] = self.name
+        if self.parameter_window is not None:
+            self.parameter_window.setWindowTitle(self.name + " parameters")
+
+    def toggleSelection(self):
+        """Toggle the selection state."""
+        if self.isSelected():
+            self.setSelected(False)
+        else:
+            self.setSelected(True)
 
     def getSaveState(self):
         """Return the current state of the circuit without the Qt bindings
@@ -239,12 +250,13 @@ class UICircuit(QtGui.QGraphicsItem):
 
     def mousePressEvent(self, event):
         """If left mouse button is pressed down start dragging
-        the circuit.
+        the circuit. Toggle the circuit selection with control click.
         """
-        if not self.isSelected():
-            self.scene().clearSelection()
-            self.scene().update()
-        if event.button() == QtCore.Qt.LeftButton:
+        if (event.button() == QtCore.Qt.LeftButton and
+                event.modifiers() & QtCore.Qt.ControlModifier):
+            self.toggleSelection()
+            self.scene().saveSelection(0)
+        elif event.button() == QtCore.Qt.LeftButton:
             self.dragged = True
         # super(UICircuit, self).mousePressEvent(event)
 
@@ -255,7 +267,7 @@ class UICircuit(QtGui.QGraphicsItem):
             self.scene().views()[0].scroll_dir = None
             self.ensureVisible()
             self.scene().updateSceneRect()
-        super(UICircuit, self).mouseReleaseEvent(event)
+        # super(UICircuit, self).mouseReleaseEvent(event)
 
     def mouseMoveEvent(self, event):
         """If circuit is being dragged try to set the circuits
