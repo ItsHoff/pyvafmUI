@@ -165,6 +165,12 @@ class MachineWidget(QtGui.QGraphicsScene):
                 return True
         return False
 
+    def findMatchingCircuit(self, save_state):
+        """Return the circuit with the matching save_state."""
+        for circuit in self.circuits:
+            if circuit.save_state == save_state:
+                return circuit
+
     def addContextActions(self, menu):
         """Add widget specific context actions to the
         context menu given as parameter.

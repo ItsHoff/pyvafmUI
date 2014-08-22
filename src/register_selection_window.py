@@ -123,8 +123,13 @@ class RegisterSelectionTree(drag_selection_window.SelectionTree):
         return new_item, None
 
     def createLoadedItem(self, save_state):
-        new_item = RegisterSelectionTreeItem(save_state.circuit.loaded_item,
-                                             save_state.channel)
+        if isinstance(save_state.circuit, GlobalDummy):
+            new_item = RegisterSelectionTreeItem(save_state.circuit,
+                                                 save_state.channel)
+        else:
+            machine = self.window().parent().circuit.scene()
+            circuit = machine.findMatchingCircuit(save_state.circuit)
+            new_item = RegisterSelectionTreeItem(circuit, save_state.channel)
         return new_item, None
 
 

@@ -318,7 +318,7 @@ class SaveCircuit(object):
         self.ios = []
         for io in circuit.ios:
             self.ios.append(io.getSaveState())
-        self.loaded_item = circuit         # Clear this before saving
+        self.loaded_item = None                 # Clear this before saving
 
     def update(self, circuit):
         """Update the save state to match the current state."""
