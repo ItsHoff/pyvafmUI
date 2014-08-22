@@ -1,7 +1,8 @@
-#1
+!1
 %Name% = machine.AddCircuit(type='Scanner', name='%Name%', $%INPUTS%$, $pushed = %Pushed%$)
+!3
 
-#3
+# Setup scanner
 £%Name%.Place($%Place%$)£
 £%Name%.Recorder = $%Recorder%$£
 £%Name%.BlankLines = $%BlankLines%$£

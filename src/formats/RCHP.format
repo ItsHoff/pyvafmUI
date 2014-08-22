@@ -1,2 +1,2 @@
-#1
+!1
 machine.AddCircuit(type='RCHP', name = '%Name%', $fcut = %FCut%$, $order = %Order%$, $%INPUTS%$, $pushed = %Pushed%$)

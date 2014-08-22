@@ -577,7 +577,7 @@ circuits = OrderedDict([
                             ("Pushed", "CheckBox")
                             ]),
     default_values      =   {"NumberOfModesV": 1, "NumberOfModesL": 1},
-    script_format = "formats/advanced_canti.format"
+    script_format       =   "formats/advanced_canti.format"
 )),
 
 # INTERPOLATION
@@ -668,3 +668,21 @@ circuits = OrderedDict([
     script_format       =   "formats/VDWtorn.format"
 ))
 ])
+
+# Header text for scripts
+blocks = [
+"""'Block 0'
+'Imports and machine setup'
+""",
+"""'Block 1'
+'Initialisation of circuits and basic setup'
+""",
+"""'Block 2'
+'Connections'
+""",
+"""'Block 3'
+'Additional setup'
+""",
+"""'Block 4'
+'Runtime operations'
+"""]

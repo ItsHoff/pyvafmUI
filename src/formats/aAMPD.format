@@ -1,2 +1,2 @@
-#1
+!1
 machine.AddCircuit(type='Machine', name = '%Name%', assembly = aAMPD, $fcut=%Fcut%$, $%INPUTS%$, $pushed = %Pushed%$)

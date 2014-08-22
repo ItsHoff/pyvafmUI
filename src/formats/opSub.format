@@ -1,2 +1,2 @@
-#1
+!1
 machine.AddCircuit(type='opSub', name='%Name%', $factors = %Factors%$, $%INPUTS%$, $pushed = %Pushed%$)

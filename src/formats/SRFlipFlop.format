@@ -1,2 +1,2 @@
-#1
+!1
 machine.AddCircuit(type='SRFlipFlop', name = '%Name%', $%INPUTS%$, $pushed = %Pushed%$)

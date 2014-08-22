@@ -14,18 +14,23 @@ The blocks will be written in in order but content inside
 the blocks can be in any order.
 
 The required format:
-    # at the start of the line followed by number 0-4
+    ! at the start of the line followed by number 0-4
       to start a new block.
     %Parameter% to signal a parameter, these will be
       replaced by the corresponding values from parameters
       dictionary.
-    $$ to signal an optional parameter anything inside these
-      will not be written if the parameter is missing.
+      example: %Name%
+    $Statement$ to signal an optional parameter, anything inside
+      these will not be written if the parameter is missing.
       example: $parameter = '%Parameter%'$
-    ££ to signal optional line, these lines will not be written
+    £Line£ to signal optional line, these lines will not be written
       if no OPTIONAL parameters are contained inside.
       example: £%name%.Configure($parameter = %Parameter%$)£
+
+    wildcards:
+        INPUTS will accept all set input values of circuit.
 """
+
 # TODO: Handle invalid formats
 
 
@@ -34,20 +39,24 @@ def createFromFormat(blocks, format_file, parameters):
     After cleaning append the line to the right block.
     """
     f = format_file
+    block = -1
     for line in f:
         # set the current block
-        if line.startswith('#'):
+        if line.startswith('!'):
             # TODO: handle not setting a block
             block = int(line[1])
-        elif line.startswith('£'):
-            if containsSetOptionalParameters(line, parameters):
+        else:
+            if block == -1:
+                raise SyntaxError("Block is not set on %s." % f.name)
+            elif line.startswith('£'):
+                if containsSetOptionalParameters(line, parameters):
+                    clean_line = createCleanLine(line, parameters)
+                    blocks[block] += clean_line
+            elif containsParameters(line):
                 clean_line = createCleanLine(line, parameters)
                 blocks[block] += clean_line
-        elif containsParameters(line):
-            clean_line = createCleanLine(line, parameters)
-            blocks[block] += clean_line
-        else:
-            blocks[block] += line
+            else:
+                blocks[block] += line
 
 
 def createCleanLine(line, parameters):
@@ -134,6 +143,7 @@ def containsSetOptionalParameters(string, parameters):
 
 
 def containsInputs(string):
+    """Return whether string takes input values or not."""
     found = string.find("INPUTS")
     if found != -1:
         return True

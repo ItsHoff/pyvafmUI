@@ -1,4 +1,5 @@
-'Block #0'
+'Block 0'
+'Imports and machine setup'
 import sys
 sys.path.append('/home/keisano1/Project/pyvafm-master/src')
 
@@ -10,12 +11,14 @@ import vafmcircuits
 machine = Machine(name='machine', dt = 5e-8, pushed=True)
 
 
-'Block #1'
+'Block 1'
+'Initialisation of circuits and basic setup'
+
+# Setup output
 out3 = machine.AddCircuit(type='output', name='out3', file = 'tut4.dat', dump = 0, pushed = True)
 
 scan = machine.AddCircuit(type='Scanner', name='scan', pushed = True)
-
-canti = machine.AddCircuit(type='Cantilever', name='canti', startingz = 0.387, Q = 42497, k=112.32, f0 = 23065, pushed = True)
+machine.AddCircuit(type='Cantilever', name='canti', startingz = 0.387, Q = 42497, k=112.32, f0 = 23065, pushed = True)
 machine.AddCircuit(type='Machine', name = 'amp', assembly = aAMPD, fcut=500, pushed = True)
 machine.AddCircuit(type='PI', name='agc', set=0.387, Kp=0.1, Ki=2.1, pushed = True)
 machine.AddCircuit(type='Machine', name = 'pll', assembly = dPFD, fcut=500, gain = 1000, f0=23065, KP=0.5, KI=3, pushed = True)
@@ -25,7 +28,8 @@ machine.AddCircuit(type='VDWtorn', name='Dimer', A1=-0.0166279, A2=0.22753, A3=-
 machine.AddCircuit(type='limiter', name='agclim', max=10, min=0, pushed = True)
 
 
-'Block #2'
+'Block 2'
+'Connections'
 machine.Connect("scan.record", "out3.record")
 machine.Connect("scan.z", "canti.holderz")
 machine.Connect("canti.zabs", "Dimer.ztip")
@@ -41,14 +45,19 @@ machine.Connect("pllinv.out", "exc.in2")
 machine.Connect("exc.out", "canti.exciter")
 
 
-'Block #3'
+'Block 3'
+'Additional setup'
 
+# Select registered channels
 out3.Register('scan.z', 'pll.df')
 
+
+# Setup scanner
 scan.BlankLines = True
 
 
-'Block #4'
+'Block 4'
+'Runtime operations'
 out3.Stop()
 scan.Place(x=0, y=0, z=15)
 scan.Move(x=0, y=0, z=-1)

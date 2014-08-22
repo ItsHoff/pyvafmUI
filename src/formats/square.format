@@ -1,2 +1,2 @@
-#1
+!1
 machine.AddCircuit(type='square', name = '%Name%', $%INPUTS%$, $pushed = %Pushed%$)

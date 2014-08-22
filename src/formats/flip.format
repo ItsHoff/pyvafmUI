@@ -1,2 +1,2 @@
-#1
+!1
 machine.AddCircuit(type='flip', name = '%Name%', $%INPUTS%$, $pushed = %Pushed%$)

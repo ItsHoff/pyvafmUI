@@ -1,4 +1,4 @@
-#0
+!0
 import sys
 £sys.path.append($'%PyVAFM src%'$)£
 

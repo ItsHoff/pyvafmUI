@@ -236,7 +236,7 @@ class MainWidget(QtGui.QWidget):
         if not savefile:
             status_bar.showMessage("Creating script... Failed!", 2000)
             return
-        blocks = [""]*5
+        blocks = circuits.blocks[:]
         with open("formats/machine.format", "r") as f:
             script.createFromFormat(blocks, f, self.parameters)
 
@@ -270,7 +270,6 @@ class MainWidget(QtGui.QWidget):
         with open(savefile, 'w') as f:
             i = 0
             for block in blocks:
-                f.write("'Block #"+str(i)+"'\n")
                 f.write(block)
                 f.write('\n\n')
                 i += 1

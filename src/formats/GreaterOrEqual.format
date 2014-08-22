@@ -1,2 +1,2 @@
-#1
+!1
 machine.AddCircuit(type='GreaterOrEqual', name = '%Name%', $%INPUTS%$, $pushed = %Pushed%$)

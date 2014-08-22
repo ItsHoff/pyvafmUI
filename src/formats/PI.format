@@ -1,2 +1,2 @@
-#1
+!1
 machine.AddCircuit(type='PI', name='%Name%', $%INPUTS%$, $pushed = %Pushed%$)
