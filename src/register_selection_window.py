@@ -129,6 +129,9 @@ class RegisterSelectionTree(drag_selection_window.SelectionTree):
         else:
             machine = self.window().parent().circuit.scene()
             circuit = machine.findMatchingCircuit(save_state.circuit)
+            # No match is found so remove the item
+            if circuit is None:
+                return None, None
             new_item = RegisterSelectionTreeItem(circuit, save_state.channel)
         return new_item, None
 

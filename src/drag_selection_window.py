@@ -125,7 +125,8 @@ class SelectionTree(QtGui.QTreeWidget):
         self.clear()
         for save_item in save_state:
             new_item, widget = self.createLoadedItem(save_item)
-            self.addTopLevelItem(new_item)
+            if new_item is not None:
+                self.addTopLevelItem(new_item)
             if widget is not None:
                 self.setItemWidget(new_item, 0, widget)
 

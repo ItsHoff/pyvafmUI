@@ -90,6 +90,20 @@ class MainWindow(QtGui.QMainWindow):
         else:
             self.statusBar().showMessage("Creating save state... Failed!", 2000)
 
+    def saveSelected(self):
+        """Save the setup currently selected."""
+        self.statusBar().showMessage("Creating save state...", 10000)
+        save_state = SaveState()
+        save_state.createFromSelected(self)
+        save_file = QtGui.QFileDialog().getSaveFileName(self, "Save Selected",
+                                                        "../saves")
+        if save_file:
+            with open(save_file, "w") as f:
+                pickle.dump(save_state, f)
+                self.statusBar().showMessage("Creating save state... Done!", 2000)
+        else:
+            self.statusBar().showMessage("Creating save state... Failed!", 2000)
+
     def load(self):
         """Load the save state of users choice."""
         self.statusBar().showMessage("Loading save state...", 10000)
@@ -292,11 +306,25 @@ class SaveState(object):
         self.machine_parameters = main_window.centralWidget().parameters
         for circuit in machine_widget.circuits:
             circuit.updateParameters()
-            self.circuits.append(circuit.getCleanSaveState())
+            self.circuits.append(circuit.getSaveState())
         for connection in machine_widget.connections:
             self.connections.append(connection.getSaveState())
         run_selection_window = main_window.centralWidget().run_selection_window
         self.run_selections = run_selection_window.getSaveState()
+
+    def createFromSelected(self, main_window):
+        """Gather all the data from selected items for saving
+        without Qt bindings.
+        """
+        machine_widget = main_window.centralWidget().machine_widget
+        self.circuit_index = machine_widget.circuit_index
+        self.machine_parameters = main_window.centralWidget().parameters
+        for circuit in machine_widget.selectedItems():
+            circuit.updateParameters()
+            self.circuits.append(circuit.getSaveState())
+        for connection in machine_widget.selectedConnections():
+            print connection
+            self.connections.append(connection.getSaveState())
 
     def load(self, main_window):
         """Load the save state stored in this object."""

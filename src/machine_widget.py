@@ -182,12 +182,17 @@ class MachineWidget(QtGui.QGraphicsScene):
         self.connect(clear_connections, QtCore.SIGNAL("triggered()"),
                      self.removeConnections)
 
+        save_selected = QtGui.QAction("Save Selected", menu)
+        self.connect(save_selected, QtCore.SIGNAL("triggered()"),
+                     self.views()[0].window().saveSelected)
+
         delete_selected = QtGui.QAction("Delete Selected", menu)
         self.connect(delete_selected, QtCore.SIGNAL("triggered()"),
                      self.deleteSelected)
 
         menu.addAction(clear_connections)
         if self.selectedItems():
+            menu.addAction(save_selected)
             menu.addAction(delete_selected)
         menu.addAction(clear_all)
 
@@ -209,7 +214,6 @@ class MachineWidget(QtGui.QGraphicsScene):
             # self.updateSceneRect()
             status_bar.showMessage("Cleared all", 3000)
         self.update()
-
 
     def removeConnections(self):
         """Clear all connections from the scene."""
@@ -263,6 +267,16 @@ class MachineWidget(QtGui.QGraphicsScene):
         status_bar.showMessage("Removed %s"%circuit.name, 3000)
         self.updateSceneRect()
         self.update()
+
+    def selectedConnections(self):
+        """Return list of connections whose both ends are selected."""
+        selected_items = self.selectedItems()
+        selected_connections = []
+        for connection in self.connections:
+            if (connection.input_.circuit in selected_items and
+                    connection.output.circuit in selected_items):
+                selected_connections.append(connection)
+        return selected_connections
 
     def moveSelected(self, amount):
         """Move all the selected items by amount."""
