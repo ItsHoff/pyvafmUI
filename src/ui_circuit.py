@@ -238,8 +238,10 @@ class UICircuit(QtGui.QGraphicsItem):
     def paint(self, painter, options, widget):
         """Paint the circuit. Called automatically by the scene."""
         if self.isSelected():
+            self.setZValue(1)
             painter.setBrush(QtGui.QColor(165, 198, 255))
         else:
+            self.setZValue(0)
             painter.setBrush(QtGui.QColor(222, 244, 251))
         pen = QtGui.QPen(QtGui.QColor(0, 0, 0))
         pen.setWidth(2)
@@ -283,8 +285,8 @@ class UICircuit(QtGui.QGraphicsItem):
             # If new position collides with other circuit
             # return to old position.
             for circuit in self.scene().circuits:
-                if (self.collidesWithItem(circuit) and
-                   circuit != self and not circuit.isSelected()):
+                if (self.collidesWithItem(circuit) and circuit != self and
+                        (not self.isSelected() or not circuit.isSelected())):
                     self.setPos(old_pos)
                     break
             # Relay the movement to all other selected circuits

@@ -80,9 +80,13 @@ class ModeSetupTree(drag_selection_window.SelectionTree):
 
     def createLoadedItem(self, save_state):
         """Create a new item matching the save state."""
+        machine = self.window().parent().circuit.scene()
         new_item = QtGui.QTreeWidgetItem()
-        item_widget = ModeSetupTreeItem(save_state.circuit.loaded_item,
-                                        save_state.vertical)
+        circuit = machine.findMatchingCircuit(save_state.circuit)
+        # No match is found so remove the item
+        if circuit is None:
+            return None, None
+        item_widget = ModeSetupTreeItem(circuit, save_state.vertical)
         size_hint = item_widget.sizeHint()
         new_item.setSizeHint(0, size_hint)
         item_widget.setText(save_state.edit_text)
