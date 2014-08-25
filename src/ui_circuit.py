@@ -28,6 +28,7 @@ class UICircuit(QtGui.QGraphicsItem):
         self.parameter_window = None
         self.name = circuit_info.circuit_type
         self.dragged = False
+        self.highlighted = False
         self.parameters = circuit_info.default_values.copy()
         self.parameters["Name"] = self.name
         self.ios = []
@@ -237,7 +238,10 @@ class UICircuit(QtGui.QGraphicsItem):
 
     def paint(self, painter, options, widget):
         """Paint the circuit. Called automatically by the scene."""
-        if self.isSelected():
+        if self.highlighted:
+            self.setZValue(2)
+            painter.setBrush(QtGui.QColor(188, 244, 184))
+        elif self.isSelected():
             self.setZValue(1)
             painter.setBrush(QtGui.QColor(165, 198, 255))
         else:
@@ -341,3 +345,6 @@ class SaveCircuit(object):
     def clean(self):
         """Remove the reference to the circuit."""
         self.loaded_item = None
+
+    def __str__(self):
+        return self.name

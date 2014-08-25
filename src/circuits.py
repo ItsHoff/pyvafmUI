@@ -128,7 +128,8 @@ circuits = OrderedDict([
                             ("Pushed", "CheckBox")
                             ]),
     script_format       =   "formats/LessOrEqual.format"
-)), ("Equal", CircuitInfo(
+)),
+("Equal", CircuitInfo(
     name                =   "Equal",
     group               =   "Mathematics",
     inputs              =   ["in1", "in2"],
@@ -624,9 +625,9 @@ circuits = OrderedDict([
     outputs             =   ["x", "y", "z", "record"],
     param_window_style  =   OrderedDict([
                             ("Name", "NameLineEdit"),
-                            ("Recorder", "NameLineEdit"),
                             ("Resolution", "DoubleIntLineEdit"),
                             ("ImageArea", "DoubleFloatLineEdit"),
+                            ("Recorder", "RecorderSelect"),
                             ("BlankLines", "CheckBox"),
                             ("Pushed", "CheckBox")
                             ]),

@@ -17,9 +17,6 @@ class MachineWidget(QtGui.QGraphicsScene):
     """Scene displaying the current state of the machine."""
 
     def __init__(self, tree_widget, parent=None):
-        '''
-        Constructor
-        '''
         super(MachineWidget, self).__init__(parent)
         self.tree_widget = tree_widget
         self.circuits = []
@@ -322,6 +319,24 @@ class MachineWidget(QtGui.QGraphicsScene):
         else:
             self.saveSelection(key)
 
+    def highlightOutputs(self):
+        """Highlight the outputs of the scene and try to make them all
+        visible.
+        """
+        output_rect = QtCore.QRectF()
+        for circuit in self.circuits:
+            if circuit.circuit_info.circuit_type == "output":
+                rect = circuit.boundingRect()
+                rect.moveTo(circuit.pos())
+                output_rect = output_rect.united(rect)
+                circuit.highlighted = True
+        self.views()[0].ensureVisible(output_rect)
+
+    def clearHighlight(self):
+        """Clear highlight from all circuits."""
+        for circuit in self.circuits:
+            circuit.highlighted = False
+
     def drawBackground(self, qp, rect):
         """Draw the background white and call a grid draw"""
         qp.setPen(QtGui.QColor(255, 255, 255))
@@ -354,6 +369,10 @@ class MachineWidget(QtGui.QGraphicsScene):
         event.accept()
 
     def dragMoveEvent(self, event):
+        """Accept event for drag & drop to work."""
+        event.accept()
+
+    def dragLeaveEvent(self, event):
         """Accept event for drag & drop to work."""
         event.accept()
 

@@ -61,6 +61,8 @@ class ParameterWindow(QtGui.QDialog):
                                 self.parent().centralWidget(), self))
             elif widget_type == "ModeSetup":
                 widgets.append(widget_creator.createModeSetup(name, self))
+            elif widget_type == "RecorderSelect":
+                widgets.append(widget_creator.createRecorderSelect(name))
             else:
                 print "Incorrect widget type on circuit " + self.circuit.name
         # Add the widgets from the container into the window layout.

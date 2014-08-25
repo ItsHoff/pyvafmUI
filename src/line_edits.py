@@ -48,7 +48,7 @@ line_edits = {
     },
     "FileLineEdit":{
         "CompletionModel"   : None,
-        "RegExp"            : QRegExp(NAME_REGEXP),
+        "RegExp"            : QRegExp(FILE_REGEXP),
         "PlaceholderText"   : "filename"
     },
     "BitLineEdit":{

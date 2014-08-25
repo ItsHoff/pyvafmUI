@@ -18,6 +18,7 @@ from label_file_dialog import LabelFileDialog
 from label_dir_dialog import LabelDirDialog
 from register_selection_window import RegisterSelectionButton
 from mode_setup_window import ModeSetupButton
+from recorder_select import RecorderSelect
 
 
 def createLineEdit(label_text, subtype):
@@ -64,3 +65,10 @@ def createModeSetup(label_text, parent):
     label = QtGui.QLabel(label_text)
     button = ModeSetupButton(parent)
     return [label, button]
+
+def createRecorderSelect(label_text):
+    """Create a recorder select widget and a label with label_text."""
+    label = QtGui.QLabel(label_text)
+    button = RecorderSelect()
+    return [label, button]
+
