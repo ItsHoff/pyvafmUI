@@ -1,2 +1,2 @@
 #1
-machine.AddCircuit(type='SKBP', name = '%Name%', $gain = %Gain%$, $fcut = %FCut%$, $band = %Band%$, $%INPUTS%$, $pushed = %Pushed%$)
+machine.AddCircuit(type='SKBP', name = '%Name%', $gain = %Gain%$, $fc = %FCut%$, $band = %Band%$, $%INPUTS%$, $pushed = %Pushed%$)
