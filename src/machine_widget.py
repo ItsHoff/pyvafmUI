@@ -410,7 +410,8 @@ class MachineWidget(QtGui.QGraphicsScene):
             event.accept()
             self.addClickedCircuit(event.scenePos())
         elif (event.button() == QtCore.Qt.LeftButton and
-              self.itemAt(event.scenePos()) is None):
+              self.itemAt(event.scenePos()) is None  and
+              not event.modifiers() & QtCore.Qt.ControlModifier):
             self.clearSelection()
             self.selection_box = SelectionBox(event.scenePos(), None, self)
             self.update()

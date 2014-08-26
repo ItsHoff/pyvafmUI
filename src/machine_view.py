@@ -84,7 +84,9 @@ class MachineView(QtGui.QGraphicsView):
     def mousePressEvent(self, event):
         """Start panning the scene if middle mouse button is pressed."""
         super(MachineView, self).mousePressEvent(event)
-        if event.button() == QtCore.Qt.MiddleButton:
+        if (event.button() == QtCore.Qt.MiddleButton    or
+               (event.button() == QtCore.Qt.LeftButton  and
+                event.modifiers() & QtCore.Qt.ControlModifier)):
             self.panning = True
             self.mouse_pos = event.pos()
 
