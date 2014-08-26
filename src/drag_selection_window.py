@@ -136,7 +136,7 @@ class SelectionTree(QtGui.QTreeWidget):
         Have to account for the situation that drag from self has exited the
         widget and the dragged item was thus deleted.
         """
-        # event.accept()
+        event.accept()
         if event.source() == self:
             # If current item is none the drag has exited the widget and
             # the item was deleted.

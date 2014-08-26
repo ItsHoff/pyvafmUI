@@ -28,13 +28,21 @@ class RecorderSelect(QtGui.QWidget):
     def setValue(self, value):
         """Set the value of the widget."""
         # Update the name
-        self.parent().circuit.scene().findMatchingCircuit(value).getSaveState()
+        recorder = self.parent().circuit.scene().findMatchingCircuit(value)
+        if recorder is not None:
+            recorder.getSaveState()
+        else:
+            self.clearValue()
+            return
         self.recorder = value
         self.label.setText(self.recorder.name)
 
     def getValue(self):
         """Return the value of the circuit."""
-        return self.recorder
+        # Find the circuit linked to the save state
+        recorder = self.parent().circuit.scene().findMatchingCircuit(self.recorder)
+        if recorder is not None:
+            return self.recorder
 
     def clearValue(self):
         """Clear the value of the widget."""
