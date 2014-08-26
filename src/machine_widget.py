@@ -209,14 +209,22 @@ class MachineWidget(QtGui.QGraphicsScene):
         menu.addAction(clear_connections)
         menu.addAction(clear_all)
 
+    def showMessageBox(self, title, text):
+        """Show a message box with a title and text. Return the value of
+        the dialog.
+        """
+        message_box = QtGui.QMessageBox()
+        message_box.setWindowTitle(title)
+        message_box.setText(text)
+        message_box.setStandardButtons(message_box.Yes | message_box.No)
+        message_box.setDefaultButton(message_box.Yes)
+        return message_box.exec_()
+
     def deleteAll(self):
         """Clear everything from the scene after confirmation."""
-        message_box = QtGui.QMessageBox()
-        message_box.setWindowTitle("Delete All")
-        message_box.setText("Do you want to delete everything?")
-        message_box.setStandardButtons(message_box.Yes | message_box.No)
-        value = message_box.exec_()
-        if value == message_box.Yes:
+        value = self.showMessageBox("Delete All",
+                                    "Do you want to delete everything?")
+        if value == QtGui.QMessageBox.Yes:
             self.clearAll()
 
     def clearAll(self):
@@ -230,12 +238,9 @@ class MachineWidget(QtGui.QGraphicsScene):
 
     def removeConnections(self):
         """Clear all connections from the scene."""
-        message_box = QtGui.QMessageBox()
-        message_box.setWindowTitle("Delete All Connections")
-        message_box.setText("Do you want to delete all connections?")
-        message_box.setStandardButtons(message_box.Yes | message_box.No)
-        value = message_box.exec_()
-        if value == message_box.Yes:
+        value = self.showMessageBox("Delete All Connections",
+                                    "Do you want to delete all connections?")
+        if value == QtGui.QMessageBox.Yes:
             status_bar = self.parent().window().statusBar()
             for connection in self.connections:
                 self.removeItem(connection)
@@ -299,12 +304,9 @@ class MachineWidget(QtGui.QGraphicsScene):
 
     def deleteSelected(self):
         """Delete all currently selected circuits."""
-        message_box = QtGui.QMessageBox()
-        message_box.setWindowTitle("Delete Selected")
-        message_box.setText("Do you want to delete all selected circuits?")
-        message_box.setStandardButtons(message_box.Yes | message_box.No)
-        value = message_box.exec_()
-        if value == message_box.Yes:
+        value = self.showMessageBox("Delete Selected",
+                                    "Do you want to delete selected circuits?")
+        if value == QtGui.QMessageBox.Yes:
             for circuit in self.selectedItems():
                 self.removeCircuit(circuit)
 
