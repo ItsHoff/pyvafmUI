@@ -319,7 +319,6 @@ class SaveState(object):
             circuit.updateParameters()
             self.circuits.append(circuit.getSaveState())
         for connection in machine_widget.selectedConnections():
-            print connection
             self.connections.append(connection.getSaveState())
 
     def load(self, main_window):
@@ -333,6 +332,7 @@ class SaveState(object):
             machine_widget.addLoadedConnection(connection)
         run_selection_window = main_window.centralWidget().run_selection_window
         run_selection_window.loadSaveState(self.run_selections)
+        self.cleanLoadedItems(machine_widget)
         machine_widget.updateSceneRect()
 
     def insert(self, main_window):
@@ -343,8 +343,17 @@ class SaveState(object):
             machine_widget.addLoadedCircuit(circuit)
         for connection in self.connections:
             machine_widget.addLoadedConnection(connection)
+        self.cleanLoadedItems(machine_widget)
         machine_widget.updateSceneRect()
         machine_widget.saveSelection(0)
+
+    def cleanLoadedItems(self, machine_widget):
+        """Clean the references to the loaded items from save states."""
+        for circuit in machine_widget.circuits:
+            circuit.getSaveState()
+        for connection in machine_widget.connections:
+            connection.getSaveState()
+
 
 
 def main():

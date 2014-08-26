@@ -642,7 +642,7 @@ circuits = OrderedDict([
     outputs             =   ["fz"],
     param_window_style  =   OrderedDict([
                             ("Name", "NameLineEdit"),
-                            ("Gamma", "FloatLineEdit"),
+                            ("Alpha", "FloatLineEdit"),
                             ("Hamaker", "FloatLineEdit"),
                             ("Radius", "FloatLineEdit"),
                             ("Offset", "FloatLineEdit"),
