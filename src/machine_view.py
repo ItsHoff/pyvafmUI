@@ -73,15 +73,12 @@ class MachineView(QtGui.QGraphicsView):
     def wheelEvent(self, event):
         """Scale the view when wheel is scrolled."""
         self.setTransformationAnchor(self.AnchorUnderMouse)
-        factor = 1.1
-        # Scaling factor for different scroll increments
-        scaling = abs(event.delta()/120)
-        print event.delta()
+        factor = 1 + 0.1* abs(event.delta()/120.0)
         if event.delta() < 0:
             factor = 1.0/factor
         if (self.scale_factor*factor > self.min_factor and
                 self.scale_factor*factor < self.max_factor):
-            self.scale_factor *= factor * scaling
+            self.scale_factor *= factor
             self.scale(factor, factor)
 
     def mousePressEvent(self, event):

@@ -203,10 +203,10 @@ class MachineWidget(QtGui.QGraphicsScene):
         self.connect(delete_selected, QtCore.SIGNAL("triggered()"),
                      self.deleteSelected)
 
-        menu.addAction(clear_connections)
         if self.selectedItems():
             menu.addAction(save_selected)
             menu.addAction(delete_selected)
+        menu.addAction(clear_connections)
         menu.addAction(clear_all)
 
     def deleteAll(self):
