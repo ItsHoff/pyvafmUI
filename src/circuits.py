@@ -634,10 +634,10 @@ circuits = OrderedDict([
     script_format       =   "formats/scanner.format"
 )),
 
-# VAN DER WALLS
-("Van Der Walls Force", CircuitInfo(
+# VAN DER WAALS
+("Van der Waals Force", CircuitInfo(
     name                =   "VDW",
-    group               =   "Van Der Walls",
+    group               =   "Van der Waals",
     inputs              =   ["ztip"],
     outputs             =   ["fz"],
     param_window_style  =   OrderedDict([
@@ -652,7 +652,7 @@ circuits = OrderedDict([
 )),
 ("VDWtorn", CircuitInfo(
     name                =   "VDWtorn",
-    group               =   "Van Der Walls",
+    group               =   "Van der Waals",
     inputs              =   ["ztip"],
     outputs             =   ["fz"],
     param_window_style  =   OrderedDict([
