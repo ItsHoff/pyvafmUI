@@ -196,6 +196,14 @@ class SelectionTree(QtGui.QTreeWidget):
         """
         pass
 
+    def keyPressEvent(self, event):
+        """Remove the current item if delete is pressed."""
+        if event.key() == QtCore.Qt.Key_Delete:
+            current_item = self.currentItem()
+            index = self.indexOfTopLevelItem(current_item)
+            self.takeTopLevelItem(index)
+
+
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     w = DragSelectionWindow()

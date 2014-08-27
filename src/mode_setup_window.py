@@ -62,6 +62,10 @@ class ModeSetupWindow(drag_selection_window.DragSelectionWindow):
         self.selection_tree.changeNofModes(True, int(n_vertical)-modes_vertical)
         self.selection_tree.changeNofModes(False, int(n_lateral)-modes_lateral)
 
+    def dragEnterEvent(self, event):
+        """Ignore the event to disallow deletion."""
+        event.ignore()
+
 
 class ModeSetupTree(drag_selection_window.SelectionTree):
     """Selection tree containing all the current modes."""
@@ -148,6 +152,13 @@ class ModeSetupTree(drag_selection_window.SelectionTree):
             for i in range(amount):
                 self.addMode(vertical)
 
+    def keyPressEvent(self, event):
+        """Overwrite the event to not delete items."""
+        if event.key() == QtCore.Qt.Key_Delete:
+            pass
+        else:
+            super(ModeSetupTree, self).keyPressEvent(event)
+
 
 class ModeSetupTreeItem(QtGui.QWidget):
     """Widget used in the ModeSetupTree."""
@@ -180,7 +191,7 @@ class ModeSetupTreeItem(QtGui.QWidget):
 
     def copy(self):
         """Return a copy of the widget. Needed when moving widgets around."""
-        new_item = ModeSetupTreeItem(self.circuit)
+        new_item = ModeSetupTreeItem(self.circuit, self.vertical)
         new_item.label.setText(self.label.text())
         new_item.line_edit.setText(self.line_edit.text())
         return new_item

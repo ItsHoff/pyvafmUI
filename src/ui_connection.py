@@ -40,7 +40,7 @@ class UIConnection(QtGui.QGraphicsPathItem):
         path.lineTo(self.end)
         self.setPath(path)
         # set Z value to guarantee that connection will be drawn on top.
-        self.setZValue(1)
+        self.setZValue(3)
 
     def addContextActions(self, menu):
         """Add connection specific context actions to the menu."""
