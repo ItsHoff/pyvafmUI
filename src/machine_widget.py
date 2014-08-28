@@ -344,7 +344,10 @@ class MachineWidget(QtGui.QGraphicsScene):
         qp.setPen(QtGui.QColor(255, 255, 255))
         qp.setBrush(QtGui.QColor(255, 255, 255))
         qp.drawRect(rect)
+        image = QtGui.QImage("../images/background")
+        qp.drawImage(rect, image)
         self.drawGrid(qp, rect)
+        self.update()
 
     def drawGrid(self, qp, rect):
         """Draw a grid with a spacing of 100 to the background."""
