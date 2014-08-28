@@ -13,22 +13,28 @@ and the file creation is handled by the main window.
 The blocks will be written in in order but content inside
 the blocks can be in any order.
 
-The required format:
-    ! at the start of the line followed by number 0-4
-      to start a new block.
-    %Parameter% to signal a parameter, these will be
-      replaced by the corresponding values from parameters
-      dictionary.
-      example: %Name%
-    $Statement$ to signal an optional parameter, anything inside
-      these will not be written if the parameter is missing.
-      example: $parameter = '%Parameter%'$
-    £Line£ to signal optional line, these lines will not be written
-      if no OPTIONAL parameters are contained inside.
-      example: £%name%.Configure($parameter = %Parameter%$)£
+The format:
+    Delimiters:
+    !               at the start of the line followed by number 0-4 to define the
+                    block in which the following lines will be written.
+    %Parameter%     to signal a parameter, these will be replaced by the corresponding
+                    values from parameters dictionary and as such must match the
+                    names given in param_window_format.
+                    example: %Name%
+    $Statement$     to signal an optional parameter, anything inside these will not
+                    be written if the parameter is missing. These should be used
+                    to enclose the parameter name in addition to the value so that
+                    they're not mistakingly added when the parameter is not set.
+                    example: $parameter = '%Parameter%'$
+    £Line£          to signal optional line, these lines will not be written
+                    if no OPTIONAL parameters (defined by $$) are contained inside.
+                    example: £%name%.Configure($parameter = %Parameter%$)£
 
-    wildcards:
-        INPUTS will accept all set input values of circuit.
+    Wildcard statements:
+    INPUTS          is used to define where all input values of the circuit
+                    are written. Needs to be added inside optional and
+                    parameter delimiters ($%INPUTS%$).
+                    example: machine.AddCircuit(type='Example', name = '%Name%', $%INPUTS%$)
 """
 
 # TODO: Handle invalid formats
