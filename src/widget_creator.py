@@ -8,6 +8,7 @@ Current widgets:
     - DirDialog
     - RegisterDialog
     - ModeSetup
+    - RecorderSelect
 """
 
 from PyQt4 import QtGui
