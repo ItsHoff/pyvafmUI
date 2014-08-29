@@ -8,6 +8,7 @@ XFOUR = "((%s),\s?){3}(%s)"
 XFIVE = "((%s),\s?){4}(%s)"
 BOOL_REGEXP = "T?r?u?e?|F?a?l?s?e?"
 TRIPLE_BOOL_REGEXP = XTHREE % (BOOL_REGEXP, BOOL_REGEXP)
+FOUR_BOOL_REGEXP = XFOUR % (BOOL_REGEXP, BOOL_REGEXP)
 FLOAT_REGEXP = "[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?"
 DOUBLE_FLOAT_REGEXP = XTWO % (FLOAT_REGEXP, FLOAT_REGEXP)
 TRIPLE_FLOAT_REGEXP = XTHREE % (FLOAT_REGEXP, FLOAT_REGEXP)
@@ -65,6 +66,11 @@ line_edits = {
         "CompletionModel"   : ParameterCompletionModel(BOOL_LIST),
         "RegExp"            : QRegExp(TRIPLE_BOOL_REGEXP),
         "PlaceholderText"   : "bool, bool, bool"
+    },
+    "FourBoolLineEdit":{
+        "CompletionModel"   : ParameterCompletionModel(BOOL_LIST),
+        "RegExp"            : QRegExp(FOUR_BOOL_REGEXP),
+        "PlaceholderText"   : "bool, bool, bool, bool"
     },
     "IntLineEdit":{
         "CompletionModel"   : None,

@@ -6,7 +6,8 @@ Created on Jun 12, 2014
 
 groups = ["Mathematics", "Signal Generation", "Signal Processing",
           "Signal Control", "Output", "Flip-Flops", "Custom", "Cantilever",
-          "Interpolation", "Scanner", "Van der Waals", "Recently Used"]
+          "Interpolation", "Scanner", "Van der Waals",
+          "Scanning Tunneling Microscope", "Recently Used"]
 
 
 class CircuitInfo(object):

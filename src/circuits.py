@@ -582,6 +582,22 @@ circuits = OrderedDict([
 )),
 
 # INTERPOLATION
+("1d Linear Interpolation", CircuitInfo(
+    name                =   "i1Dlin",
+    group               =   "Interpolation",
+    inputs              =   ["x"],
+    outputs             =   ["F#Components"],
+    param_window_style  =   OrderedDict([
+                            ("Name", "NameLineEdit"),
+                            ("Components", "IntLineEdit"),
+                            ("Step", "FloatLineEdit"),
+                            ("Data", "LineEdit"),
+                            ("PBC", "CheckBox"),
+                            ("Pushed", "CheckBox")
+                            ]),
+    default_values      =   {"Components": 1},
+    script_format       =   "formats/i1Dlin.format"
+)),
 ("3d Linear Interpolation", CircuitInfo(
     name                =   "i3Dlin",
     group               =   "Interpolation",
@@ -600,21 +616,22 @@ circuits = OrderedDict([
     default_values      =   {"Components": 3},
     script_format       =   "formats/i3Dlin.format"
 )),
-("1d Linear Interpolation", CircuitInfo(
-    name                =   "i1Dlin",
+("4d Linear Interpolation", CircuitInfo(
+    name                =   "i4Dlin",
     group               =   "Interpolation",
-    inputs              =   ["x"],
+    inputs              =   ["x", "y", "z", "V"],
     outputs             =   ["F#Components"],
     param_window_style  =   OrderedDict([
                             ("Name", "NameLineEdit"),
-                            ("Components", "IntLineEdit"),
-                            ("Step", "FloatLineEdit"),
-                            ("Data", "LineEdit"),
-                            ("PBC", "CheckBox"),
+                            ("Components","IntLineEdit"),
+                            ("BiasStep", "FloatLineEdit"),
+                            ("StartingV", "FloatLineEdit"),
+                            ("PBC", "FourBoolLineEdit"),
+                            ("VASP Data", "FileDialog"),
                             ("Pushed", "CheckBox")
                             ]),
     default_values      =   {"Components": 1},
-    script_format       =   "formats/i1Dlin.format"
+    script_format       =   "formats/i4Dlin.format"
 )),
 
 # SCANNER
@@ -667,6 +684,22 @@ circuits = OrderedDict([
                             ("Pushed", "CheckBox"),
                             ]),
     script_format       =   "formats/VDWtorn.format"
+)),
+
+# SCANNING TUNNELING MICROSCOPE
+("STM", CircuitInfo(
+    name                =   "STM",
+    group               =   "Scanning Tunneling Microscope",
+    inputs              =   ["Density"],
+    outputs             =   ["Current"],
+    param_window_style  =   OrderedDict([
+                            ("Name", "NameLineEdit"),
+                            ("WorkFunction", "FloatLineEdit"),
+                            ("WaveFunctionOverlap", "FloatLineEdit"),
+                            ("Pushed", "CheckBox"),
+                            ]),
+    default_values      =   {"WorkFunction": 4, "WaveFunctionOverlap": 2},
+    script_format       =   "formats/STM.format"
 ))
 ])
 
