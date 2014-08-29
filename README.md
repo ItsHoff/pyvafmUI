@@ -5,7 +5,7 @@ GUI for the pyvafm
 
 Requirements:
     
-    - Python2
+    - Python 2.7
     
     - PyQt4
     
