@@ -33,8 +33,6 @@ class MainWindow(QtGui.QMainWindow):
     def __init__(self):
         """Initialise the main window."""
         super(MainWindow, self).__init__()
-        self.setWindowIcon(QtGui.QIcon("../images/logo.jpg"))
-        self.setWindowIconText("PyVAFM UI")
         self.initUI()
 
     def initUI(self):
